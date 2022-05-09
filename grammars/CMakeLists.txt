@@ -3,9 +3,6 @@
 # can be found in the LICENSE file at the root of the lizard source
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-# TODO: Auto-compile all grammars in this directory and create a dedicated target
-# for each of them, that can be used to link against the generated parsers.
-
 set(GRAMMARS
 	"${CMAKE_CURRENT_SOURCE_DIR}/GeCCoExport.g4"
 )
@@ -21,26 +18,23 @@ foreach (CURRENT_GRAMMAR IN LISTS GRAMMARS)
 
 	get_filename_component(GRAMMAR_NAME "${CURRENT_GRAMMAR}" NAME_WLE)
 
-	set(TARGET_NAME "${GRAMMAR_NAME}_parser")
+	set(TARGET_NAME "lizard_${GRAMMAR_NAME}_parser")
 
-	add_library(${TARGET_NAME} STATIC)
 
 	antlr_target("${GRAMMAR_NAME}" "${CURRENT_GRAMMAR}"
 		PACKAGE lizard::parser::autogen
-		OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${GRAMMAR_NAME}"
+		OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${GRAMMAR_NAME}/lizard/parser/autogen"
 		LEXER
 		PARSER
 		LISTENER
 		VISITOR
 	)
 
-	target_sources("${TARGET_NAME}"
-		PUBLIC
-			${ANTLR_${GRAMMAR_NAME}_CXX_OUTPUTS}
-	)
+	add_library(${TARGET_NAME} STATIC ${ANTLR_${GRAMMAR_NAME}_CXX_OUTPUTS})
+
 	target_include_directories("${TARGET_NAME}"
 		PUBLIC
-			"${ANTLR_${GRAMMAR_NAME}_OUTPUT_DIR}"
+			"${CMAKE_CURRENT_BINARY_DIR}/${GRAMMAR_NAME}"
 	)
 	target_link_libraries("${TARGET_NAME}"
 		PUBLIC
@@ -54,7 +48,5 @@ foreach (CURRENT_GRAMMAR IN LISTS GRAMMARS)
 			C_INCLUDE_WHAT_YOU_USE ""
 			LINK_WHAT_YOU_USE OFF
 	)
-
-	include_directories(${antlr4cpp_include_dirs_antlrcpptest})
 endforeach()
 
