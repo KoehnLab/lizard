@@ -6,7 +6,6 @@
 option(LIZARD_IWYU "Whether to enable the include-what-you-use tool (if found)" ON)
 option(LIZARD_LWYU "Whether to enable the link-what-you-use tool" ON)
 
-message(STATUS "Using Link-what-you-use: ${LIZARD_LWYU}")
 set(CMAKE_LINK_WHAT_YOU_USE ${LIZARD_LWYU})
 
 if (LIZARD_IWYU)
