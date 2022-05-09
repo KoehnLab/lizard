@@ -42,11 +42,11 @@ num_vertices:
 ;
 
 super_vertex:
-	'/SVERTEX/' INT+
+	'/SVERTEX/' (operator_indices+=INT)+
 ;
 
 num_arcs:
-	'/#ARCS/' INT INT
+	'/#ARCS/' arc_count=INT external_arc_count=INT
 ;
 
 vertices:
@@ -63,25 +63,25 @@ external_arcs:
 
 contr_string:
 	'/CONTR_STRING/' NL
-	INT* NL
-	INT* NL
-	INT* NL
-	ID* NL
-	INT* NL
-	INT*
+	(vertex_indices+=INT)* NL
+	(index_types+=INT)* NL
+	(index_spaces+=INT)* NL
+	(result_flags+=ID)* NL
+	(arc_index+=INT)* NL
+	(index_ids+=INT)*
 ;
 
 result_string:
 	'/RESULT_STRING/' NL
-	INT* NL
-	INT* NL
-	INT* NL
-	INT* NL
-	INT*
+	(vertex_indices+=INT)* NL
+	(index_types+=INT)* NL
+	(index_spaces+=INT)* NL
+	(arc_index+=INT)* NL
+	(index_ids+=INT)*
 ;
 
 tensor_spec:
-	ID ID index_spec
+	name=ID transpose=ID index_spec
 ;
 
 index_spec:
