@@ -8,7 +8,7 @@
 grammar GeCCoExport;
 
 body:
-	contraction* EOF
+	contraction* '[END]'
 ;
 
 contraction:
