@@ -3,11 +3,9 @@
 # can be found in the LICENSE file at the root of the lizard source
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-add_subdirectory(core)
-add_subdirectory(parser)
+add_library(lizard_core STATIC
+	Exception.cpp
+)
 
+add_library(lizard::core ALIAS lizard_core)
 
-add_executable(test main.cpp)
-
-target_link_libraries(test PUBLIC lizard::core)
-target_link_libraries(test PUBLIC lizard::parser)

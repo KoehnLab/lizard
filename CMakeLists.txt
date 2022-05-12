@@ -35,6 +35,8 @@ include(setup_tools)
 
 option(tests "Whether to build test cases" ON)
 
+include_directories("${CMAKE_SOURCE_DIR}/include")
+
 add_subdirectory(grammars)
 add_subdirectory(src)
 #add_subdirectory(tests)
