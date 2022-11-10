@@ -4,6 +4,7 @@
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
 include(CheckIPOSupported)
+include(CompilerFlags)
 
 check_ipo_supported(RESULT LTO_DEFAULT)
 
@@ -13,9 +14,7 @@ option(LIZARD_DISABLE_WARNINGS "Whether to disable compiler warnings" OFF)
 option(LIZARD_WARNINGS_AS_ERRORS "Whether to disable compiler warnings" OFF)
 
 
-# Use cpp17 and error if that is not available
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ${LIZARD_LTO})
 
 
 # On some compilers, we have to use some special flags in order to get support
@@ -24,24 +23,22 @@ find_package(Filesystem REQUIRED QUIET)
 link_libraries(std::filesystem)
 
 
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE ${LIZARD_LTO})
-
-
-# Configure warning-related options
-if (MSVC)
-	add_compile_options(/W4 /Wall)
-
-	if (LIZARD_DISABLE_WARNINGS)
-		add_compile_options(/w)
-	elseif (LIZARD_WARNINGS_AS_ERRORS)
-		add_compile_options(/WX)
-	endif()
+set(WANTED_FEATURES "")
+if (LIZARD_DISABLE_WARNINGS)
+	list(APPEND WANTED_FEATURES "DISABLE_ALL_WARNINGS")
 else()
-	add_compile_options(-Wpedantic -Wall -Wextra)
-
-	if (LIZARD_DISABLE_WARNINGS)
-		add_compile_options(-w)
-	elseif (LIZARD_WARNINGS_AS_ERRORS)
-		add_compile_options(-Werror)
-	endif()
+	list(APPEND WANTED_FEATURES "ENABLE_MOST_WARNINGS")
 endif()
+
+if (LIZARD_WARNINGS_AS_ERRORS)
+	list(APPEND WANTED_FEATURES "ENABLE_WARNINGS_AS_ERRORS")
+endif()
+
+get_compiler_flags(
+	${WANTED_FEATURES}
+	OUTPUT_VARIABLE COMPILER_FLAGS
+)
+
+message(STATUS "Used compiler flags: ${COMPILER_FLAGS}")
+
+add_compile_options(${COMPILER_FLAGS})

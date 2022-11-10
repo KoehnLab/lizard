@@ -17,6 +17,11 @@ set(CMAKE_MODULE_PATH
 	"${PROJECT_SOURCE_DIR}/cmake"
 )
 
+# Use cpp17 and error if that is not available
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 # Make sure that libraries and executables end up in the correct directories
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -27,9 +32,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(3RDPARTY_DIR "${CMAKE_SOURCE_DIR}/3rdParty")
 
-include(compiler)
 include(setup_dependencies)
+include(compiler)
 include(setup_tools)
+
 
 
 option(tests "Whether to build test cases" ON)
