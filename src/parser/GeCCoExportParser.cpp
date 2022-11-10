@@ -28,7 +28,7 @@ namespace GeCCoExportParser {
 
 	void parse(const std::filesystem::path &filePath) {
 		std::ifstream stream(filePath);
-		parse(stream, filePath.c_str());
+		parse(stream, filePath.string());
 	}
 
 	void parse(std::istream &inputStream, std::string_view fileName) {
