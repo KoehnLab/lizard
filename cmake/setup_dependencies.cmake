@@ -3,6 +3,10 @@
 # can be found in the LICENSE file at the root of the lizard source
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
+list(APPEND CMAKE_MODULE_PATH
+	"${PROJECT_SOURCE_DIR}/cmake/antlr4"
+)
+
 # Add ANTLR4 cpp runtime
 set(ANTLR4_TAG "v4.11.1")
 include(ExternalAntlr4Cpp)

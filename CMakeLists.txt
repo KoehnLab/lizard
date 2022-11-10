@@ -13,9 +13,8 @@ project(lizard,
 	LANGUAGES "CXX"
 )
 
-list(APPEND CMAKE_MODULE_PATH
-	"${CMAKE_SOURCE_DIR}/cmake"
-	"${CMAKE_SOURCE_DIR}/cmake/antlr4"
+set(CMAKE_MODULE_PATH
+	"${PROJECT_SOURCE_DIR}/cmake"
 )
 
 # Make sure that libraries and executables end up in the correct directories
