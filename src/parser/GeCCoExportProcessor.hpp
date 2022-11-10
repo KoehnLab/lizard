@@ -13,7 +13,7 @@ namespace lizard::parser {
 
 class GeCCoExportProcessor : public autogen::GeCCoExportBaseListener {
 public:
-	GeCCoExportProcessor() = default;
+	GeCCoExportProcessor()  = default;
 	~GeCCoExportProcessor() = default;
 
 	virtual void exitContraction(autogen::GeCCoExportParser::ContractionContext *ctx) override;

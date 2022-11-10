@@ -8,15 +8,15 @@
 
 #include <BaseErrorListener.h>
 
-#include <string>
-#include <string_view>
 #include <exception>
 #include <iosfwd>
+#include <string>
+#include <string_view>
 
 namespace antlr4 {
-	class Recognizer;
-	class Token;
-}
+class Recognizer;
+class Token;
+} // namespace antlr4
 
 namespace lizard::parser {
 

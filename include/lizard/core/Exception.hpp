@@ -6,9 +6,9 @@
 #ifndef LIZARD_UTIL_EXCEPTION_HPP_
 #define LIZARD_UTIL_EXCEPTION_HPP_
 
-#include <stdexcept>
-#include <iostream>
 #include <exception>
+#include <iostream>
+#include <stdexcept>
 
 namespace lizard::core {
 
