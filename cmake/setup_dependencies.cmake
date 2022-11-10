@@ -9,23 +9,7 @@ list(APPEND CMAKE_MODULE_PATH
 	"${PROJECT_SOURCE_DIR}/cmake/antlr4"
 )
 
-message(STATUS "Fetching and building dependencies...")
-
-# Add ANTLR4 cpp runtime
-set(ANTLR4_TAG "v4.11.1")
-include(ExternalAntlr4Cpp)
-
-# required if linking to static library
-add_definitions(-DANTLR4CPP_STATIC)
-
-# Set ANTLR jar
-set(ANTLR_EXECUTABLE "${3RDPARTY_DIR}/antlr4/antlr-4.11.1-complete.jar")
-
-if (NOT EXISTS "${ANTLR_EXECUTABLE}")
-	message(FATAL_ERROR "ANTLR jar-file not found. Was looking for ${ANTLR_EXECUTABLE}")
-endif()
-
-find_package(ANTLR REQUIRED)
+message(STATUS "Fetching and configuring dependencies...")
 
 
 FetchContent_Declare(
@@ -34,9 +18,45 @@ FetchContent_Declare(
 	GIT_TAG        v1.2.1
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	antlr4
+	GIT_REPOSITORY https://github.com/antlr/antlr4.git
+	GIT_TAG        v4.11.1
+	GIT_SHALLOW    true
+	SOURCE_SUBDIR  runtime/Cpp
+)
+FetchContent_Declare(
+	googletest
+	GIT_REPOSITORY https://github.com/google/googletest
+	GIT_TAG        release-1.12.1
+	GIT_SHALLOW    true
+)
 
-FetchContent_MakeAvailable(cmake_compiler_flags)
+set(ANTLR)
+
+# ANTLR options
+set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
+set(WITH_DEMO        FALSE CACHE INTERNAL "")
+set(ANTLR4_INSTALL   FALSE CACHE INTERNAL "")
+set(ANTLR_BUILD_CPP_TESTS ${LIZARD_BUILD_TESTS} FALSE CACHE INTERNAL "")
+set(ANTLR_EXECUTABLE "${3RDPARTY_DIR}/antlr4/antlr-4.11.1-complete.jar" CACHE INTERNAL "")
+
+
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4)
+
 
 # Append the compiler flags CMake module to the module path
 FetchContent_GetProperties(cmake_compiler_flags SOURCE_DIR COMPILER_FLAGS_SRC_DIR)
 list(APPEND CMAKE_MODULE_PATH "${COMPILER_FLAGS_SRC_DIR}")
+
+
+# Add antlr's cmake support module to the module path
+FetchContent_GetProperties(antlr4 SOURCE_DIR ANTLR_SOURCE_DIR)
+list(APPEND CMAKE_MODULE_PATH "${ANTLR_SOURCE_DIR}/runtime/Cpp/cmake")
+
+# Required to be able to access ANTLR's cmake support
+find_package(ANTLR REQUIRED)
+
+# ANTLR's CMakeLists.txt does not specify the include directories for 
+target_include_directories(antlr4_static PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")
+target_include_directories(antlr4_shared PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")

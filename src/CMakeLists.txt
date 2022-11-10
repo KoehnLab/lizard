@@ -7,7 +7,7 @@ add_subdirectory(core)
 add_subdirectory(parser)
 
 
-add_executable(test main.cpp)
+add_executable(testTarget main.cpp)
 
-target_link_libraries(test PUBLIC lizard::core)
-target_link_libraries(test PUBLIC lizard::parser)
+target_link_libraries(testTarget PUBLIC lizard::core)
+target_link_libraries(testTarget PUBLIC lizard::parser)
