@@ -46,7 +46,7 @@ else()
     set(ANTLR4_SHARED_LIBRARIES
         ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.dll.a)
     set(ANTLR4_RUNTIME_LIBRARIES
-        ${ANTLR4_OUTPUT_DIR}/cygantlr4-runtime-4.10.1.dll)
+        ${ANTLR4_OUTPUT_DIR}/cygantlr4-runtime-4.11.1.dll)
   elseif(APPLE)
     set(ANTLR4_RUNTIME_LIBRARIES
         ${ANTLR4_OUTPUT_DIR}/libantlr4-runtime.dylib)
@@ -95,8 +95,8 @@ if(ANTLR4_ZIP_REPOSITORY)
       SOURCE_SUBDIR runtime/Cpp
       CMAKE_CACHE_ARGS
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		  -DCMAKE_WARN_DEPRECATED:BOOL=OFF
           -DWITH_STATIC_CRT:BOOL=${ANTLR4_WITH_STATIC_CRT}
+          -DDISABLE_WARNINGS:BOOL=ON
           # -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
           -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} # alternatively, compile the runtime with the same C++ standard as the outer project
       INSTALL_COMMAND ""
@@ -114,8 +114,8 @@ else()
       SOURCE_SUBDIR runtime/Cpp
       CMAKE_CACHE_ARGS
           -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-		  -DCMAKE_WARN_DEPRECATED:BOOL=OFF
           -DWITH_STATIC_CRT:BOOL=${ANTLR4_WITH_STATIC_CRT}
+          -DDISABLE_WARNINGS:BOOL=ON
           # -DCMAKE_CXX_STANDARD:STRING=17 # if desired, compile the runtime with a different C++ standard
           -DCMAKE_CXX_STANDARD:STRING=${CMAKE_CXX_STANDARD} # alternatively, compile the runtime with the same C++ standard as the outer project
       INSTALL_COMMAND ""
@@ -145,7 +145,6 @@ add_library(antlr4_static STATIC IMPORTED)
 add_dependencies(antlr4_static antlr4_runtime-build_static)
 set_target_properties(antlr4_static PROPERTIES
                       IMPORTED_LOCATION ${ANTLR4_STATIC_LIBRARIES})
-
 target_include_directories(antlr4_static
     INTERFACE
         ${ANTLR4_INCLUDE_DIRS}
