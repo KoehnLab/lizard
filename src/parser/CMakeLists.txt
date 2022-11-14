@@ -15,6 +15,3 @@ target_link_libraries(lizard_parser
 		lizard_GeCCoExport_parser
 		lizard::core
 )
-
-find_package(Threads REQUIRED)
-target_link_libraries(lizard_parser PRIVATE Threads::Threads)
