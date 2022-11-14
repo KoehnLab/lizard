@@ -6,6 +6,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "The type of build to produce")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 
 project(lizard,
