@@ -39,3 +39,6 @@ compile_commands.json
 
 # clangd index
 .clangd/
+
+# When ANTLR is built with tests, it will create this directory and copy the libraries into it
+dist/
