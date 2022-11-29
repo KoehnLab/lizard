@@ -5,6 +5,7 @@
 
 add_library(lizard_parser STATIC
 	GeCCoExportParser.cpp
+	TensorSymmetryParser.cpp
 	ErrorReporter.cpp
 )
 
@@ -13,6 +14,7 @@ add_library(lizard::parser ALIAS lizard_parser)
 target_link_libraries(lizard_parser
 	PRIVATE
 		lizard_GeCCoExport_parser
+		lizard_TensorSymmetry_parser
 )
 
 target_link_libraries(lizard_parser
