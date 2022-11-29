@@ -12,12 +12,12 @@
 
 namespace lizard::parser {
 
-namespace GeCCoExportParser {
-
+class GeCCoExportParser {
+public:
 	void parse(const std::filesystem::path &filePath);
 	void parse(std::istream &inputStream, std::string_view fileName = "");
 
-} // namespace GeCCoExportParser
+};
 
 } // namespace lizard::parser
 

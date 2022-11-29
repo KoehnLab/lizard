@@ -13,5 +13,9 @@ add_library(lizard::parser ALIAS lizard_parser)
 target_link_libraries(lizard_parser
 	PRIVATE
 		lizard_GeCCoExport_parser
+)
+
+target_link_libraries(lizard_parser
+	PUBLIC
 		lizard::core
 )

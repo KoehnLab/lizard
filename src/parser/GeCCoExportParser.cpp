@@ -24,39 +24,35 @@
 
 namespace lizard::parser {
 
-namespace GeCCoExportParser {
+void GeCCoExportParser::parse(const std::filesystem::path &filePath) {
+	std::ifstream stream(filePath);
+	parse(stream, filePath.string());
+}
 
-	void parse(const std::filesystem::path &filePath) {
-		std::ifstream stream(filePath);
-		parse(stream, filePath.string());
+void GeCCoExportParser::parse(std::istream &inputStream, std::string_view fileName) {
+	try {
+		ErrorReporter reporter(fileName);
+
+		antlr4::ANTLRInputStream antlrInStream(inputStream);
+
+		autogen::GeCCoExportLexer lexer(&antlrInStream);
+		lexer.removeErrorListeners();
+		lexer.addErrorListener(&reporter);
+
+		antlr4::CommonTokenStream tokens(&lexer);
+
+		tokens.fill();
+
+		autogen::GeCCoExportParser parser(&tokens);
+
+		parser.removeErrorListeners();
+		parser.addErrorListener(&reporter);
+		antlr4::tree::ParseTree *tree = parser.body();
+
+		std::cout << tree->toStringTree(&parser, true) << std::endl;
+	} catch (const antlr4::RuntimeException &) {
+		std::throw_with_nested(ParseException("Parsing GeCCo export file failed."));
 	}
-
-	void parse(std::istream &inputStream, std::string_view fileName) {
-		try {
-			ErrorReporter reporter(fileName);
-
-			antlr4::ANTLRInputStream antlrInStream(inputStream);
-
-			autogen::GeCCoExportLexer lexer(&antlrInStream);
-			lexer.removeErrorListeners();
-			lexer.addErrorListener(&reporter);
-
-			antlr4::CommonTokenStream tokens(&lexer);
-
-			tokens.fill();
-
-			autogen::GeCCoExportParser parser(&tokens);
-
-			parser.removeErrorListeners();
-			parser.addErrorListener(&reporter);
-			antlr4::tree::ParseTree *tree = parser.body();
-
-			std::cout << tree->toStringTree(&parser, true) << std::endl;
-		} catch (const antlr4::RuntimeException &) {
-			std::throw_with_nested(ParseException("Parsing GeCCo export file failed."));
-		}
-	}
-
-} // namespace GeCCoExportParser
+}
 
 } // namespace lizard::parser

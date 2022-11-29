@@ -63,12 +63,16 @@ external_arcs:
 
 contr_string:
 	'/CONTR_STRING/' NL
-	(vertex_indices+=INT)* NL
-	(index_types+=INT)* NL
-	(index_spaces+=INT)* NL
-	(result_flags+=ID)* NL
-	(arc_index+=INT)* NL
-	(index_ids+=INT)*
+	(
+		NL NL NL NL NL
+	|
+		(vertex_indices+=INT)+ NL
+		(index_types+=INT)+ NL
+		(index_spaces+=INT)+ NL
+		(result_flags+=ID)+ NL
+		(arc_index+=INT)+ NL
+		(index_ids+=INT)+
+	)
 ;
 
 result_string:
@@ -77,7 +81,7 @@ result_string:
 	(index_types+=INT)* NL
 	(index_spaces+=INT)* NL
 	(arc_index+=INT)* NL
-	(index_ids+=INT)*
+	(index_ids+=INT)* NL
 ;
 
 tensor_spec:
