@@ -42,3 +42,5 @@ compile_commands.json
 
 # When ANTLR is built with tests, it will create this directory and copy the libraries into it
 dist/
+
+.cache/
