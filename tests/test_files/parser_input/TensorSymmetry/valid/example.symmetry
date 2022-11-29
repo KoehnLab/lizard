@@ -1,0 +1,17 @@
+# Comments can be added
+
+MY_SPACE = P | Q; # Make MY_SPACE consist of either space P or space Q
+
+# A weird example tensor with symmetry
+T2[MY_SPACE P Q; A B]: 1,2 & 3,4 -> 1;
+
+E[A;B]: 1,2 -> -1;
+
+MY_TENSOR# Intermediary comment
+[
+# More comments
+A
+;
+B
+]# bla
+: 1,2 -> +1;

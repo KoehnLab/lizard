@@ -1,0 +1,6 @@
+MY_SPACE = P | Q;
+
+T2[MY_SPACE P Q; A B]: 1,2 & 3,4 -> 1;
+
+# Remove factor
+E[A;B]: 1,2 ;

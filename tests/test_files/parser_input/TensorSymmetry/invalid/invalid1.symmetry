@@ -1,0 +1,6 @@
+MY_SPACE = P | Q;
+
+# Remove terminating semicolon
+T2[MY_SPACE P Q; A B]: 1,2 & 3,4 -> 1
+
+E[A;B]: 1,2 -> -1;
