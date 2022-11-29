@@ -16,7 +16,6 @@ class GeCCoExportParser {
 public:
 	void parse(const std::filesystem::path &filePath);
 	void parse(std::istream &inputStream, std::string_view fileName = "");
-
 };
 
 } // namespace lizard::parser
