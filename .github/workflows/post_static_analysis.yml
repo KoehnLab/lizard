@@ -6,6 +6,9 @@ on:
     workflows: [ "Static analysis" ]
     types: [ completed ]
 
+permissions:
+  actions: read
+
 jobs:
   clang-tidy-results:
     # Trigger the job only if the previous (insecure) workflow completed successfully
