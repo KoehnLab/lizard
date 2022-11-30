@@ -23,7 +23,7 @@ jobs:
           shell: bash
 
         - name: Analyze
-          run:  run-clang-tidy "$(pwd)/src/" "$(pwd)/include/" -export-fixes clang-tidy-fixes.yml
+          run:  run-clang-tidy "$(pwd)/src/" "$(pwd)/include/" -export-fixes clang-tidy-fixes.yml -p build
           shell: bash
 
         - name: Run clang-tidy-pr-comments action
