@@ -1,12 +1,10 @@
-name: PR checks
+name: Static analysis
 
-on: [pull_request]
-
+on: pull_request
 
 jobs:
-  clang_tidy:
+  clang-tidy:
     runs-on: ubuntu-latest
-
     steps:
         - name: Checkout
           uses: actions/checkout@v3
@@ -32,16 +30,23 @@ jobs:
               cmakeListsOrSettingsJson: 'CMakeListsTxtAdvanced' # Required to respect cmakeAppendedArgs
               cmakeBuildType: Debug
               buildDirectory: 'build'
-              cmakeAppendedArgs: -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF -DLIZARD_CLANG_TIDY=OFF
+              cmakeAppendedArgs: -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF -DLIZARD_CLANG_TIDY=OFF -DLIZARD_BUILD_TESTS=OFF
 
-        - name: Analyze
-          run:  run-clang-tidy "$(pwd)/src/" "$(pwd)/include/" -export-fixes clang-tidy-fixes.yml -p build
+        - name: Create results directory
+          run: mkdir clang-tidy-result
           shell: bash
 
-        - name: Run clang-tidy-pr-comments action
-          uses: platisd/clang-tidy-pr-comments@v1
+        - name: Analyze
+          run:  run-clang-tidy "$(pwd)/src/" "$(pwd)/include/" -export-fixes clang-tidy-result/fixes.yml -p build
+          shell: bash
+
+        - name: Save PR metadata
+          run: |
+            echo ${{ github.event.number }} > clang-tidy-result/pr-id.txt
+            echo ${{ github.event.pull_request.head.repo.full_name }} > clang-tidy-result/pr-head-repo.txt
+            echo ${{ github.event.pull_request.head.ref }} > clang-tidy-result/pr-head-ref.txt
+
+        - uses: actions/upload-artifact@v2
           with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            clang_tidy_fixes: clang-tidy-fixes.yml
-            request_changes: true
-            suggestions_per_comment: 25
+            name: clang-tidy-result
+            path: clang-tidy-result/
