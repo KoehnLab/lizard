@@ -32,8 +32,6 @@ FetchContent_Declare(
 	GIT_SHALLOW    true
 )
 
-set(ANTLR)
-
 # ANTLR options
 set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
 set(WITH_DEMO        FALSE CACHE INTERNAL "")
