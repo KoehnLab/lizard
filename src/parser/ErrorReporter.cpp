@@ -11,8 +11,12 @@ namespace lizard::parser {
 ErrorReporter::ErrorReporter(std::string_view fileName) : m_fileName(fileName) {
 }
 
-void ErrorReporter::syntaxError(antlr4::Recognizer *, antlr4::Token *, std::size_t line, std::size_t column,
-								const std::string &msg, std::exception_ptr) {
+void ErrorReporter::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, std::size_t line,
+								std::size_t column, const std::string &msg, std::exception_ptr exception) {
+	(void) recognizer;
+	(void) offendingSymbol;
+	(void) exception;
+
 	std::string errorMessage;
 	if (!m_fileName.empty()) {
 		errorMessage = m_fileName + ":";

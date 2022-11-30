@@ -10,11 +10,11 @@
 
 namespace lizard::core {
 
-void print_exception_message(const std::exception &e, std::ostream &out) {
-	out << e.what() << std::endl;
+void print_exception_message(const std::exception &exception, std::ostream &out) {
+	out << exception.what() << std::endl;
 
 	try {
-		std::rethrow_if_nested(e);
+		std::rethrow_if_nested(exception);
 	} catch (const std::exception &inner) {
 		print_exception_message(inner);
 	}

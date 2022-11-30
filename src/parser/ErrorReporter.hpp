@@ -30,12 +30,11 @@ namespace lizard::parser {
 class ErrorReporter : public antlr4::BaseErrorListener {
 public:
 	ErrorReporter(std::string_view fileName = "");
-	~ErrorReporter() = default;
 
-	virtual void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, std::size_t line,
-							 std::size_t column, const std::string &msg, std::exception_ptr e) override;
+	void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *offendingSymbol, std::size_t line,
+					 std::size_t column, const std::string &msg, std::exception_ptr exception) override;
 
-protected:
+private:
 	std::string m_fileName;
 };
 
