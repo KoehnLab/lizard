@@ -3,6 +3,8 @@
 # can be found in the LICENSE file at the root of the lizard source
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
+include(setup_tools)
+
 add_subdirectory(core)
 add_subdirectory(parser)
 

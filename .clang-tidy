@@ -1,0 +1,6 @@
+---
+Checks: '-*bugprone-*,clang-analyizer-*,concurrency-*,cppcoreguidelines-*,misc-*,modernize-*,performance-*,portability-*,readability-*,-misc-no-recursion,-modernize-use-auto'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+UseColor: true

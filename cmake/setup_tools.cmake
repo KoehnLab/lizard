@@ -5,6 +5,7 @@
 
 option(LIZARD_IWYU "Whether to enable the include-what-you-use tool (if found)" ON)
 option(LIZARD_LWYU "Whether to enable the link-what-you-use tool" ON)
+option(LIZARD_CLANG_TIDY "Whether to enable the clang-tidy tool" ON)
 
 set(CMAKE_LINK_WHAT_YOU_USE ${LIZARD_LWYU})
 
@@ -19,3 +20,12 @@ if (LIZARD_IWYU)
 	endif()
 endif()
 
+if (LIZARD_CLANG_TIDY)
+	find_program(clang_tidy_path NAMES clang-tidy)
+	if (clang_tidy_path)
+		set(CMAKE_CXX_CLANG_TIDY "${clang_tidy_path}" ${LIZARD_CLANG_TIDY_EXTRA_OPTIONS})
+		set(CMAKE_C_CLANG_TIDY "${clang_tidy_path}" ${LIZARD_CLANG_TIDY_EXTRA_OPTIONS})
+	else()
+		message(STATUS "Could not locate clang-tidy - Its diagnostics are therefore unavailable")
+	endif()
+endif()

@@ -43,7 +43,7 @@ jobs:
                   cmakeListsOrSettingsJson: 'CMakeListsTxtAdvanced' # Required to respect cmakeAppendedArgs
                   cmakeBuildType: ${{ matrix.build_type }}
                   buildDirectory: 'build'
-                  cmakeAppendedArgs: -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF
+                  cmakeAppendedArgs: -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF -DLIZARD_CLANG_TIDY=OFF
 
             - name: Run tests
               run: cd build && ctest --output-on-failure .

@@ -41,7 +41,6 @@ set(3RDPARTY_DIR "${PROJECT_SOURCE_DIR}/3rdParty")
 
 include(setup_dependencies)
 include(compiler)
-include(setup_tools)
 
 
 
