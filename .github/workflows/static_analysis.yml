@@ -9,7 +9,7 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v3
           with:
-              fetch-depth: 1
+              fetch-depth: 2
               submodules: 'recursive'
 
         - name: Install dependencies
@@ -37,7 +37,8 @@ jobs:
           shell: bash
 
         - name: Analyze
-          run:  run-clang-tidy "$(pwd)/src/" "$(pwd)/include/" -export-fixes clang-tidy-result/fixes.yml -p build
+          run: |
+            git diff -U0 HEAD^ | clang-tidy-diff -p1 -path build -export-fixes clang-tidy-result/fixes.yml
           shell: bash
 
         - name: Save PR metadata
