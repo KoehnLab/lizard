@@ -31,6 +31,12 @@ FetchContent_Declare(
 	GIT_TAG        release-1.12.1
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	CLI11
+	GIT_REPOSITORY https://github.com/CLIUtils/CLI11
+	GIT_TAG        v2.3.1
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
@@ -45,8 +51,18 @@ else()
 endif()
 set(WITH_STATIC_CRT "${USE_STATIC_CRT}" CACHE INTERNAL "")
 
+# CLI11 options
+set(CLI11_WARNINGS_AS_ERRORS  OFF CACHE INTERNAL "")
+set(CLI11_SINGLE_FILE         OFF CACHE INTERNAL "")
+set(CLI11_PRECOMPILED         ON  CACHE INTERNAL "")
+set(CLI11_BUILD_DOCS          OFF CACHE INTERNAL "")
+set(CLI11_BUILD_TESTS         ${LIZARD_BUILD_TESTS} CACHE INTERNAL "")
+set(CLI11_BUILD_EXAMPLES      OFF CACHE INTERNAL "")
+set(CLI11_BUILD_EXAMPLES_JSON OFF CACHE INTERNAL "")
+set(CLI11_INSTALL             OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4)
+
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11)
 
 
 # Append the compiler flags CMake module to the module path

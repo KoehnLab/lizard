@@ -9,7 +9,25 @@ add_subdirectory(core)
 add_subdirectory(parser)
 
 
-add_executable(testTarget main.cpp)
+add_executable(lizard main.cpp)
 
-target_link_libraries(testTarget PUBLIC lizard::core)
-target_link_libraries(testTarget PUBLIC lizard::parser)
+target_compile_definitions(
+	lizard
+		PRIVATE
+			LIZARD_VERSION_MAJOR=${CMAKE_PROJECT_VERSION_MAJOR}
+			LIZARD_VERSION_MINOR=${CMAKE_PROJECT_VERSION_MINOR}
+			LIZARD_VERSION_PATCH=${CMAKE_PROJECT_VERSION_PATCH}
+			LIZARD_VERSION_STR="${CMAKE_PROJECT_VERSION_MAJOR}.${CMAKE_PROJECT_VERSION_MINOR}.${CMAKE_PROJECT_VERSION_PATCH}"
+)
+
+target_link_libraries(
+	lizard
+		PUBLIC
+		lizard::core
+		lizard::parser
+)
+target_link_libraries(
+	lizard
+		PRIVATE
+			CLI11
+)
