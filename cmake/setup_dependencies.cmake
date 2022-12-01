@@ -37,6 +37,18 @@ FetchContent_Declare(
 	GIT_TAG        v2.3.1
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	fmt
+	GIT_REPOSITORY https://github.com/fmtlib/fmt
+	GIT_TAG        9.1.0
+	GIT_SHALLOW    true
+)
+FetchContent_Declare(
+	spdlog
+	GIT_REPOSITORY https://github.com/gabime/spdlog
+	GIT_TAG        v1.11.0
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
@@ -61,8 +73,34 @@ set(CLI11_BUILD_EXAMPLES      OFF CACHE INTERNAL "")
 set(CLI11_BUILD_EXAMPLES_JSON OFF CACHE INTERNAL "")
 set(CLI11_INSTALL             OFF CACHE INTERNAL "")
 
+# fmt options
+set(FMT_MASTER_PROJECT OFF CACHE INTERNAL "")
+set(FMT_PEDANTIC       OFF CACHE INTERNAL "")
+set(FMT_WERROR         OFF CACHE INTERNAL "")
+set(FMT_DOC            OFF CACHE INTERNAL "")
+set(FMT_INSTALL        OFF CACHE INTERNAL "")
+set(FMT_TEST           OFF CACHE INTERNAL "") # Compiling tests creates errors due to duplicate gtest target
+set(FMT_FUZZ           OFF CACHE INTERNAL "")
+set(FMT_FUZZ           OFF CACHE INTERNAL "")
+set(FMT_MODULE         OFF CACHE INTERNAL "")
+set(FMT_SYSTEM_HEADERS ON  CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11)
+# spdlog options
+set(SPDLOG_MASTER_PROJECT   OFF CACHE INTERNAL "")
+set(SPDLOG_BUILD_ALL        OFF CACHE INTERNAL "")
+set(SPDLOG_BUILD_SHARED     OFF CACHE INTERNAL "")
+set(SPDLOG_ENABLE_PCH       ON  CACHE INTERNAL "")
+set(SPDLOG_BUILD_PIC        ${CMAKE_POSITION_INDEPENDENT_CODE} CACHE INTERNAL "")
+set(SPDLOG_BUILD_EXAMPLE    OFF CACHE INTERNAL "")
+set(SPDLOG_BUILD_EXAMPLE_HO OFF CACHE INTERNAL "")
+set(SPDLOG_BUILD_BENCH      OFF CACHE INTERNAL "")
+set(SPDLOG_SANITIZE_ADDRESS OFF CACHE INTERNAL "")
+set(SPDLOG_BUILD_WARNINGS   OFF CACHE INTERNAL "")
+set(SPDLOG_INSTALL          OFF CACHE INTERNAL "")
+set(SPDLOG_FMT_EXTERNAL     ON  CACHE INTERNAL "")
+set(SPDLOG_TIDY             OFF CACHE INTERNAL "")
+
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog)
 
 
 # Append the compiler flags CMake module to the module path

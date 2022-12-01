@@ -5,12 +5,22 @@
 
 #include <CLI/CLI.hpp>
 
+#include <fmt/core.h>
+
+#include <spdlog/spdlog.h>
+
 auto main(int argc, char **argv) -> int {
 	CLI::App app("A quantum chemistry application used for the symbolic derivation and manipulation of equations based "
 				 "on second quantization.");
 	app.set_version_flag("--version", std::string(LIZARD_VERSION_STR));
 
 	CLI11_PARSE(app, argc, argv);
+
+	fmt::print("Hello {}!", "world");
+	fmt::print(FMT_STRING("Number {:.5f}!"), 1.5);
+
+	spdlog::info("This is a test message");
+	spdlog::info("This is a {} message", "surprise");
 
 	return 0;
 }

@@ -29,5 +29,7 @@ target_link_libraries(
 target_link_libraries(
 	lizard
 		PRIVATE
-			CLI11
+			CLI11::CLI11
+			fmt::fmt
+			spdlog::spdlog
 )
