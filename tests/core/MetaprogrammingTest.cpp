@@ -5,6 +5,7 @@
 
 #include "lizard/core/CumulativeSize.hpp"
 #include "lizard/core/SizedStorage.hpp"
+#include "lizard/core/VariadicHelpers.hpp"
 
 #include <gtest/gtest.h>
 
@@ -54,6 +55,35 @@ TEST(Core, cumulative_bit_size) {
 	ASSERT_EQ(::lizard::core::cumulative_bit_size_v< std::uint8_t >, 1 * 8);
 	ASSERT_EQ((::lizard::core::cumulative_bit_size_v< std::uint8_t, std::uint16_t >), 3 * 8);
 	ASSERT_EQ((::lizard::core::cumulative_bit_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11 * 8);
+}
+
+struct Dummy {};
+
+TEST(Core, nth_element) {
+	ASSERT_TRUE((std::is_same_v<::lizard::core::nth_element_t< 0, int, double, Dummy >, int >) );
+	ASSERT_TRUE((std::is_same_v<::lizard::core::nth_element_t< 1, int, double, Dummy >, double >) );
+	ASSERT_TRUE((std::is_same_v<::lizard::core::nth_element_t< 2, int, double, Dummy >, Dummy >) );
+}
+
+TEST(Core, get_first) {
+	ASSERT_TRUE((std::is_same_v<::lizard::core::get_first_t< int, double, Dummy >, int >) );
+	ASSERT_TRUE((std::is_same_v<::lizard::core::get_first_t< int >, int >) );
+}
+
+TEST(Core, get_last) {
+	ASSERT_TRUE((std::is_same_v<::lizard::core::get_last_t< int, double, Dummy >, Dummy >) );
+	ASSERT_TRUE((std::is_same_v<::lizard::core::get_last_t< int >, int >) );
+}
+
+TEST(Core, index_of) {
+	ASSERT_EQ((::lizard::core::index_of_v< int, int, float, Dummy >), 0);
+	ASSERT_EQ((::lizard::core::index_of_v< float, int, float, Dummy >), 1);
+	ASSERT_EQ((::lizard::core::index_of_v< Dummy, int, float, Dummy >), 2);
+
+	// Same test but this time with arbitrary CV qualifiers
+	ASSERT_EQ((::lizard::core::index_of_v< const int, int, float, Dummy >), 0);
+	ASSERT_EQ((::lizard::core::index_of_v< float &, int, float, Dummy >), 1);
+	ASSERT_EQ((::lizard::core::index_of_v< Dummy &&, int, float, Dummy >), 2);
 }
 
 } // namespace lizard::test::parser
