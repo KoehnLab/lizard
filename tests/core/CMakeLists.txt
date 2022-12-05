@@ -4,7 +4,7 @@
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
 add_executable(CoreTest
-	SizedStorageTest.cpp
+	MetaprogrammingTest.cpp
 )
 
 target_link_libraries(CoreTest PRIVATE lizard::core)
