@@ -6,6 +6,7 @@
 #ifndef LIZARD_CORE_SIZED_STORAGE_HPP_
 #define LIZARD_CORE_SIZED_STORAGE_HPP_
 
+#include <cstddef>
 #include <cstdint>
 
 namespace lizard::core {

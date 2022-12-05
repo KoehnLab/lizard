@@ -6,7 +6,7 @@
 #ifndef LIZARD_CORE_CUMULATIVE_SIZE_HPP_
 #define LIZARD_CORE_CUMULATIVE_SIZE_HPP_
 
-#include <cstdint>
+#include <cstddef>
 
 namespace lizard::core {
 
