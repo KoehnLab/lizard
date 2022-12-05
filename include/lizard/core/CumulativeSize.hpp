@@ -31,6 +31,6 @@ template< typename... Ts > constexpr std::size_t cumulative_byte_size_v = cumula
  */
 template< typename... Ts > constexpr std::size_t cumulative_bit_size_v = cumulative_byte_size< Ts... >::value * 8;
 
-}; // namespace lizard::core
+} // namespace lizard::core
 
 #endif // LIZARD_CORE_CUMULATIVE_SIZE_HPP_
