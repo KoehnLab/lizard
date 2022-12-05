@@ -42,11 +42,11 @@ TEST(Core, sized_octet_storage) {
 
 enum class TestEnum : std::uint64_t { A, B };
 
-TEST(Core, cumulative_byte_size) {
-	ASSERT_EQ(::lizard::core::cumulative_byte_size_v<>, 0);
-	ASSERT_EQ(::lizard::core::cumulative_byte_size_v< std::uint8_t >, 1);
-	ASSERT_EQ((::lizard::core::cumulative_byte_size_v< std::uint8_t, std::uint16_t >), 3);
-	ASSERT_EQ((::lizard::core::cumulative_byte_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11);
+TEST(Core, cumulative_octet_size) {
+	ASSERT_EQ(::lizard::core::cumulative_octet_size_v<>, 0);
+	ASSERT_EQ(::lizard::core::cumulative_octet_size_v< std::uint8_t >, 1);
+	ASSERT_EQ((::lizard::core::cumulative_octet_size_v< std::uint8_t, std::uint16_t >), 3);
+	ASSERT_EQ((::lizard::core::cumulative_octet_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11);
 }
 
 TEST(Core, cumulative_bit_size) {
