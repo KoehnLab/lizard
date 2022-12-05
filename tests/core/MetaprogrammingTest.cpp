@@ -3,6 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
+#include "lizard/core/CumulativeSize.hpp"
 #include "lizard/core/SizedStorage.hpp"
 
 #include <gtest/gtest.h>
@@ -36,6 +37,22 @@ TEST(Core, sized_octet_storage) {
 	constexpr_for< 1, sizeof(test_until) >([](auto requestedMinOctetSize) {
 		ASSERT_GE(sizeof(::lizard::core::sized_octet_storage_t< requestedMinOctetSize >), requestedMinOctetSize);
 	});
+}
+
+enum class TestEnum : std::uint64_t { A, B };
+
+TEST(Core, cumulative_byte_size) {
+	ASSERT_EQ(::lizard::core::cumulative_byte_size_v<>, 0);
+	ASSERT_EQ(::lizard::core::cumulative_byte_size_v< std::uint8_t >, 1);
+	ASSERT_EQ((::lizard::core::cumulative_byte_size_v< std::uint8_t, std::uint16_t >), 3);
+	ASSERT_EQ((::lizard::core::cumulative_byte_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11);
+}
+
+TEST(Core, cumulative_bit_size) {
+	ASSERT_EQ(::lizard::core::cumulative_bit_size_v<>, 0);
+	ASSERT_EQ(::lizard::core::cumulative_bit_size_v< std::uint8_t >, 1 * 8);
+	ASSERT_EQ((::lizard::core::cumulative_bit_size_v< std::uint8_t, std::uint16_t >), 3 * 8);
+	ASSERT_EQ((::lizard::core::cumulative_bit_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11 * 8);
 }
 
 } // namespace lizard::test::parser
