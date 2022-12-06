@@ -13,12 +13,12 @@ In order to build `lizard`, your system will have to meet the following requirem
 - [cmake](https://cmake.org/) v3.18 or more recent
 
 All other dependencies will be fetched automatically while running cmake (requires an active internet connection). These dependencies are
-- [cmake-compiler-flags](https://github.com/Krzmbrzl/cmake-compiler-flags)
-- [antlr4](https://github.com/antlr/antlr4)
-- [GoogleTest](https://github.com/google/googletest)
-- [CLI11](https://github.com/CLIUtils/CLI11)
-- [fmt](https://github.com/fmtlib/fmt)
-- [spdlog](https://github.com/gabime/spdlog)
+- [cmake-compiler-flags](https://github.com/Krzmbrzl/cmake-compiler-flags) (BSD-3-Clause)
+- [antlr4](https://github.com/antlr/antlr4) (BSD-3-Clause)
+- [GoogleTest](https://github.com/google/googletest) (BSD-3-Clause)
+- [CLI11](https://github.com/CLIUtils/CLI11) (BSD-3-Clause)
+- [fmt](https://github.com/fmtlib/fmt) (MIT)
+- [spdlog](https://github.com/gabime/spdlog) (MIT)
 
 
 ### Build `lizard`
