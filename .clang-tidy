@@ -20,3 +20,5 @@ UseColor: true
 CheckOptions:
 - key: readability-magic-numbers.IgnorePowersOf2IntegerValues
   value: 'true'
+- key: performance-move-const-arg.CheckTriviallyCopyableMove
+  value 'false'
