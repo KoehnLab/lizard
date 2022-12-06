@@ -1,17 +1,17 @@
 ---
 Checks: "-*,
-		 bugprone-*,
-		 clang-analyizer-*,
-		 concurrency-*,
-		 cppcoreguidelines-*,
-		 -cppcoreguidelines-avoid-magic-numbers,
-		 misc-*,
-		 modernize-*,
-		 performance-*,
-		 portability-*,
-		 readability-*,
-		 -misc-no-recursion,
-		 -modernize-use-auto"
+         bugprone-*,
+         clang-analyizer-*,
+         concurrency-*,
+         cppcoreguidelines-*,
+         -cppcoreguidelines-avoid-magic-numbers,
+         misc-*,
+         modernize-*,
+         performance-*,
+         portability-*,
+         readability-*,
+         -misc-no-recursion,
+         -modernize-use-auto"
 
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
