@@ -38,7 +38,7 @@ In order to execute the built test cases, enter the `build` directory and execut
 ### Available build options
 
 Build options have to be passed to cmake, when invoking it. They are passed in the form of `-D<option>=<value>`. Thus, a cmake invocation with options
-might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIBPERM_EXAMPLES=ON ..`
+might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIZARD_LTO=ON ..`
 
 | **Option** | **Description** | **Default** |
 | ---------- | --------------- | ----------- |
