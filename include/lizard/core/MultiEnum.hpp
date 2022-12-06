@@ -19,18 +19,13 @@ namespace lizard::core {
 
 namespace details {
 	/**
-	 * Size of an octet (byte) in bits
-	 */
-	static constexpr const int octet_size = 8;
-
-	/**
 	 * Gets the cumulative size of the first N types of the provided parameter pack in bits
 	 */
 	template< std::size_t N, typename T, typename... Ts > constexpr auto bit_width_of_first_n() -> std::size_t {
 		static_assert(sizeof...(Ts) + 1 > N, "bit_width_of_first_n: Given N is larger than parameter pack");
 
 		if constexpr (N > 0) {
-			return sizeof(T) * octet_size + bit_width_of_first_n< N - 1, Ts... >();
+			return sizeof(T) * 8 + bit_width_of_first_n< N - 1, Ts... >();
 		}
 		return 0;
 	}
@@ -40,7 +35,7 @@ namespace details {
 	 * left. Example: bits_to_mask = 4 and bits_to_skip = 4 results in 0b11110000
 	 */
 	template< typename T, std::size_t bits_to_skip, std::size_t bits_to_mask > constexpr auto bit_pattern() -> T {
-		static_assert(bits_to_skip + bits_to_mask <= sizeof(T) * octet_size,
+		static_assert(bits_to_skip + bits_to_mask <= sizeof(T) * 8,
 					  "bit_pattern: Provided type is not wide enough to create desired mask");
 		std::size_t mask  = 0;
 		std::size_t value = 1;
@@ -85,8 +80,7 @@ public:
 		// Mask out all unrelated bits and then shift the remaining bits down as if they had never been changed in the
 		// first place
 		std::underlying_type_t< Enum > numericRep = static_cast< std::underlying_type_t< Enum > >(
-			(m_value & details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * details::octet_size >())
-			>> shiftAmount);
+			(m_value & details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >()) >> shiftAmount);
 		return static_cast< Enum >(numericRep);
 	}
 
@@ -102,9 +96,8 @@ public:
 		underlying_type numericRep = static_cast< underlying_type >(val) << shiftAmount;
 
 		// Create a bit pattern that masks out the bits corresponding to Enum in our internal storage
-		underlying_type zeroPattern =
-			std::numeric_limits< underlying_type >::max()
-			& (~details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * details::octet_size >());
+		underlying_type zeroPattern = std::numeric_limits< underlying_type >::max()
+									  & (~details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >());
 
 		// Zero-out the bits for Enum
 		m_value &= zeroPattern;

@@ -46,7 +46,7 @@ template< std::size_t octets > using sized_octet_storage_t = typename sized_octe
 template< std::size_t bits > struct sized_storage {
 	// Note: (bits + 7) / 8 is the same as rounding the result of bits / 8 to the next
 	// highest integer (unless the result itself is already an integer)
-	using type = sized_octet_storage_t< (bits + 7) / 8 >; // NOLINT
+	using type = sized_octet_storage_t< (bits + 8 - 1) / 8 >;
 };
 
 /**
