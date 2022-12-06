@@ -86,4 +86,11 @@ TEST(Core, index_of) {
 	ASSERT_EQ((::lizard::core::index_of_v< Dummy &&, int, float, Dummy >), 2);
 }
 
+TEST(Core, is_contained) {
+	ASSERT_TRUE((::lizard::core::is_contained_v< int, float, const int, double >) );
+	ASSERT_FALSE((::lizard::core::is_contained_v< int *, float, const int, double >) );
+	ASSERT_TRUE((::lizard::core::is_contained_v< float, float, const int, double >) );
+	ASSERT_TRUE((::lizard::core::is_contained_v< double &, float, const int, double >) );
+}
+
 } // namespace lizard::test::parser

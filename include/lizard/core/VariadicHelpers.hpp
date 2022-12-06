@@ -121,6 +121,24 @@ struct index_of
 template< typename T, typename Head, typename... Tail >
 constexpr const std::size_t index_of_v = index_of< T, Head, Tail... >::value;
 
+
+//////////////////////////////////
+/// is_contained
+//////////////////////////////////
+
+/**
+ * Metaprogramming helper to check whether the given parameter pack contains a given type.
+ * The result of this check can be accessed through the "value" member of the struct.
+ */
+template< typename T, typename... Ts >
+struct is_contained : std::integral_constant< bool, (std::is_same_v< std::decay_t< T >, std::decay_t< Ts > > || ...) > {
+};
+
+/**
+ * Checks whether the given type is contained in the provided parameter pack
+ */
+template< typename T, typename... Ts > constexpr const bool is_contained_v = is_contained< T, Ts... >::value;
+
 } // namespace lizard::core
 
 #endif // LIZARD_CORE_VARIADICHELPERS_HPP_
