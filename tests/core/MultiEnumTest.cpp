@@ -46,4 +46,12 @@ TEST(Core, MultiEnum) {
 	ASSERT_EQ(test.get< E1 >(), E1::A);
 	ASSERT_EQ(test.get< E2 >(), E2::C);
 	ASSERT_EQ(test.get< UnscopedEnum >(), UNSCOPED_C);
+
+	decltype(test) copy = test;
+
+	ASSERT_EQ(test, copy);
+
+	copy.set(E1::B);
+
+	ASSERT_NE(test, copy);
 }

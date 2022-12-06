@@ -105,6 +105,10 @@ public:
 		m_value |= numericRep;
 	}
 
+	auto operator==(const MultiEnum &other) const -> bool { return m_value == other.m_value; }
+
+	auto operator!=(const MultiEnum &other) const -> bool { return !(*this == other); }
+
 private:
 	underlying_type m_value = 0;
 };
