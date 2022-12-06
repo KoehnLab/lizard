@@ -5,6 +5,7 @@
 
 add_executable(CoreTest
 	MetaprogrammingTest.cpp
+	MultiEnumTest.cpp
 )
 
 target_link_libraries(CoreTest PRIVATE lizard::core)
