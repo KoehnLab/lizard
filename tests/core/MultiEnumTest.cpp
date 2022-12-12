@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <cstdint>
 
+using namespace ::lizard;
+
 enum UnscopedEnum {
 	UNSCOPED_A = 256,
 	UNSCOPED_B,
@@ -29,7 +31,7 @@ enum class E2 : std::uint16_t {
 };
 
 TEST(Core, MultiEnum) {
-	::lizard::core::MultiEnum< E1, UnscopedEnum, E2 > test;
+	MultiEnum< E1, UnscopedEnum, E2 > test;
 
 	ASSERT_GE(sizeof(decltype(test)::underlying_type), sizeof(UnscopedEnum) + sizeof(E1) + sizeof(E2));
 

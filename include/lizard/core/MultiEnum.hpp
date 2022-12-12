@@ -15,9 +15,9 @@
 #include <limits>
 #include <type_traits>
 
-namespace lizard::core {
+namespace lizard {
 
-namespace details {
+namespace core::details {
 	/**
 	 * Gets the cumulative size of the first N types of the provided parameter pack in bits
 	 */
@@ -49,7 +49,7 @@ namespace details {
 
 		return mask;
 	}
-} // namespace details
+} // namespace core::details
 
 /**
  * This class represents a wrapper type that can be used to combine the storage of the provided enum types into a single
@@ -75,12 +75,13 @@ public:
 	template< typename Enum > constexpr auto get() const -> Enum {
 		static_assert(is_contained_v< Enum, Enums... >,
 					  "MultiEnum: Used get<>() with a type not wrapped by this instance");
-		constexpr std::size_t shiftAmount = details::bit_width_of_first_n< index_of_v< Enum, Enums... >, Enums... >();
+		constexpr std::size_t shiftAmount =
+			core::details::bit_width_of_first_n< index_of_v< Enum, Enums... >, Enums... >();
 
 		// Mask out all unrelated bits and then shift the remaining bits down as if they had never been changed in the
 		// first place
 		std::underlying_type_t< Enum > numericRep = static_cast< std::underlying_type_t< Enum > >(
-			(m_value & details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >()) >> shiftAmount);
+			(m_value & core::details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >()) >> shiftAmount);
 		return static_cast< Enum >(numericRep);
 	}
 
@@ -90,14 +91,16 @@ public:
 	template< typename Enum > constexpr void set(Enum val) {
 		static_assert(is_contained_v< Enum, Enums... >,
 					  "MultiEnum: Used set<>() with a type not wrapped by this instance");
-		constexpr std::size_t shiftAmount = details::bit_width_of_first_n< index_of_v< Enum, Enums... >, Enums... >();
+		constexpr std::size_t shiftAmount =
+			core::details::bit_width_of_first_n< index_of_v< Enum, Enums... >, Enums... >();
 
 		// Shift the relevant bits up so that they reach their position for storage inside this wrapper.
 		underlying_type numericRep = static_cast< underlying_type >(val) << shiftAmount;
 
 		// Create a bit pattern that masks out the bits corresponding to Enum in our internal storage
-		underlying_type zeroPattern = std::numeric_limits< underlying_type >::max()
-									  & (~details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >());
+		underlying_type zeroPattern =
+			std::numeric_limits< underlying_type >::max()
+			& (~core::details::bit_pattern< underlying_type, shiftAmount, sizeof(Enum) * 8 >());
 
 		// Zero-out the bits for Enum
 		m_value &= zeroPattern;
@@ -113,6 +116,6 @@ private:
 	underlying_type m_value = 0;
 };
 
-} // namespace lizard::core
+} // namespace lizard
 
 #endif

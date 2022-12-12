@@ -8,7 +8,7 @@
 #include <exception>
 #include <iostream>
 
-namespace lizard::core {
+namespace lizard {
 
 void print_exception_message(const std::exception &exception, std::ostream &out) {
 	out << exception.what() << std::endl;
@@ -20,4 +20,4 @@ void print_exception_message(const std::exception &exception, std::ostream &out)
 	}
 }
 
-} // namespace lizard::core
+} // namespace lizard

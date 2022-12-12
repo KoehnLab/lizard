@@ -8,7 +8,7 @@
 
 #include <cstddef>
 
-namespace lizard::core {
+namespace lizard {
 
 /**
  * Metaprogramming helper that stores the cumulative octet (byte) size of the given data types in its static "value"
@@ -32,6 +32,6 @@ template< typename... Ts > constexpr std::size_t cumulative_octet_size_v = cumul
  */
 template< typename... Ts > constexpr std::size_t cumulative_bit_size_v = cumulative_octet_size< Ts... >::value * 8;
 
-} // namespace lizard::core
+} // namespace lizard
 
 #endif // LIZARD_CORE_CUMULATIVE_SIZE_HPP_

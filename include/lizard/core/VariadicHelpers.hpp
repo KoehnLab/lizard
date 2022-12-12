@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace lizard::core {
+namespace lizard {
 
 //////////////////////////////////
 /// nth_element
@@ -77,7 +77,7 @@ template< typename... Ts > using get_last_t = typename get_last< Ts... >::type;
 /// index_of
 //////////////////////////////////
 
-namespace details {
+namespace core::details {
 	/**
 	 * This is the underlying implementation for the index_of struct defined further down. It requires a few
 	 * extra template parameters that we don't want to force users to provide the correct defaults for when
@@ -103,7 +103,7 @@ namespace details {
 	template< typename T, std::size_t N, typename Head > struct index_of_impl< T, N, false, Head > {
 		static_assert(N == -1, "index_of: Searched for entry not found");
 	};
-} // namespace details
+} // namespace core::details
 
 /**
  * Metaprogramming helper to find the index of a given type in a list of variadic parameter (parameter pack)
@@ -113,7 +113,7 @@ namespace details {
  */
 template< typename T, typename Head, typename... Tail >
 struct index_of
-	: details::index_of_impl< T, 0, std::is_same_v< std::decay_t< T >, std::decay_t< Head > >, Head, Tail... > {};
+	: core::details::index_of_impl< T, 0, std::is_same_v< std::decay_t< T >, std::decay_t< Head > >, Head, Tail... > {};
 
 /**
  * Finds the index of the given type in the provided parameter pack
@@ -139,6 +139,6 @@ struct is_contained : std::integral_constant< bool, (std::is_same_v< std::decay_
  */
 template< typename T, typename... Ts > constexpr const bool is_contained_v = is_contained< T, Ts... >::value;
 
-} // namespace lizard::core
+} // namespace lizard
 
 #endif // LIZARD_CORE_VARIADICHELPERS_HPP_

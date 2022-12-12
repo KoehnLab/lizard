@@ -10,9 +10,9 @@
 
 namespace lizard::parser {
 
-class ParseException : public ::lizard::core::Exception {
+class ParseException : public ::lizard::Exception {
 public:
-	using ::lizard::core::Exception::Exception;
+	using ::lizard::Exception::Exception;
 };
 
 } // namespace lizard::parser

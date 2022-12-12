@@ -9,7 +9,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace lizard::core {
+namespace lizard {
 
 /**
  * A metaprogramming helper that returns an integral type that can hold data consisting up to the
@@ -54,6 +54,6 @@ template< std::size_t bits > struct sized_storage {
  */
 template< std::size_t bits > using sized_storage_t = typename sized_storage< bits >::type;
 
-} // namespace lizard::core
+} // namespace lizard
 
 #endif // LIZARD_CORE_SIZED_STORAGE_HPP_

@@ -10,7 +10,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace lizard::core {
+namespace lizard {
 
 /**
  * Base class for all exceptions used in lizard
@@ -28,6 +28,6 @@ public:
  */
 void print_exception_message(const std::exception &e, std::ostream &out = std::cerr);
 
-} // namespace lizard::core
+} // namespace lizard
 
 #endif // LIZARD_UTIL_EXCEPTION_HPP_
