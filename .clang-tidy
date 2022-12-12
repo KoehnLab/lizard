@@ -22,3 +22,5 @@ CheckOptions:
   value: true
 - key: performance-move-const-arg.CheckTriviallyCopyableMove
   value: false
+- key: readability-function-cognitive-complexity.IgnoreMacros
+  value: true
