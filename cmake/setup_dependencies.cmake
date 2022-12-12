@@ -49,6 +49,12 @@ FetchContent_Declare(
 	GIT_TAG        v1.11.0
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	hedley
+	GIT_REPOSITORY https://github.com/nemequ/hedley
+	GIT_TAG        v15
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
@@ -100,7 +106,7 @@ set(SPDLOG_INSTALL          OFF CACHE INTERNAL "")
 set(SPDLOG_FMT_EXTERNAL     ON  CACHE INTERNAL "")
 set(SPDLOG_TIDY             OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog)
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley)
 
 
 # Append the compiler flags CMake module to the module path
@@ -118,3 +124,7 @@ find_package(ANTLR REQUIRED)
 # ANTLR's CMakeLists.txt does not specify the include directories for 
 target_include_directories(antlr4_static PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")
 target_include_directories(antlr4_shared PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")
+
+# Add hedley to include path
+FetchContent_GetProperties(hedley SOURCE_DIR HEDLEY_SOURCE_DIR)
+include_directories("${HEDLEY_SOURCE_DIR}")
