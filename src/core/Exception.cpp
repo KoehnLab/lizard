@@ -16,7 +16,7 @@ void print_exception_message(const std::exception &exception, std::ostream &out)
 	try {
 		std::rethrow_if_nested(exception);
 	} catch (const std::exception &inner) {
-		print_exception_message(inner);
+		print_exception_message(inner, out);
 	}
 }
 
