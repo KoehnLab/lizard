@@ -75,15 +75,6 @@ template< typename Int, std::make_signed_t< Int > iterations > void test_signed_
 	}
 }
 
-constexpr auto pow(std::int64_t base, std::int64_t exponent) -> std::int64_t {
-	std::int64_t result = 1;
-	for (std::int64_t i = 0; i < exponent; ++i) {
-		result *= base;
-	}
-
-	return result;
-}
-
 static constexpr const int nIterations = std::numeric_limits< std::int8_t >::max();
 
 TEST(Core, signed_cast_int8) {
