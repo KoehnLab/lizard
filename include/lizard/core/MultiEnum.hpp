@@ -69,6 +69,10 @@ public:
 	 */
 	using underlying_type = sized_storage_t< cumulative_bit_size_v< Enums... > >;
 
+	MultiEnum() noexcept = default;
+
+	template< typename Enum > MultiEnum(Enum val) { set< Enum >(val); }
+
 	/**
 	 * @returns The current value of the specified enum type
 	 */
