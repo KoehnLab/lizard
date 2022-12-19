@@ -4,6 +4,7 @@
 # tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
 add_executable(CoreTest
+	ExpressionTest.cpp
 	MetaprogrammingTest.cpp
 	MultiEnumTest.cpp
 	SignedCastTest.cpp
