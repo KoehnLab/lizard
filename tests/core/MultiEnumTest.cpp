@@ -56,4 +56,8 @@ TEST(Core, MultiEnum) {
 	copy.set(E1::B);
 
 	ASSERT_NE(test, copy);
+
+	decltype(test) multiTest(UNSCOPED_C, E1::B);
+	ASSERT_EQ(multiTest.get< UnscopedEnum >(), UNSCOPED_C);
+	ASSERT_EQ(multiTest.get< E1 >(), E1::B);
 }

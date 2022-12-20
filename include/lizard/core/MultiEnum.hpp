@@ -71,7 +71,9 @@ public:
 
 	MultiEnum() noexcept = default;
 
-	template< typename Enum > MultiEnum(Enum val) { set< Enum >(val); }
+	template< typename Enum, typename... MoreEnums > MultiEnum(Enum val, MoreEnums... vals) : MultiEnum(vals...) {
+		set< Enum >(val);
+	}
 
 	/**
 	 * @returns The current value of the specified enum type
