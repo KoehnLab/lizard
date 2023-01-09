@@ -5,6 +5,7 @@
 
 add_library(lizard_core STATIC
 	Exception.cpp
+	Fraction.cpp
 )
 
 add_library(lizard::core ALIAS lizard_core)
