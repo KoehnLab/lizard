@@ -11,6 +11,7 @@ Checks: "-*,
          portability-*,
          readability-*,
          -misc-no-recursion,
+         -bugprone-easily-swappable-parameters,
          -modernize-use-auto"
 
 WarningsAsErrors: ''
