@@ -13,4 +13,4 @@ auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream 
 	return stream << fraction.getNumerator() << " / " << fraction.getDenominator();
 }
 
-}
+} // namespace lizard
