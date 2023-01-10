@@ -16,11 +16,7 @@ auto main(int argc, char **argv) -> int {
 
 	CLI11_PARSE(app, argc, argv);
 
-	fmt::print("Hello {}!", "world");
-	fmt::print(FMT_STRING("Number {:.5f}!"), 1.5);
-
-	spdlog::info("This is a test message");
-	spdlog::info("This is a {} message", "surprise");
+	spdlog::info("This is lizard v{}", LIZARD_VERSION_STR);
 
 	return 0;
 }
