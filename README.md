@@ -20,6 +20,7 @@ All other dependencies will be fetched automatically while running cmake (requir
 - [fmt](https://github.com/fmtlib/fmt) (MIT)
 - [spdlog](https://github.com/gabime/spdlog) (MIT)
 - [Headley](https://github.com/nemequ/hedley) (CC0-1.0)
+- [iterators](https://github.com/Krzmbrzl/iterators) (BSD-3-Clause)
 
 
 ### Build `lizard`

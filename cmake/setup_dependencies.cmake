@@ -55,6 +55,12 @@ FetchContent_Declare(
 	GIT_TAG        v15
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	iterators
+	GIT_REPOSITORY https://github.com/Krzmbrzl/iterators
+	GIT_TAG        v1.0.0
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
@@ -106,7 +112,7 @@ set(SPDLOG_INSTALL          OFF CACHE INTERNAL "")
 set(SPDLOG_FMT_EXTERNAL     ON  CACHE INTERNAL "")
 set(SPDLOG_TIDY             OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley)
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators)
 
 
 # Append the compiler flags CMake module to the module path
