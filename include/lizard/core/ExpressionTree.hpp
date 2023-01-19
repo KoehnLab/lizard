@@ -97,6 +97,16 @@ public:
 	}
 
 	/**
+	 * @returns The root expression in this tree
+	 */
+	auto getRoot() const -> ConstExpression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+
+	/**
+	 * @returns The root expression in this tree
+	 */
+	auto getRoot() -> Expression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+
+	/**
 	 * Adds the given Variable object as a nullary expression to this tree. The general rules for adding nodes
 	 * to the tree apply.
 	 */
