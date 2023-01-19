@@ -40,7 +40,7 @@ public:
 	 * @returns The represented values as a floating point number
 	 */
 	template< typename Decimal = float >[[nodiscard]] constexpr auto getValue() const -> Decimal {
-		return static_cast< Decimal >(m_numerator) / m_denominator;
+		return static_cast< Decimal >(m_numerator) / static_cast< Decimal >(m_denominator);
 	}
 
 	/**

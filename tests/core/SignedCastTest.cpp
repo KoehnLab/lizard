@@ -58,7 +58,8 @@ template< typename Int, std::make_signed_t< Int > iterations > void test_signed_
 			// Ensure we test the value just outside the range of the signed type
 			unsignedInt = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max()) + 1;
 		} else {
-			unsignedInt = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max()) + i * increment;
+			unsignedInt = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max())
+						  + static_cast< UnsignedInt >(i * increment);
 		}
 
 		// For unsigned values that are bigger than any positive value representable with the signed

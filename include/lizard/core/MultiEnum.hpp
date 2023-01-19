@@ -101,7 +101,7 @@ public:
 			core::details::bit_width_of_first_n< index_of_v< Enum, Enums... >, Enums... >();
 
 		// Shift the relevant bits up so that they reach their position for storage inside this wrapper.
-		underlying_type numericRep = static_cast< underlying_type >(val) << shiftAmount;
+		underlying_type numericRep = static_cast< underlying_type >(static_cast< underlying_type >(val) << shiftAmount);
 
 		// Create a bit pattern that masks out the bits corresponding to Enum in our internal storage
 		underlying_type zeroPattern =
