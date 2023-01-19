@@ -33,7 +33,7 @@ foreach (CURRENT_GRAMMAR IN LISTS GRAMMARS)
 
 	add_library(${TARGET_NAME} STATIC ${ANTLR_${GRAMMAR_NAME}_CXX_OUTPUTS})
 
-	target_include_directories("${TARGET_NAME}"
+	target_include_directories("${TARGET_NAME}" SYSTEM
 		PUBLIC
 			"${CMAKE_CURRENT_BINARY_DIR}/${GRAMMAR_NAME}"
 	)
