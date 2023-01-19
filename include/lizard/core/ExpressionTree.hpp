@@ -86,6 +86,17 @@ public:
 	}
 
 	/**
+	 * Clears this tree of any content that it is currently holding. After this operation, the tree will be empty
+	 */
+	void clear() {
+		m_variables.clear();
+		m_nodes.clear();
+		m_consumableNodes = {};
+		m_root.reset();
+		m_size = 0;
+	}
+
+	/**
 	 * Adds the given Variable object as a nullary expression to this tree. The general rules for adding nodes
 	 * to the tree apply.
 	 */
