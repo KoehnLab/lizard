@@ -47,7 +47,7 @@ namespace core::details {
 			value *= 2;
 		}
 
-		return mask;
+		return static_cast< T >(mask);
 	}
 } // namespace core::details
 

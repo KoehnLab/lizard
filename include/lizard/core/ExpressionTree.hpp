@@ -93,7 +93,7 @@ public:
 		m_variables.push_back(std::move(var));
 
 		// Create an Expression object the references the variable
-		Node varExpr(ExpressionType::Variable, Numeric(m_variables.size() - 1));
+		Node varExpr(ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)));
 
 		add(std::move(varExpr));
 	}
@@ -112,7 +112,7 @@ public:
 				+ " arguments, but only " + std::to_string(m_consumableNodes.size()) + " arguments are available");
 		}
 
-		Numeric nodeID(m_nodes.size());
+		Numeric nodeID(static_cast< Numeric::numeric_type >(m_nodes.size()));
 		switch (node.getCardinality()) {
 			case ExpressionCardinality::Binary: {
 				Numeric rhs = std::move(m_consumableNodes.top());
