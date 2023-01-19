@@ -17,6 +17,7 @@
 #include <cassert>
 #include <iostream>
 #include <stack>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -281,6 +282,11 @@ protected:
 	}
 };
 
+// Consistency checks
+static_assert(std::is_convertible_v< Expression< int >, ConstExpression< int > >,
+			  "A mutable expression must be implicitly convertible to a constant expression");
+static_assert(!std::is_convertible_v< ConstExpression< int >, Expression< int > >,
+			  "A constant expression must NOT be convertible to a mutable expression");
 
 } // namespace lizard
 
