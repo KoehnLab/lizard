@@ -284,6 +284,18 @@ protected:
 } // namespace lizard
 
 
+// Support operator== between expressions and Variable types
+template< typename Variable >
+auto operator==(const lizard::ConstExpression< Variable > &lhs, const Variable &rhs) -> bool {
+	return lhs.getType() == lizard::ExpressionType::Variable && lhs.getVariable() == rhs;
+}
+
+template< typename Variable >
+auto operator==(const Variable &lhs, const lizard::ConstExpression< Variable > &rhs) -> bool {
+	return rhs == lhs;
+}
+
+
 // Support operator== for containers holding ConstExpression and Expression
 
 // clang-format off
