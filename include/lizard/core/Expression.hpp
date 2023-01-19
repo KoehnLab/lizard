@@ -16,6 +16,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <stack>
 #include <utility>
 #include <vector>
 
