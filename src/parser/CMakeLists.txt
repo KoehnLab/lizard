@@ -8,6 +8,7 @@ add_library(lizard_parser STATIC
 	TensorSymmetryParser.cpp
 	ErrorReporter.cpp
 )
+register_lizard_target(lizard_parser)
 
 add_library(lizard::parser ALIAS lizard_parser)
 

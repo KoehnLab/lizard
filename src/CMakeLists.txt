@@ -10,6 +10,7 @@ add_subdirectory(parser)
 
 
 add_executable(lizard main.cpp)
+register_lizard_target(lizard)
 
 target_compile_definitions(
 	lizard

@@ -12,6 +12,7 @@ add_library(lizard_core STATIC
 	Node.cpp
 	SignedCast.cpp
 )
+register_lizard_target(lizard_core)
 
 add_library(lizard::core ALIAS lizard_core)
 
