@@ -32,6 +32,12 @@ FetchContent_Declare(
 	GIT_SHALLOW    true
 )
 FetchContent_Declare(
+	googlebenchmark
+	GIT_REPOSITORY https://github.com/google/benchmark
+	GIT_TAG        v1.7.1
+	GIT_SHALLOW    true
+)
+FetchContent_Declare(
 	CLI11
 	GIT_REPOSITORY https://github.com/CLIUtils/CLI11
 	GIT_TAG        v2.3.1

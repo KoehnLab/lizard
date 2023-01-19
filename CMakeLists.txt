@@ -17,6 +17,7 @@ project(lizard,
 
 
 option(LIZARD_BUILD_TESTS "Whether to build test cases" ON)
+option(LIZARD_BUILD_BENCHMARKS "Whether to build benchmarks" OFF)
 
 
 set(CMAKE_MODULE_PATH
@@ -50,4 +51,5 @@ include_directories("${CMAKE_SOURCE_DIR}/include")
 add_subdirectory(grammars)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(benchmarks)
 

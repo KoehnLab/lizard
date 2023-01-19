@@ -6,6 +6,8 @@
 #ifndef LIZARD_CORE_SIGNED_CAST_HPP_
 #define LIZARD_CORE_SIGNED_CAST_HPP_
 
+#include "lizard/core/Numeric.hpp"
+
 #include <cstring>
 #include <type_traits>
 
@@ -52,6 +54,11 @@ template< typename To, typename From > auto signed_cast(From value) -> To {
 		return convertedValue;
 	}
 }
+
+// Specialization for our Numeric type
+template<>
+auto signed_cast< std::make_signed_t< Numeric::numeric_type >, Numeric >(Numeric value)
+	-> std::make_signed_t< Numeric::numeric_type >;
 
 } // namespace lizard
 
