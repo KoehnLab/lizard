@@ -15,7 +15,7 @@ message(STATUS "Fetching and configuring dependencies...")
 FetchContent_Declare(
 	cmake_compiler_flags
 	GIT_REPOSITORY https://github.com/Krzmbrzl/cmake-compiler-flags.git
-	GIT_TAG        v1.2.1
+	GIT_TAG        v2.0.0
 	GIT_SHALLOW    true
 )
 FetchContent_Declare(
