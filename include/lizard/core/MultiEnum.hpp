@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_MULTIENUM_HPP_
-#define LIZARD_CORE_MULTIENUM_HPP_
+#pragma once
 
 #include "lizard/core/CumulativeSize.hpp"
 #include "lizard/core/SizedStorage.hpp"
@@ -123,5 +122,3 @@ private:
 };
 
 } // namespace lizard
-
-#endif

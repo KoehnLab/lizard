@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_NODE_HPP_
-#define LIZARD_CORE_NODE_HPP_
+#pragma once
 
 #include "lizard/core/ConstexprMath.hpp"
 #include "lizard/core/ExpressionCardinality.hpp"
@@ -132,5 +131,3 @@ private:
 auto operator<<(std::ostream &stream, const Node &node) -> std::ostream &;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_NODE_HPP_

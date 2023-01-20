@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_EXPRESSION_HPP_
-#define LIZARD_CORE_EXPRESSION_HPP_
+#pragma once
 
 #include "lizard/core/ExpressionCardinality.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
@@ -326,5 +325,3 @@ auto operator==(const std::vector< Expr1 > &lhs, const std::vector< Expr2 > &rhs
 	}
 	return true;
 }
-
-#endif // LIZARD_CORE_EXPRESSION_HPP_

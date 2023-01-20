@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_FRACTION_HPP_
-#define LIZARD_CORE_FRACTION_HPP_
+#pragma once
 
 #include <cstdint>
 #include <iosfwd>
@@ -143,5 +142,3 @@ constexpr auto operator>=(const Fraction &lhs, const Fraction &rhs) -> bool {
 auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream &;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_FRACTION_HPP_

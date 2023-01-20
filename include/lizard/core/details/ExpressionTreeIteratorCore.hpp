@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_DETAILS_EXPRESSION_TREE_ITERATOR_HPP_
-#define LIZARD_CORE_DETAILS_EXPRESSION_TREE_ITERATOR_HPP_
+#pragma one
 
 #include "lizard/core/DepthFirst.hpp"
 #include "lizard/core/Expression.hpp"
@@ -185,5 +184,3 @@ template< typename Variable >
 struct is_semantically_const< lizard::ConstExpression< Variable >, void > : std::true_type {};
 
 } // namespace iterators
-
-#endif // LIZARD_CORE_DETAILS_EXPRESSION_TREE_ITERATOR_HPP_

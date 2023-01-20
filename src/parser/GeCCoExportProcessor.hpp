@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_PARSER_GECCOEXPORTPROCESSOR_HPP_
-#define LIZARD_PARSER_GECCOEXPORTPROCESSOR_HPP_
+#pragma once
 
 #include "lizard/parser/autogen/GeCCoExportBaseListener.h"
 #include "lizard/parser/autogen/GeCCoExportParser.h"
@@ -27,5 +26,3 @@ public:
 };
 
 } // namespace lizard::parser
-
-#endif // LIZARD_PARSER_GECCOEXPORTPROCESSOR_HPP_

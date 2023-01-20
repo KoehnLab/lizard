@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_EXPRESSION_OPERATOR_HPP_
-#define LIZARD_CORE_EXPRESSION_OPERATOR_HPP_
+#pragma once
 
 #include <cstdint>
 #include <iosfwd>
@@ -22,5 +21,3 @@ enum class ExpressionOperator : std::uint8_t {
 auto operator<<(std::ostream &stream, const ExpressionOperator &operatorType) -> std::ostream &;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_EXPRESSION_OPERATOR_HPP_

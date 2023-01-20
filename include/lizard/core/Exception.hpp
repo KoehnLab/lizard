@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_UTIL_EXCEPTION_HPP_
-#define LIZARD_UTIL_EXCEPTION_HPP_
+#pragma once
 
 #include <exception>
 #include <iostream>
@@ -29,5 +28,3 @@ public:
 void print_exception_message(const std::exception &e, std::ostream &out = std::cerr);
 
 } // namespace lizard
-
-#endif // LIZARD_UTIL_EXCEPTION_HPP_

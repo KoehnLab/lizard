@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_PARSER_TENSORSYMMETRYPARSER_HPP_
-#define LIZARD_PARSER_TENSORSYMMETRYPARSER_HPP_
+#pragma once
 
 #include <filesystem>
 #include <iosfwd>
@@ -19,5 +18,3 @@ public:
 };
 
 } // namespace lizard::parser
-
-#endif // LIZARD_PARSER_TENSORSYMMETRYPARSER_HPP_

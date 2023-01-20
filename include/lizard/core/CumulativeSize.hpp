@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_CUMULATIVE_SIZE_HPP_
-#define LIZARD_CORE_CUMULATIVE_SIZE_HPP_
+#pragma once
 
 #include <cstddef>
 
@@ -33,5 +32,3 @@ template< typename... Ts > constexpr std::size_t cumulative_octet_size_v = cumul
 template< typename... Ts > constexpr std::size_t cumulative_bit_size_v = cumulative_octet_size< Ts... >::value * 8;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_CUMULATIVE_SIZE_HPP_
