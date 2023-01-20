@@ -9,6 +9,7 @@
 #include "lizard/core/ExpressionException.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/ExpressionType.hpp"
+#include "lizard/core/Expression_fwd.hpp"
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/TreeTraversal.hpp"
