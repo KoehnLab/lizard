@@ -6,7 +6,7 @@
 #pragma once
 
 #include "lizard/core/DepthFirst.hpp"
-#include "lizard/core/Expression.hpp"
+#include "lizard/core/Expression_fwd.hpp"
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/TreeTraversal.hpp"
