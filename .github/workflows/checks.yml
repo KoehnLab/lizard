@@ -26,7 +26,7 @@ jobs:
               shell: bash
 
             - name: Check code formatting
-              uses: jidicula/clang-format-action@v4.6.2
+              uses: jidicula/clang-format-action@v4.10.1
               with:
                   clang-format-version: '10'
                   exclude-regex: '^(./3rdParty/*|./build/*)'
