@@ -8,6 +8,7 @@
 #include "lizard/core/ExpressionCardinality.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/ExpressionType.hpp"
+#include "lizard/core/Fraction.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/type_traits.hpp"
 
@@ -65,25 +66,11 @@ public:
 	[[nodiscard]] auto getOperator() const -> ExpressionOperator;
 
 	/**
-	 * @returns The numerator of the represented literal
+	 * @returns The literal value this expression represents
 	 *
 	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
 	 */
-	[[nodiscard]] auto getNumerator() const -> std::int32_t;
-
-	/**
-	 * @returns The denominator of the represented literal
-	 *
-	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
-	 */
-	[[nodiscard]] auto getDenominator() const -> std::int32_t;
-
-	/**
-	 * @returns The numerical value of the represented literal (as a floating point value)
-	 *
-	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
-	 */
-	[[nodiscard]] auto getLiteral() const -> double;
+	[[nodiscard]] auto getLiteral() const -> Fraction;
 
 	/**
 	 * @returns The Expression representing the left argument of the represented binary expression
@@ -160,7 +147,7 @@ public:
 	 *
 	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
 	 */
-	void setLiteral(std::int32_t numerator, std::int32_t denominator = 1);
+	void setLiteral(const Fraction &fraction);
 
 	/**
 	 * @returns The Expression representing the left argument of the represented binary expression

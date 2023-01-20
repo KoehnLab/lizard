@@ -11,6 +11,7 @@
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/ExpressionTree.hpp"
 #include "lizard/core/ExpressionType.hpp"
+#include "lizard/core/Fraction.hpp"
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
@@ -54,29 +55,17 @@ template< typename Variable > auto ConstExpression< Variable >::getOperator() co
 	return m_node->getOperator();
 }
 
-template< typename Variable > auto ConstExpression< Variable >::getNumerator() const -> std::int32_t {
+template< typename Variable > auto ConstExpression< Variable >::getLiteral() const -> Fraction {
 	assert(getCardinality() == ExpressionCardinality::Nullary);
 	assert(getType() == ExpressionType::Literal);
 
-	// For literals the left child's ID really is to be taken as a numeric value representing the literal's
-	// numerator
-	return signed_cast< std::int32_t >(m_node->getLeftChild());
-}
+	static_assert(std::is_same_v< Fraction::field_type, std::make_signed_t< Numeric::numeric_type > >,
+				  "Expected integers to be of same width in order for signed_cast to work");
 
-template< typename Variable > auto ConstExpression< Variable >::getDenominator() const -> std::int32_t {
-	assert(getCardinality() == ExpressionCardinality::Nullary);
-	assert(getType() == ExpressionType::Literal);
-
-	// For literals the right child's ID really is to be taken as a numeric value representing the literal's
-	// denominator
-	return signed_cast< std::int32_t >(m_node->getRightChild());
-}
-
-template< typename Variable > auto ConstExpression< Variable >::getLiteral() const -> double {
-	assert(getCardinality() == ExpressionCardinality::Nullary);
-	assert(getType() == ExpressionType::Literal);
-
-	return static_cast< double >(getNumerator()) / getDenominator();
+	// For literals, the left and right child's ID is the numerator and denominator of the represented literal value
+	// respectively
+	return { signed_cast< Fraction::field_type >(m_node->getLeftChild()),
+			 signed_cast< Fraction::field_type >(m_node->getRightChild()) };
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getLeftArg() const -> ConstExpression< Variable > {
@@ -157,13 +146,14 @@ template< typename Variable > auto Expression< Variable >::getVariable() -> Vari
 }
 
 
-template< typename Variable >
-void Expression< Variable >::setLiteral(std::int32_t numerator, std::int32_t denominator) {
+template< typename Variable > void Expression< Variable >::setLiteral(const Fraction &fraction) {
 	assert(this->getCardinality() == ExpressionCardinality::Nullary);
 	assert(this->getType() == ExpressionType::Literal);
+	static_assert(std::is_same_v< Fraction::field_type, std::make_signed_t< Numeric::numeric_type > >,
+				  "Expected integers to be of same width in order for signed_cast to work");
 
-	node().setLeftChild(Numeric(signed_cast< Numeric::numeric_type >(numerator)));
-	node().setRightChild(Numeric(signed_cast< Numeric::numeric_type >(denominator)));
+	node().setLeftChild(Numeric(signed_cast< Numeric::numeric_type >(fraction.getNumerator())));
+	node().setRightChild(Numeric(signed_cast< Numeric::numeric_type >(fraction.getDenominator())));
 }
 
 template< typename Variable > auto Expression< Variable >::getLeftArg() -> Expression< Variable > {

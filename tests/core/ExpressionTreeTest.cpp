@@ -115,7 +115,7 @@ auto evaluate(const ExpressionTree< Variable > &tree, const std::unordered_map< 
 					resultStack.push(variables.at(expression.getVariable().name));
 				} else {
 					// We expect to work with integers only
-					resultStack.push(expression.getNumerator());
+					resultStack.push(expression.getLiteral().getNumerator());
 				}
 				break;
 		}
@@ -198,7 +198,7 @@ protected:
 					break;
 				case ExpressionType::Literal:
 					// We expect to only find integer literals in our tests
-					visitedNodeContents.push_back(std::to_string(static_cast< int >(current.getLiteral())));
+					visitedNodeContents.push_back(static_cast< std::string >(current.getLiteral()));
 					break;
 				case ExpressionType::Operator:
 					switch (current.getOperator()) {
