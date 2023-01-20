@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_EXPRESSION_CARDINALITY_HPP_
-#define LIZARD_CORE_EXPRESSION_CARDINALITY_HPP_
+#pragma once
 
 #include <cstdint>
 
@@ -35,5 +34,3 @@ static_assert(static_cast< int >(ExpressionCardinality::Unary) == 1);
 static_assert(static_cast< int >(ExpressionCardinality::Binary) == 2);
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_EXPRESSION_CARDINALITY_HPP_

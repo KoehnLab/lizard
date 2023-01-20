@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_CONSTEXPR_MATH_HPP_
-#define LIZARD_CORE_CONSTEXPR_MATH_HPP_
+#pragma once
 
 #include <cassert>
 #include <cmath>
@@ -33,5 +32,3 @@ constexpr auto pow(double base, int exponent) -> ResultType { // NOLINT(bugprone
 }
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_CONSTEXPR_MATH_HPP_

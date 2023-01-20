@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_SIZED_STORAGE_HPP_
-#define LIZARD_CORE_SIZED_STORAGE_HPP_
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -55,5 +54,3 @@ template< std::size_t bits > struct sized_storage {
 template< std::size_t bits > using sized_storage_t = typename sized_storage< bits >::type;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_SIZED_STORAGE_HPP_

@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_EXPRESSIONTYPE_HPP_
-#define LIZARD_CORE_EXPRESSIONTYPE_HPP_
+#pragma once
 
 #include <cstdint>
 #include <iosfwd>
@@ -23,5 +22,3 @@ enum class ExpressionType : std::uint8_t {
 auto operator<<(std::ostream &stream, const ExpressionType &type) -> std::ostream &;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_EXPRESSIONTYPE_HPP_

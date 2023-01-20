@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_VARIADICHELPERS_HPP_
-#define LIZARD_CORE_VARIADICHELPERS_HPP_
+#pragma once
 
 #include <cstddef>
 #include <type_traits>
@@ -140,5 +139,3 @@ struct is_contained : std::integral_constant< bool, (std::is_same_v< std::decay_
 template< typename T, typename... Ts > constexpr const bool is_contained_v = is_contained< T, Ts... >::value;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_VARIADICHELPERS_HPP_

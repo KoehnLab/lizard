@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_PARSER_ERRORREPORTER_HPP_
-#define LIZARD_PARSER_ERRORREPORTER_HPP_
+#pragma once
 
 #include <BaseErrorListener.h>
 
@@ -39,5 +38,3 @@ private:
 };
 
 } // namespace lizard::parser
-
-#endif // LIZARD_PARSER_ERRORREPORTER_HPP_

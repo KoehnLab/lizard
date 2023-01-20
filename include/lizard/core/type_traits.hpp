@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_DETAILS_TYPE_TRAITS_HPP_
-#define LIZARD_CORE_DETAILS_TYPE_TRAITS_HPP_
+#pragma once
 
 #include <type_traits>
 
@@ -45,5 +44,3 @@ template< typename T > constexpr bool is_iterable_v     = is_iterable< T >::valu
 template< typename T > using expression_tree_variable_t = typename expression_tree_variable< T >::type;
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_DETAILS_TYPE_TRAITS_HPP_

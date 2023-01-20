@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_DEPTH_FIRST_HPP_
-#define LIZARD_CORE_DEPTH_FIRST_HPP_
+#pragma once
 
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
@@ -48,5 +47,3 @@ struct TraversalStep {
 auto stepTraversal(const Node &node, const Numeric &currentID, const Numeric &previousID, Order order) -> TraversalStep;
 
 } // namespace lizard::depth_first
-
-#endif // LIZARD_CORE_DEPTH_FIRST_HPP_

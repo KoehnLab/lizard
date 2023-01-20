@@ -3,8 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
 
-#ifndef LIZARD_CORE_TREE_TRAVERSAL_HPP_
-#define LIZARD_CORE_TREE_TRAVERSAL_HPP_
+#pragma once
 
 namespace lizard {
 
@@ -18,5 +17,3 @@ enum class TreeTraversal {
 };
 
 } // namespace lizard
-
-#endif // LIZARD_CORE_TREE_TRAVERSAL_HPP_
