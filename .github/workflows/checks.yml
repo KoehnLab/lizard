@@ -15,7 +15,7 @@ jobs:
                 skip_after_successful_duplicate: 'true'
 
 
-    run:
+    perform_general_checks:
         needs: skip_test
 
         if: needs.skip_test.outputs.should_skip != 'true'
