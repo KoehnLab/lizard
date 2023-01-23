@@ -98,6 +98,11 @@ public:
 	 */
 	[[nodiscard]] auto isRoot() const -> bool;
 
+	/**
+	 * @returns The size of the expression rooted at the currently represented element
+	 */
+	[[nodiscard]] auto size() const -> Numeric::numeric_type;
+
 	template< typename V >
 	friend auto operator==(const ConstExpression< V > &lhs, const ConstExpression< V > &rhs) -> bool;
 	template< typename V >
@@ -114,6 +119,11 @@ private:
 	Numeric m_nodeID;
 	const Node *m_node;
 	const ExpressionTree< Variable > *m_tree;
+
+	/**
+	 * @returns The computed size of this expression
+	 */
+	[[nodiscard]] auto computeSize() const -> Numeric::numeric_type;
 };
 
 

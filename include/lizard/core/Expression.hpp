@@ -24,6 +24,8 @@
 #include <utility>
 #include <vector>
 
+#include <hedley.h>
+
 namespace lizard {
 
 template< typename Variable >
@@ -92,6 +94,16 @@ template< typename Variable > auto ConstExpression< Variable >::isRoot() const -
 	return !m_node->hasParent();
 }
 
+template< typename Variable > auto ConstExpression< Variable >::size() const -> Numeric::numeric_type {
+	if (m_nodeID == m_tree->m_rootID) {
+		// The represented expression is the same as the one represented by the associated expression tree
+		// -> Use it to obtain the size as that's more efficient
+		return m_tree->size();
+	}
+
+	return computeSize();
+}
+
 template< typename Variable > auto ConstExpression< Variable >::nodeID() const -> const Numeric & {
 	return m_nodeID;
 }
@@ -102,6 +114,19 @@ template< typename Variable > auto ConstExpression< Variable >::node() const -> 
 
 template< typename Variable > auto ConstExpression< Variable >::tree() const -> const ExpressionTree< Variable > & {
 	return *m_tree;
+}
+
+template< typename Variable > auto ConstExpression< Variable >::computeSize() const -> Numeric::numeric_type {
+	switch (getCardinality()) {
+		case ExpressionCardinality::Nullary:
+			return 1;
+		case ExpressionCardinality::Unary:
+			return getLeftArg().computeSize() + 1;
+		case ExpressionCardinality::Binary:
+			return getLeftArg().computeSize() + getRightArg().computeSize() + 1;
+	}
+
+	HEDLEY_UNREACHABLE();
 }
 
 
