@@ -27,9 +27,8 @@
 namespace lizard {
 
 template< typename Variable >
-ConstExpression< Variable >::ConstExpression(Numeric nodeIndex, const Node &node,
-											 const ExpressionTree< Variable > &tree)
-	: m_nodeIndex(std::move(nodeIndex)), m_node(&node), m_tree(&tree) {
+ConstExpression< Variable >::ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree)
+	: m_nodeID(std::move(nodeID)), m_node(&node), m_tree(&tree) {
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getCardinality() const -> ExpressionCardinality {
@@ -93,8 +92,8 @@ template< typename Variable > auto ConstExpression< Variable >::isRoot() const -
 	return !m_node->hasParent();
 }
 
-template< typename Variable > auto ConstExpression< Variable >::nodeIndex() const -> const Numeric & {
-	return m_nodeIndex;
+template< typename Variable > auto ConstExpression< Variable >::nodeID() const -> const Numeric & {
+	return m_nodeID;
 }
 
 template< typename Variable > auto ConstExpression< Variable >::node() const -> const Node & {
@@ -109,7 +108,7 @@ template< typename Variable > auto ConstExpression< Variable >::tree() const -> 
 
 template< typename Variable >
 auto operator==(const ConstExpression< Variable > &lhs, const ConstExpression< Variable > &rhs) -> bool {
-	return lhs.m_nodeIndex == rhs.m_nodeIndex && *lhs.m_node == *rhs.m_node && lhs.m_tree == rhs.m_tree;
+	return lhs.m_nodeID == rhs.m_nodeID && *lhs.m_node == *rhs.m_node && lhs.m_tree == rhs.m_tree;
 }
 
 template< typename Variable >
@@ -119,7 +118,7 @@ auto operator!=(const ConstExpression< Variable > &lhs, const ConstExpression< V
 
 template< typename Variable >
 auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -> std::ostream & {
-	return stream << "Node " << expr.m_nodeIndex << ": " << *expr.m_node << " (" << expr.m_tree << ")";
+	return stream << "Node " << expr.m_nodeID << ": " << *expr.m_node << " (" << expr.m_tree << ")";
 }
 
 
@@ -136,8 +135,8 @@ auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -
  */
 
 template< typename Variable >
-Expression< Variable >::Expression(Numeric nodeIndex, Node &node, ExpressionTree< Variable > &tree)
-	: ConstExpression< Variable >(std::move(nodeIndex), node, tree) {
+Expression< Variable >::Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree)
+	: ConstExpression< Variable >(std::move(nodeID), node, tree) {
 }
 
 template< typename Variable > auto Expression< Variable >::getVariable() -> Variable & {
@@ -177,9 +176,9 @@ template< typename Variable > auto Expression< Variable >::getArg() -> Expressio
 	return { node().getLeftChild(), tree().m_nodes[node().getLeftChild()], tree() };
 }
 
-template< typename Variable > auto Expression< Variable >::nodeIndex() -> Numeric & {
+template< typename Variable > auto Expression< Variable >::nodeID() -> Numeric & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Numeric & >(std::as_const(*this).nodeIndex());
+	return const_cast< Numeric & >(std::as_const(*this).nodeID());
 }
 
 template< typename Variable > auto Expression< Variable >::node() -> Node & {

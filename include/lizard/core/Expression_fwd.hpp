@@ -34,7 +34,7 @@ class Node;
  */
 template< typename Variable > class ConstExpression {
 public:
-	ConstExpression(Numeric nodeIndex, const Node &node, const ExpressionTree< Variable > &tree);
+	ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree);
 	ConstExpression(const ConstExpression &)     = default;
 	ConstExpression(ConstExpression &&) noexcept = default;
 	~ConstExpression()                           = default;
@@ -106,12 +106,12 @@ public:
 	friend auto operator<<(std::ostream &stream, const ConstExpression< V > &expr) -> std::ostream &;
 
 protected:
-	[[nodiscard]] auto nodeIndex() const -> const Numeric &;
+	[[nodiscard]] auto nodeID() const -> const Numeric &;
 	[[nodiscard]] auto node() const -> const Node &;
 	[[nodiscard]] auto tree() const -> const ExpressionTree< Variable > &;
 
 private:
-	Numeric m_nodeIndex;
+	Numeric m_nodeID;
 	const Node *m_node;
 	const ExpressionTree< Variable > *m_tree;
 };
@@ -130,7 +130,7 @@ private:
  */
 template< typename Variable > class Expression : public ConstExpression< Variable > {
 public:
-	Expression(Numeric nodeIndex, Node &node, ExpressionTree< Variable > &tree);
+	Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree);
 
 	// Inherit constructors from base class
 	using ConstExpression< Variable >::ConstExpression;
@@ -171,7 +171,7 @@ public:
 	[[nodiscard]] auto getArg() -> Expression;
 
 protected:
-	[[nodiscard]] auto nodeIndex() -> Numeric &;
+	[[nodiscard]] auto nodeID() -> Numeric &;
 
 	[[nodiscard]] auto node() -> Node &;
 
