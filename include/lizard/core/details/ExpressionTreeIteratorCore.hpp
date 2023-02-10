@@ -21,8 +21,10 @@
 namespace lizard {
 
 template< typename > class ExpressionTree;
+template< typename > class Expression;
+template< typename > class ConstExpression;
 
-}
+} // namespace lizard
 
 namespace lizard::details {
 
