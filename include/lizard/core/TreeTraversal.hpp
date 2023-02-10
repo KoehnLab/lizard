@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <iosfwd>
 
 namespace lizard {
@@ -12,7 +13,7 @@ namespace lizard {
 /**
  * An enum holding the possible ways how a given tree can be traversed
  */
-enum class TreeTraversal {
+enum class TreeTraversal : std::uint8_t {
 	DepthFirst_PostOrder,
 	DepthFirst_PreOrder,
 	DepthFirst_InOrder,
