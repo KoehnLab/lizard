@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <iosfwd>
+
 namespace lizard {
 
 /**
@@ -15,5 +17,7 @@ enum class TreeTraversal {
 	DepthFirst_PreOrder,
 	DepthFirst_InOrder,
 };
+
+auto operator<<(std::ostream &stream, const TreeTraversal &traversal) -> std::ostream &;
 
 } // namespace lizard
