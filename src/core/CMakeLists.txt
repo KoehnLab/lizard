@@ -11,6 +11,7 @@ add_library(lizard_core STATIC
 	Fraction.cpp
 	Node.cpp
 	SignedCast.cpp
+	TreeTraversal.cpp
 )
 register_lizard_target(lizard_core)
 

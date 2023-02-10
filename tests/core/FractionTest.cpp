@@ -7,9 +7,11 @@
 
 #include <gtest/gtest.h>
 
+#include <tuple>
+
 using namespace ::lizard;
 
-TEST(Core, Fraction_comparison) {
+TEST(Fraction, comparison) {
 	ASSERT_EQ(Fraction(1, 2), Fraction(1, 2));
 	ASSERT_EQ(Fraction(1), Fraction(4, 4));
 
@@ -20,17 +22,21 @@ TEST(Core, Fraction_comparison) {
 	ASSERT_GT(Fraction(5, 8), Fraction(3, 7));
 }
 
-TEST(Core, Fraction_fromDecimal) {
-	float maxError = 1e-5; // NOLINT(*-magic-numbers)
-	for (Fraction::field_type numerator : { -128, -56, 0, 23, 265 }) {
-		for (Fraction::field_type denominator : { 1, 3, 12, 54, 785 }) {
-			Fraction expectedFraction(numerator, denominator);
+class ConversionTest : public ::testing::TestWithParam< std::tuple< int, int > > {};
 
-			Fraction approximatedFraction =
-				Fraction::fromDecimal(static_cast< float >(numerator) / static_cast< float >(denominator), maxError);
+TEST_P(ConversionTest, fromDecimal) {
+	constexpr const float maxError = 1e-5; // NOLINT(*-magic-numbers)
 
-			ASSERT_TRUE(std::abs(approximatedFraction.getValue() - expectedFraction.getValue()) < maxError)
-				<< "Expected: " << expectedFraction << " but got " << approximatedFraction;
-		}
-	}
+	const int numerator   = std::get< 0 >(GetParam());
+	const int denominator = std::get< 1 >(GetParam());
+
+	const float numericValue = static_cast< float >(numerator) / static_cast< float >(denominator);
+
+	const Fraction frac = Fraction::fromDecimal(numericValue, maxError);
+
+	EXPECT_NEAR(frac.getValue< float >(), numericValue, maxError);
 }
+
+INSTANTIATE_TEST_SUITE_P(Fraction, ConversionTest,
+						 ::testing::Combine(::testing::Values(-128, -56, 0, 23, 265),
+											::testing::Values(-42, -7, 1, 3, 12, 54, 785)));

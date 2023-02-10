@@ -29,7 +29,7 @@ using namespace ::lizard;
 
 using test_until = std::uint64_t;
 
-TEST(Core, sized_storage) {
+TEST(Metaprogramming, sized_storage) {
 	constexpr_for< 1, sizeof(test_until) * 8 >([](auto requestedMinBitSize) {
 		ASSERT_GE(sizeof(sized_storage_t< requestedMinBitSize >) * 8, requestedMinBitSize);
 	});
@@ -43,14 +43,14 @@ TEST(Core, sized_octet_storage) {
 
 enum class TestEnum : std::uint64_t { A, B };
 
-TEST(Core, cumulative_octet_size) {
+TEST(Metaprogramming, cumulative_octet_size) {
 	ASSERT_EQ(cumulative_octet_size_v<>, 0);
 	ASSERT_EQ(cumulative_octet_size_v< std::uint8_t >, 1);
 	ASSERT_EQ((cumulative_octet_size_v< std::uint8_t, std::uint16_t >), 3);
 	ASSERT_EQ((cumulative_octet_size_v< std::uint8_t, std::uint16_t, TestEnum >), 11);
 }
 
-TEST(Core, cumulative_bit_size) {
+TEST(Metaprogramming, cumulative_bit_size) {
 	ASSERT_EQ(cumulative_bit_size_v<>, 0);
 	ASSERT_EQ(cumulative_bit_size_v< std::uint8_t >, 1 * 8);
 	ASSERT_EQ((cumulative_bit_size_v< std::uint8_t, std::uint16_t >), 3 * 8);
@@ -59,23 +59,23 @@ TEST(Core, cumulative_bit_size) {
 
 struct Dummy {};
 
-TEST(Core, nth_element) {
+TEST(Metaprogramming, nth_element) {
 	ASSERT_TRUE((std::is_same_v< nth_element_t< 0, int, double, Dummy >, int >) );
 	ASSERT_TRUE((std::is_same_v< nth_element_t< 1, int, double, Dummy >, double >) );
 	ASSERT_TRUE((std::is_same_v< nth_element_t< 2, int, double, Dummy >, Dummy >) );
 }
 
-TEST(Core, get_first) {
+TEST(Metaprogramming, get_first) {
 	ASSERT_TRUE((std::is_same_v< get_first_t< int, double, Dummy >, int >) );
 	ASSERT_TRUE((std::is_same_v< get_first_t< int >, int >) );
 }
 
-TEST(Core, get_last) {
+TEST(Metaprogramming, get_last) {
 	ASSERT_TRUE((std::is_same_v< get_last_t< int, double, Dummy >, Dummy >) );
 	ASSERT_TRUE((std::is_same_v< get_last_t< int >, int >) );
 }
 
-TEST(Core, index_of) {
+TEST(Metaprogramming, index_of) {
 	ASSERT_EQ((index_of_v< int, int, float, Dummy >), 0);
 	ASSERT_EQ((index_of_v< float, int, float, Dummy >), 1);
 	ASSERT_EQ((index_of_v< Dummy, int, float, Dummy >), 2);
@@ -86,7 +86,7 @@ TEST(Core, index_of) {
 	ASSERT_EQ((index_of_v< Dummy &&, int, float, Dummy >), 2);
 }
 
-TEST(Core, is_contained) {
+TEST(Metaprogramming, is_contained) {
 	ASSERT_TRUE((is_contained_v< int, float, const int, double >) );
 	ASSERT_FALSE((is_contained_v< int *, float, const int, double >) );
 	ASSERT_TRUE((is_contained_v< float, float, const int, double >) );

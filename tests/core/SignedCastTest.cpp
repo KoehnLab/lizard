@@ -11,9 +11,16 @@
 #include <limits>
 #include <type_traits>
 
-template< typename Int, std::make_signed_t< Int > iterations > void test_signed_cast() {
-	using SignedInt   = std::make_signed_t< Int >;
-	using UnsignedInt = std::make_unsigned_t< Int >;
+template< typename T > class SignedCast : public ::testing::Test {};
+
+using TestTypes = ::testing::Types< std::int8_t, std::int16_t, std::int32_t, std::int64_t >;
+TYPED_TEST_SUITE(SignedCast, TestTypes);
+
+TYPED_TEST(SignedCast, casting) {
+	using SignedInt   = std::make_signed_t< TypeParam >;
+	using UnsignedInt = std::make_unsigned_t< TypeParam >;
+
+	constexpr const int iterations = std::numeric_limits< std::int8_t >::max();
 
 	constexpr const SignedInt increment = std::numeric_limits< SignedInt >::max() / iterations;
 	static_assert(increment > 0);
@@ -28,6 +35,9 @@ template< typename Int, std::make_signed_t< Int > iterations > void test_signed_
 		} else {
 			signedInt = i * increment;
 		}
+
+		SCOPED_TRACE("signedInt = " + std::to_string(signedInt) + " (iteration " + std::to_string(i) + " of "
+					 + std::to_string(iterations) + ")");
 
 
 		// For positive numbers the signed and unsigned type should be identical
@@ -62,6 +72,9 @@ template< typename Int, std::make_signed_t< Int > iterations > void test_signed_
 						  + static_cast< UnsignedInt >(i * increment);
 		}
 
+		SCOPED_TRACE("unsignedInt = " + std::to_string(unsignedInt) + " (iteration " + std::to_string(i) + " of "
+					 + std::to_string(iterations) + ")");
+
 		// For unsigned values that are bigger than any positive value representable with the signed
 		// correspondent, we expect the conversion to signed values to end up as a negative number (< 0)
 		signedInt = lizard::signed_cast< SignedInt >(unsignedInt);
@@ -74,22 +87,4 @@ template< typename Int, std::make_signed_t< Int > iterations > void test_signed_
 			break;
 		}
 	}
-}
-
-static constexpr const int nIterations = std::numeric_limits< std::int8_t >::max();
-
-TEST(Core, signed_cast_int8) {
-	test_signed_cast< std::int8_t, nIterations >();
-}
-
-TEST(Core, signed_cast_int16) {
-	test_signed_cast< std::int16_t, nIterations >();
-}
-
-TEST(Core, signed_cast_int32) {
-	test_signed_cast< std::int32_t, nIterations >();
-}
-
-TEST(Core, signed_cast_int64) {
-	test_signed_cast< std::int64_t, nIterations >();
 }

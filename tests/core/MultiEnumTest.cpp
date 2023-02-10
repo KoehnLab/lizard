@@ -30,7 +30,7 @@ enum class E2 : std::uint16_t {
 	C,
 };
 
-TEST(Core, MultiEnum) {
+TEST(MultiEnum, get_and_set) {
 	MultiEnum< E1, UnscopedEnum, E2 > test;
 
 	ASSERT_GE(sizeof(decltype(test)::underlying_type), sizeof(UnscopedEnum) + sizeof(E1) + sizeof(E2));
