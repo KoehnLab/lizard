@@ -10,7 +10,15 @@
 namespace lizard {
 
 auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream & {
-	return stream << fraction.getNumerator() << " / " << fraction.getDenominator();
+	const Fraction::field_type numerator   = fraction.getNumerator();
+	const Fraction::field_type denominator = fraction.getDenominator();
+
+	stream << numerator;
+	if (numerator > 0 && denominator != 1) {
+		stream << " / " << denominator;
+	}
+
+	return stream;
 }
 
 } // namespace lizard
