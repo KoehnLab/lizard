@@ -147,17 +147,6 @@ TEST(ExpressionTree, construction) {
 	ASSERT_EQ(tree, other);
 }
 
-template< TreeTraversal iteration_order, typename TreeType >
-void testTreeIteration(const TreeType &tree,
-					   const std::vector< Expression< expression_tree_variable_t< TreeType > > > &expectedSequence) {
-	std::vector< ConstExpression< expression_tree_variable_t< TreeType > > > producedSequence;
-
-	for (auto it = tree.template begin< iteration_order >(); it != tree.template end< iteration_order >(); ++it) {
-		producedSequence.push_back(*it);
-	}
-
-	ASSERT_EQ(producedSequence, expectedSequence);
-}
 
 class IterationTest
 	: public ::testing::TestWithParam< std::tuple< std::string, TreeTraversal, std::vector< std::string > > > {
