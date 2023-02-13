@@ -10,6 +10,7 @@
 #include "lizard/core/ExpressionType.hpp"
 #include "lizard/core/Fraction.hpp"
 #include "lizard/core/Numeric.hpp"
+#include "lizard/core/TreeTraversal.hpp"
 #include "lizard/core/type_traits.hpp"
 
 #include <cstdint>
@@ -21,6 +22,10 @@ namespace lizard {
 
 template< typename > class ExpressionTree;
 class Node;
+
+namespace details {
+	template< typename, bool, TreeTraversal > class ExpressionTreeIteratorCore;
+}
 
 /**
  * Class providing a rich API for accessing individual (sub-)expressions in an expression tree.
@@ -50,6 +55,13 @@ public:
 	 * @returns The type of this expression
 	 */
 	[[nodiscard]] auto getType() const -> ExpressionType;
+
+	/**
+	 * @returns The parent of the currently represented expression
+	 *
+	 * Note: Calling this function on a root expression (isRoot() returns true) is undefined behavior!
+	 */
+	[[nodiscard]] auto getParent() const -> ConstExpression;
 
 	/**
 	 * @returns The represented variable object
@@ -120,6 +132,9 @@ private:
 	const Node *m_node;
 	const ExpressionTree< Variable > *m_tree;
 
+	template< typename > friend class ExpressionTree;
+	template< typename, bool, TreeTraversal > friend class details::ExpressionTreeIteratorCore;
+
 	/**
 	 * @returns The computed size of this expression
 	 */
@@ -181,11 +196,11 @@ public:
 	[[nodiscard]] auto getArg() -> Expression;
 
 protected:
-	[[nodiscard]] auto nodeID() -> Numeric &;
-
 	[[nodiscard]] auto node() -> Node &;
 
 	[[nodiscard]] auto tree() -> ExpressionTree< Variable > &;
+
+	template< typename, bool, TreeTraversal > friend class details::ExpressionTreeIteratorCore;
 };
 
 } // namespace lizard

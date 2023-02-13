@@ -15,6 +15,7 @@
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
+#include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
 #include "lizard/core/type_traits.hpp"
 
 #include <cassert>
@@ -39,6 +40,12 @@ template< typename Variable > auto ConstExpression< Variable >::getCardinality()
 
 template< typename Variable > auto ConstExpression< Variable >::getType() const -> ExpressionType {
 	return m_node->getType();
+}
+
+template< typename Variable > auto ConstExpression< Variable >::getParent() const -> ConstExpression< Variable > {
+	assert(!isRoot());
+
+	return { m_node->getParent(), m_tree->m_nodes[m_node->getParent()], *m_tree };
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getVariable() const -> const Variable & {
@@ -166,7 +173,7 @@ Expression< Variable >::Expression(Numeric nodeID, Node &node, ExpressionTree< V
 
 template< typename Variable > auto Expression< Variable >::getVariable() -> Variable & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Variable & >(std::as_const(*this).getVariable());
+	return const_cast< Variable & >(ConstExpression< Variable >::getVariable());
 }
 
 
@@ -201,19 +208,14 @@ template< typename Variable > auto Expression< Variable >::getArg() -> Expressio
 	return { node().getLeftChild(), tree().m_nodes[node().getLeftChild()], tree() };
 }
 
-template< typename Variable > auto Expression< Variable >::nodeID() -> Numeric & {
-	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Numeric & >(std::as_const(*this).nodeID());
-}
-
 template< typename Variable > auto Expression< Variable >::node() -> Node & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Node & >(std::as_const(*this).node());
+	return const_cast< Node & >(ConstExpression< Variable >::node());
 }
 
 template< typename Variable > auto Expression< Variable >::tree() -> ExpressionTree< Variable > & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< ExpressionTree< Variable > & >(std::as_const(*this).tree());
+	return const_cast< ExpressionTree< Variable > & >(ConstExpression< Variable >::tree());
 }
 
 

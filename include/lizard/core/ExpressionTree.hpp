@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "lizard/core/Expression.hpp"
 #include "lizard/core/ExpressionCardinality.hpp"
 #include "lizard/core/ExpressionException.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
@@ -17,6 +18,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <stack>
 #include <type_traits>
 #include <vector>
@@ -181,32 +183,32 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(*this, m_root) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::end(*this) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_root) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cbegin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_root) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cend() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
 	}
 
 	friend auto operator==(const ExpressionTree &lhs, const ExpressionTree &rhs) -> bool {
@@ -244,6 +246,9 @@ private:
 	std::stack< Numeric > m_consumableNodes;
 	Numeric m_root;
 	std::size_t m_size = 0;
+
+	friend class ConstExpression< Variable >;
+	friend class Expression< Variable >;
 };
 
 

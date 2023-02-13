@@ -72,8 +72,7 @@ void Node::setParent(Numeric parentID) {
 }
 
 auto Node::hasLeftChild() const -> bool {
-	assert(getCardinality() != ExpressionCardinality::Nullary); // NOLINT
-	return m_left.isValid();
+	return getCardinality() != ExpressionCardinality::Nullary && m_left.isValid();
 }
 
 auto Node::getLeftChild() const -> Numeric {
@@ -86,8 +85,7 @@ void Node::setLeftChild(Numeric childID) {
 }
 
 auto Node::hasRightChild() const -> bool {
-	assert(getCardinality() == ExpressionCardinality::Binary); // NOLINT
-	return m_right.isValid();
+	return getCardinality() == ExpressionCardinality::Binary && m_right.isValid();
 }
 
 auto Node::getRightChild() const -> Numeric {
