@@ -451,10 +451,6 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		auto begin = Iterator(Core::fromRoot(tree, tree.getRoot().getLeftArg()));
 		auto end   = Iterator(Core::afterRoot(tree, tree.getRoot().getLeftArg()));
 
-		std::cout << "Root: " << tree.getRoot() << std::endl;
-		std::cout << "Left arg: " << tree.getRoot().getLeftArg() << std::endl;
-		std::cout << "First visited: " << *begin << std::endl;
-
 		visitedNodes       = visitNodes(begin, end);
 		expectedNodeVisits = [&]() -> std::vector< std::string > {
 			switch (traversalOrder) {
