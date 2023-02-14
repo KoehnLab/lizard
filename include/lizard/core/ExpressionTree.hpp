@@ -76,7 +76,7 @@ public:
 	/**
 	 * @returns Whether this tree is in a valid state
 	 */
-	[[nodiscard]] auto isValid() const -> bool { return isEmpty() || m_root.isValid(); }
+	[[nodiscard]] auto isValid() const -> bool { return isEmpty() || m_rootID.isValid(); }
 
 	/**
 	 * Ensures that the internally used buffers are big enough to hold at least the given amount of nodes and variables
@@ -94,19 +94,19 @@ public:
 		m_variables.clear();
 		m_nodes.clear();
 		m_consumableNodes = {};
-		m_root.reset();
+		m_rootID.reset();
 		m_size = 0;
 	}
 
 	/**
 	 * @returns The root expression in this tree
 	 */
-	auto getRoot() const -> ConstExpression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+	auto getRoot() const -> ConstExpression< Variable > { return { m_rootID, m_nodes[m_rootID], *this }; }
 
 	/**
 	 * @returns The root expression in this tree
 	 */
-	auto getRoot() -> Expression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+	auto getRoot() -> Expression< Variable > { return { m_rootID, m_nodes[m_rootID], *this }; }
 
 	/**
 	 * Adds the given Variable object as a nullary expression to this tree. The general rules for adding nodes
@@ -170,10 +170,10 @@ public:
 
 		if (m_consumableNodes.empty()) {
 			// The node that has consumed the last arguments available thus far must be the new root node
-			m_root = nodeID;
+			m_rootID = nodeID;
 		} else {
 			// At the moment there is no root node as the expression is unfinished
-			m_root = {};
+			m_rootID = {};
 		}
 
 		// Every expression is understood to create (return) a value and therefore, it can be used
@@ -183,7 +183,7 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
@@ -193,7 +193,7 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
@@ -203,7 +203,7 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cbegin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
@@ -244,7 +244,7 @@ private:
 	std::vector< Variable > m_variables;
 	std::vector< Node > m_nodes;
 	std::stack< Numeric > m_consumableNodes;
-	Numeric m_root;
+	Numeric m_rootID;
 	Numeric::numeric_type m_size = 0;
 
 	friend class ConstExpression< Variable >;
