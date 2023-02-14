@@ -167,6 +167,7 @@ public:
 
 		// Store the expression as a new node
 		m_nodes.push_back(std::move(node));
+		m_size++;
 
 		if (m_consumableNodes.empty()) {
 			// The node that has consumed the last arguments available thus far must be the new root node

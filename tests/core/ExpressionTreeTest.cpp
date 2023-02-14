@@ -548,3 +548,20 @@ INSTANTIATE_TEST_SUITE_P(ExpressionTree, EvaluationTest,
 							 std::tuple< std::string, int >{ "2 a + 4 2 -1 b * + * *", 40 },
 							 // 2 + (4 * (a * (2 + -3) + b) + -1 * b) + (4 * 3 * 2 * 1)
 							 std::tuple< std::string, int >{ "2 4 a 2 -3 + * b + * -1 b * + + 4 3 * 2 * 1 * +", 74 }));
+
+
+TEST(ExpressionTree, size) {
+	/**
+	 *   *
+	 *  / \
+	 * 1   +
+	 *    / \
+	 *   2   3
+	 */
+	ExpressionTree< Variable > tree = treeFromPostfix("1 2 3 + *");
+
+	EXPECT_EQ(tree.size(), 5);
+	EXPECT_EQ(tree.getRoot().size(), 5);
+	EXPECT_EQ(tree.getRoot().getLeftArg().size(), 1);
+	EXPECT_EQ(tree.getRoot().getRightArg().size(), 3);
+}
