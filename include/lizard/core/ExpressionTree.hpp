@@ -71,7 +71,7 @@ public:
 	/**
 	 * @returns The amount of nodes currently in this tree
 	 */
-	[[nodiscard]] auto size() const -> std::size_t { return m_size; }
+	[[nodiscard]] auto size() const -> Numeric::numeric_type { return m_size; }
 
 	/**
 	 * @returns Whether this tree is in a valid state
@@ -245,7 +245,7 @@ private:
 	std::vector< Node > m_nodes;
 	std::stack< Numeric > m_consumableNodes;
 	Numeric m_root;
-	std::size_t m_size = 0;
+	Numeric::numeric_type m_size = 0;
 
 	friend class ConstExpression< Variable >;
 	friend class Expression< Variable >;
