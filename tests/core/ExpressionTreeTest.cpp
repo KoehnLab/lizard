@@ -561,3 +561,80 @@ TEST(ExpressionTree, size) {
 	EXPECT_EQ(tree.getRoot().getLeftArg().size(), 1);
 	EXPECT_EQ(tree.getRoot().getRightArg().size(), 3);
 }
+
+class SubstitutionTest : public ::testing::TestWithParam< std::tuple< Node, std::string, int > > {
+public:
+	using ParamPack = std::tuple< Node, std::string, int >;
+
+protected:
+	// (1 * 2) + (a + b)
+	ExpressionTree< Variable > m_tree = treeFromPostfix("1 2 * a b + +");
+
+	std::unordered_map< std::string, int > m_variableDefinitions = {
+		{ "a", -2 },
+		{ "b", 4 },
+		{ "c", 5 },
+	};
+
+	std::array< Variable, 3 > m_variables = { "a", "b", "c" };
+};
+
+TEST_P(SubstitutionTest, substitutions) {
+	ASSERT_EQ(evaluate(m_tree, m_variableDefinitions), 4);
+
+	const Node &replaceTarget                    = std::get< 0 >(GetParam());
+	const ExpressionTree< Variable > replacement = treeFromPostfix(std::get< 1 >(GetParam()));
+	const int expectedResult                     = std::get< 2 >(GetParam());
+
+	ASSERT_TRUE(replacement.isValid());
+
+	auto iter = std::find_if(m_tree.begin(), m_tree.end(), [&](const ConstExpression< Variable > &expr) {
+		// Compare only the Node itself (not its parent and not its children)
+		if (expr.getCardinality() != replaceTarget.getCardinality() || expr.getType() != replaceTarget.getType()) {
+			return false;
+		}
+		switch (replaceTarget.getType()) {
+			case ExpressionType::Literal:
+				return expr.getLiteral().getNumerator()
+						   == signed_cast< Fraction::field_type >(replaceTarget.getLeftChild())
+					   && expr.getLiteral().getDenominator()
+							  == signed_cast< Fraction::field_type >(replaceTarget.getRightChild());
+			case ExpressionType::Operator:
+				return expr.getOperator() == replaceTarget.getOperator();
+			case ExpressionType::Variable:
+				return expr.getVariable() == m_variables.at(replaceTarget.getLeftChild());
+		}
+
+		HEDLEY_UNREACHABLE();
+	});
+
+	ASSERT_NE(iter, m_tree.end());
+
+	if (replacement.getRoot().getType() == ExpressionType::Variable) {
+		// Substitute with a single Variable
+		iter->substituteWith(replacement.getRoot().getVariable());
+	} else {
+		// Substitute with entire expression
+		iter->substituteWith(replacement.getRoot());
+	}
+
+	EXPECT_EQ(evaluate(m_tree, m_variableDefinitions), expectedResult);
+}
+
+INSTANTIATE_TEST_SUITE_P(ExpressionTree, SubstitutionTest,
+						 ::testing::Values(
+							 // Replace literal "1" with "2 * 4"
+							 SubstitutionTest::ParamPack{ Node(1), "2 4 *", 18 },
+							 // Replace variable "a" with "1 + 1"
+							 SubstitutionTest::ParamPack{ Node(ExpressionType::Variable, Numeric{ 0 }), "1 1 +", 8 },
+							 // Replace multiplication with "(4 + 2) * -1"
+							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "4 2 + -1 *", -4 },
+							 // Replace multiplication with literal "7"
+							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "7", 9 },
+
+							 // Replace literal "1" with variable "c"
+							 SubstitutionTest::ParamPack{ Node(1), "c", 12 },
+							 // Replace variable "a" with variable "c"
+							 SubstitutionTest::ParamPack{ Node(ExpressionType::Variable, Numeric{ 0 }), "c", 11 },
+							 // Replace multiplication with variable "c"
+							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "c", 7 }));

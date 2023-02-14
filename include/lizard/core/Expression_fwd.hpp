@@ -134,6 +134,7 @@ private:
 
 	template< typename > friend class ExpressionTree;
 	template< typename, bool, TreeTraversal > friend class details::ExpressionTreeIteratorCore;
+	template< typename > friend class Expression;
 
 	/**
 	 * @returns The computed size of this expression
@@ -194,6 +195,10 @@ public:
 	 * Note: If this expression is not actually unary, calling this function is undefined behavior!
 	 */
 	[[nodiscard]] auto getArg() -> Expression;
+
+	void substituteWith(Variable variable);
+
+	void substituteWith(const ConstExpression< Variable > &expr);
 
 protected:
 	[[nodiscard]] auto node() -> Node &;

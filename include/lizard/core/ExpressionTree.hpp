@@ -112,14 +112,7 @@ public:
 	 * Adds the given Variable object as a nullary expression to this tree. The general rules for adding nodes
 	 * to the tree apply.
 	 */
-	void add(Variable var) {
-		m_variables.push_back(std::move(var));
-
-		// Create an Expression object the references the variable
-		Node varExpr(ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)));
-
-		add(std::move(varExpr));
-	}
+	void add(Variable var) { add(addVariable(std::move(var))); }
 
 	/**
 	 * Adds the given node to this tree. Nodes have to be added in the order in which they
@@ -250,6 +243,87 @@ private:
 
 	friend class ConstExpression< Variable >;
 	friend class Expression< Variable >;
+
+	/**
+	 * Adds the given Variable to this tree by appending the Variable to the variable store and creating a new
+	 * Node that points to this newly appended Variable. However, the Node itself is not added to the tree.
+	 *
+	 * @returns The created Node
+	 */
+	auto addVariable(Variable var) -> Node {
+		m_variables.push_back(std::move(var));
+
+		// Create an Expression object the references the variable
+		return Node{ ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)) };
+	}
+
+	void substitute(const Numeric &nodeID, Variable variable) {
+		assert(nodeID < m_nodes.size());
+
+		// TODO: Mark space currently occupied by sub-tree under m_nodes[nodeID] as reusable
+		Node node = addVariable(variable);
+		node.setParent(m_nodes[nodeID].getParent());
+
+		m_nodes[nodeID] = std::move(node);
+	}
+
+	template< typename Iterator > void substitute(const Numeric &nodeID, Iterator iter, const Iterator end) {
+		static_assert(
+			std::is_base_of_v< ConstExpression< Variable >, typename std::iterator_traits< Iterator >::value_type >,
+			"ExpressionTree::substitute expects iterators working on Expressions");
+
+		if (iter == end) {
+			return;
+		}
+
+		assert(nodeID < m_nodes.size());
+
+		Numeric parentID = m_nodes[nodeID].getParent();
+		Numeric::numeric_type replacedSize =
+			ConstExpression< Variable >(nodeID, std::move(m_nodes[nodeID]), *this).size();
+		// TODO: Mark space currently occupied by the sub-tree under m_nodes[nodeID] as reusable
+
+		assert(m_size >= replacedSize);
+		m_size -= replacedSize;
+
+		// Save state and clear it for the duration of the substitution
+		decltype(m_consumableNodes) copy = std::move(m_consumableNodes);
+		m_consumableNodes                = {};
+		decltype(m_rootID) rootCopy      = std::move(m_rootID);
+		m_rootID.reset();
+
+		for (; iter != end; ++iter) {
+			if (iter->getType() == ExpressionType::Variable) {
+				add(iter->getVariable());
+			} else {
+				add(*iter->m_node);
+			}
+		}
+
+		// Perform post-substitution verification and postprocessing
+		assert(isValid());
+		assert(m_consumableNodes.size() == 1);
+		assert(m_rootID.isValid());
+		assert(m_rootID < m_nodes.size());
+		if (!isValid() || m_consumableNodes.size() != 1 || !m_rootID.isValid()) {
+			throw ExpressionException("Substitution lead to an inconsistent tree state");
+		}
+
+		m_nodes[m_rootID].setParent(parentID);
+
+		if (parentID.isValid()) {
+			Node &parent = m_nodes[parentID];
+			if (parent.getLeftChild() == nodeID) {
+				parent.setLeftChild(std::move(m_rootID));
+			} else {
+				parent.setRightChild(std::move(m_rootID));
+			}
+		}
+
+		// Restore previous state
+		m_consumableNodes = std::move(copy);
+		m_rootID          = std::move(rootCopy);
+	}
 };
 
 

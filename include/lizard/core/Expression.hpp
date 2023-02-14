@@ -218,6 +218,20 @@ template< typename Variable > auto Expression< Variable >::tree() -> ExpressionT
 	return const_cast< ExpressionTree< Variable > & >(ConstExpression< Variable >::tree());
 }
 
+template< typename Variable > void Expression< Variable >::substituteWith(Variable variable) {
+	tree().substitute(this->nodeID(), std::move(variable));
+}
+
+template< typename Variable > void Expression< Variable >::substituteWith(const ConstExpression< Variable > &expr) {
+	using Iterator = typename ExpressionTree< Variable >::const_post_order_iterator;
+	using Core     = details::ExpressionTreeIteratorCore< Variable, true, TreeTraversal::DepthFirst_PostOrder >;
+
+	Iterator begin(Core::fromRoot(expr.tree(), expr.nodeID()));
+	Iterator end(Core::afterRoot(expr.tree(), expr.nodeID()));
+
+	tree().substitute(this->nodeID(), begin, end);
+}
+
 
 
 // Consistency checks
