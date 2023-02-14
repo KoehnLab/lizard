@@ -257,6 +257,10 @@ private:
 		return Node{ ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)) };
 	}
 
+	/**
+	 * Substitutes the Node with the given ID with a new Node representing the provided Variable
+	 * (which will be stored inside this tree).
+	 */
 	void substitute(const Numeric &nodeID, Variable variable) {
 		assert(nodeID < m_nodes.size());
 
@@ -267,6 +271,11 @@ private:
 		m_nodes[nodeID] = std::move(node);
 	}
 
+	/**
+	 * Substitutes the Node with the given ID with the sub-tree iterated over by means of the provided
+	 * iterator pair. The iteration order is expected to be depth-first, post-order. Using any other
+	 * iteration / tree traversal order is not supported!
+	 */
 	template< typename Iterator > void substitute(const Numeric &nodeID, Iterator iter, const Iterator end) {
 		static_assert(
 			std::is_base_of_v< ConstExpression< Variable >, typename std::iterator_traits< Iterator >::value_type >,

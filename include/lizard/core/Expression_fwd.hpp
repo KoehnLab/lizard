@@ -196,8 +196,14 @@ public:
 	 */
 	[[nodiscard]] auto getArg() -> Expression;
 
+	/**
+	 * Replaces the represented expression with an expression containing only the given Variable.
+	 */
 	void substituteWith(Variable variable);
 
+	/**
+	 * Replaces the represented expression with the provided one.
+	 */
 	void substituteWith(const ConstExpression< Variable > &expr);
 
 protected:
