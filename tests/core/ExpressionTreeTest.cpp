@@ -27,6 +27,13 @@
 
 #include <hedley.h>
 
+using namespace ::lizard;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// UTILITY CLASSES /////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+
 struct Variable {
 	std::string name;
 };
@@ -39,7 +46,9 @@ auto operator!=(const Variable &lhs, const Variable &rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-using namespace ::lizard;
+////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////// UTILITY FUNCTIONS ////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 auto treeFromPostfix(const std::string &postfixExpr) -> ExpressionTree< Variable > {
 	ExpressionTree< Variable > tree;
@@ -128,80 +137,77 @@ auto evaluate(const ExpressionTree< Variable > &tree, const std::unordered_map< 
 	return resultStack.top();
 }
 
-
-TEST(ExpressionTree, construction) {
-	/*    *
-	 *   / \
-	 *  2   x
-	 */
-	ExpressionTree< Variable > tree;
-
-	tree.add(Node(2));
-	ASSERT_TRUE(tree.isValid());
-	tree.add(Variable{ "x" });
-	ASSERT_FALSE(tree.isValid());
-	tree.add(Node(ExpressionOperator::Times));
-	ASSERT_TRUE(tree.isValid());
-
-	// Adding a binary operator when only a single argument is currently available should throw
-	ASSERT_THROW(tree.add(Node(ExpressionOperator::Plus)), ExpressionException);
-
-	ExpressionTree< Variable > other = treeFromPostfix("2 x *");
-
-	ASSERT_EQ(tree, other);
-}
-
-
-template< typename Iterator > auto visitNodes(Iterator begin, Iterator end) -> std::vector< std::string > {
+template< typename Iterator > auto iterate(Iterator begin, Iterator end) -> std::vector< ConstExpression< Variable > > {
 	std::vector< ConstExpression< Variable > > visitedExpressions;
 
 	for (auto iter = begin; iter != end; ++iter) {
 		visitedExpressions.push_back(*iter);
 	}
 
-	std::vector< std::string > visitedNodeContents;
-	for (ConstExpression< Variable > &current : visitedExpressions) {
-		switch (current.getType()) {
-			case ExpressionType::Variable:
-				visitedNodeContents.push_back(current.getVariable().name);
-				break;
-			case ExpressionType::Literal:
-				// We expect to only find integer literals in our tests
-				visitedNodeContents.push_back(static_cast< std::string >(current.getLiteral()));
-				break;
-			case ExpressionType::Operator:
-				switch (current.getOperator()) {
-					case ExpressionOperator::Plus:
-						visitedNodeContents.emplace_back("+");
-						break;
-					case ExpressionOperator::Times:
-						visitedNodeContents.emplace_back("*");
-						break;
-				}
-				break;
-		}
-	}
-
-	return visitedNodeContents;
+	return visitedExpressions;
 }
 
+
 template< typename TreeType >
-auto visitNodes(TreeTraversal traversalOrder, TreeType &tree) -> std::vector< std::string > {
+auto iterate(TreeType &tree, TreeTraversal traversalOrder) -> std::vector< ConstExpression< Variable > > {
 	switch (traversalOrder) {
 		case TreeTraversal::DepthFirst_InOrder:
-			return visitNodes(tree.template begin< TreeTraversal::DepthFirst_InOrder >(),
-							  tree.template end< TreeTraversal::DepthFirst_InOrder >());
+			return iterate(tree.template begin< TreeTraversal::DepthFirst_InOrder >(),
+						   tree.template end< TreeTraversal::DepthFirst_InOrder >());
 		case TreeTraversal::DepthFirst_PreOrder:
-			return visitNodes(tree.template begin< TreeTraversal::DepthFirst_PreOrder >(),
-							  tree.template end< TreeTraversal::DepthFirst_PreOrder >());
+			return iterate(tree.template begin< TreeTraversal::DepthFirst_PreOrder >(),
+						   tree.template end< TreeTraversal::DepthFirst_PreOrder >());
 		case TreeTraversal::DepthFirst_PostOrder:
-			return visitNodes(tree.template begin< TreeTraversal::DepthFirst_PostOrder >(),
-							  tree.template end< TreeTraversal::DepthFirst_PostOrder >());
+			return iterate(tree.template begin< TreeTraversal::DepthFirst_PostOrder >(),
+						   tree.template end< TreeTraversal::DepthFirst_PostOrder >());
 	}
 
 	HEDLEY_UNREACHABLE();
 }
 
+auto getNodeName(const ConstExpression< Variable > &expression) -> std::string {
+	switch (expression.getType()) {
+		case ExpressionType::Variable:
+			return expression.getVariable().name;
+		case ExpressionType::Literal:
+			return static_cast< std::string >(expression.getLiteral());
+		case ExpressionType::Operator:
+			switch (expression.getOperator()) {
+				case ExpressionOperator::Plus:
+					return "+";
+				case ExpressionOperator::Times:
+					return "*";
+			}
+	}
+
+	HEDLEY_UNREACHABLE();
+}
+
+template< typename TreeType >
+auto iteratedNodeNames(TreeType &tree, TreeTraversal traversalOrder) -> std::vector< std::string > {
+	std::vector< std::string > nodeNames;
+
+	for (ConstExpression< Variable > &current : iterate(tree, traversalOrder)) {
+		nodeNames.push_back(getNodeName(current));
+	}
+
+	return nodeNames;
+}
+
+template< typename Iterator > auto iteratedNodeNames(Iterator begin, Iterator end) -> std::vector< std::string > {
+	std::vector< std::string > nodeNames;
+
+	for (ConstExpression< Variable > &current : iterate(begin, end)) {
+		nodeNames.push_back(getNodeName(current));
+	}
+
+	return nodeNames;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////// TEST FIXTURES //////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
 
 class IterationTest : public ::testing::TestWithParam< std::tuple< TreeTraversal, std::size_t > > {
 public:
@@ -238,6 +244,65 @@ protected:
 	std::array< decltype(m_smallTreeNodeIterationOrder) *, 2 > m_iterationOrders = { &m_smallTreeNodeIterationOrder,
 																					 &m_mediumTreeNodeIterationOrder };
 };
+
+class EvaluationTest : public ::testing::TestWithParam< std::tuple< std::string, int > > {
+public:
+	using ParamPack = std::tuple< std::string, int >;
+
+protected:
+	const std::unordered_map< std::string, int > m_variables = {
+		{ "a", -3 },
+		{ "b", 12 },
+	};
+};
+
+class SubstitutionTest : public ::testing::TestWithParam< std::tuple< Node, std::string, int > > {
+public:
+	using ParamPack = std::tuple< Node, std::string, int >;
+
+protected:
+	// (1 * 2) + (a + b)
+	ExpressionTree< Variable > m_tree = treeFromPostfix("1 2 * a b + +");
+
+	const std::unordered_map< std::string, int > m_variableDefinitions = {
+		{ "a", -2 },
+		{ "b", 4 },
+		{ "c", 5 },
+	};
+
+	const std::array< Variable, 3 > m_variables = { "a", "b", "c" };
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////// TEST CASES ////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
+TEST(ExpressionTree, construction) {
+	/*
+	 *    *
+	 *   / \
+	 *  2   x
+	 */
+	ExpressionTree< Variable > tree;
+
+	tree.add(Node(2));
+	ASSERT_TRUE(tree.isValid());
+	tree.add(Variable{ "x" });
+	ASSERT_FALSE(tree.isValid());
+	tree.add(Node(ExpressionOperator::Times));
+	ASSERT_TRUE(tree.isValid());
+
+	// Adding a binary operator when only a single argument is currently available should throw
+	ASSERT_THROW(tree.add(Node(ExpressionOperator::Plus)), ExpressionException);
+
+	ExpressionTree< Variable > other = treeFromPostfix("2 x *");
+
+	ASSERT_EQ(tree, other);
+}
+
 
 template< TreeTraversal traversalOrder, bool isConst > void test_iteration_anchors() {
 	/*
@@ -354,6 +419,7 @@ TEST_P(IterationTest, iteration_anchors) {
 	const TreeTraversal traversalOrder = std::get< 0 >(GetParam());
 	const bool accessTreeAsConst       = static_cast< bool >(std::get< 1 >(GetParam()));
 
+	// Map from runtime arguments to compile-time arguments
 	switch (traversalOrder) {
 		case TreeTraversal::DepthFirst_InOrder:
 			if (accessTreeAsConst) {
@@ -385,9 +451,9 @@ TEST_P(IterationTest, full_iteration) {
 	const std::vector< std::string > expectedIterationOrder =
 		(*m_iterationOrders.at(std::get< 1 >(GetParam())))[traversalOrder];
 
-	const std::vector< std::string > visitedNodes      = visitNodes(traversalOrder, tree);
-	const std::vector< std::string > constVisitedNodes = visitNodes(
-		traversalOrder, static_cast< std::add_lvalue_reference_t< std::add_const_t< decltype(tree) > > >(tree));
+	const std::vector< std::string > visitedNodes = iteratedNodeNames(tree, traversalOrder);
+	const std::vector< std::string > constVisitedNodes =
+		iteratedNodeNames(static_cast< const decltype(tree) >(tree), traversalOrder);
 
 	EXPECT_EQ(visitedNodes, expectedIterationOrder);
 	EXPECT_EQ(constVisitedNodes, expectedIterationOrder);
@@ -415,7 +481,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		auto begin = tree.template begin< traversalOrder >();
 		auto end   = Iterator(Core::at(tree, tree.getRoot()));
 
-		visitedNodes       = visitNodes(begin, end);
+		visitedNodes       = iteratedNodeNames(begin, end);
 		expectedNodeVisits = []() -> std::vector< std::string > {
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
@@ -433,7 +499,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		auto begin = tree.template begin< traversalOrder >();
 		auto end   = Iterator(Core::after(tree, tree.getRoot()));
 
-		visitedNodes       = visitNodes(begin, end);
+		visitedNodes       = iteratedNodeNames(begin, end);
 		expectedNodeVisits = []() -> std::vector< std::string > {
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
@@ -451,7 +517,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		auto begin = Iterator(Core::fromRoot(tree, tree.getRoot().getLeftArg()));
 		auto end   = Iterator(Core::afterRoot(tree, tree.getRoot().getLeftArg()));
 
-		visitedNodes       = visitNodes(begin, end);
+		visitedNodes       = iteratedNodeNames(begin, end);
 		expectedNodeVisits = [&]() -> std::vector< std::string > {
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
@@ -474,6 +540,7 @@ TEST_P(IterationTest, partial_iteration) {
 	const TreeTraversal traversalOrder = std::get< 0 >(GetParam());
 	const bool accessTreeAsConst       = static_cast< bool >(std::get< 1 >(GetParam()));
 
+	// Map from runtime arguments to compile-time arguments
 	switch (traversalOrder) {
 		case TreeTraversal::DepthFirst_InOrder:
 			if (accessTreeAsConst) {
@@ -499,14 +566,6 @@ TEST_P(IterationTest, partial_iteration) {
 	}
 }
 
-INSTANTIATE_TEST_SUITE_P(ExpressionTree, IterationTest,
-						 ::testing::Combine(::testing::Values(TreeTraversal::DepthFirst_InOrder,
-															  TreeTraversal::DepthFirst_PostOrder,
-															  TreeTraversal::DepthFirst_PreOrder),
-											::testing::Values(0, 1)));
-
-
-
 TEST(ExpressionTree, iterator_convertability) {
 	ExpressionTree< Variable > tree = treeFromPostfix("a b +");
 
@@ -515,36 +574,19 @@ TEST(ExpressionTree, iterator_convertability) {
 	auto constIter = tree.cbegin();
 	constIter      = mutIter; // mutable to const iterator must be possible
 
+	static_assert(!std::is_same_v< decltype(mutIter), decltype(constIter) >,
+				  "Mutable and const iterators should be different types");
+
 	(void) constIter;
 }
 
-
-
-class EvaluationTest : public ::testing::TestWithParam< std::tuple< std::string, int > > {};
-
 TEST_P(EvaluationTest, evaluate) {
-	std::unordered_map< std::string, int > variables;
-	variables["a"] = -3;
-	variables["b"] = 12;
-
 	const std::string treePostfix = std::get< 0 >(GetParam());
-	int expectedResult            = std::get< 1 >(GetParam());
+	const int expectedResult      = std::get< 1 >(GetParam());
 
 	ExpressionTree< Variable > tree = treeFromPostfix(treePostfix);
-	ASSERT_EQ(evaluate(tree, variables), expectedResult);
+	ASSERT_EQ(evaluate(tree, m_variables), expectedResult);
 }
-
-INSTANTIATE_TEST_SUITE_P(ExpressionTree, EvaluationTest,
-						 ::testing::Values(
-							 // a + (b + -2)
-							 std::tuple< std::string, int >{ "a b -2 + +", 7 },
-							 // 2 + -1 * b
-							 std::tuple< std::string, int >{ "2 -1 b * +", -10 },
-							 // (2 + a) * (4 * (2 + -1 * b))
-							 std::tuple< std::string, int >{ "2 a + 4 2 -1 b * + * *", 40 },
-							 // 2 + (4 * (a * (2 + -3) + b) + -1 * b) + (4 * 3 * 2 * 1)
-							 std::tuple< std::string, int >{ "2 4 a 2 -3 + * b + * -1 b * + + 4 3 * 2 * 1 * +", 74 }));
-
 
 TEST(ExpressionTree, size) {
 	/**
@@ -561,23 +603,6 @@ TEST(ExpressionTree, size) {
 	EXPECT_EQ(tree.getRoot().getLeftArg().size(), 1);
 	EXPECT_EQ(tree.getRoot().getRightArg().size(), 3);
 }
-
-class SubstitutionTest : public ::testing::TestWithParam< std::tuple< Node, std::string, int > > {
-public:
-	using ParamPack = std::tuple< Node, std::string, int >;
-
-protected:
-	// (1 * 2) + (a + b)
-	ExpressionTree< Variable > m_tree = treeFromPostfix("1 2 * a b + +");
-
-	std::unordered_map< std::string, int > m_variableDefinitions = {
-		{ "a", -2 },
-		{ "b", 4 },
-		{ "c", 5 },
-	};
-
-	std::array< Variable, 3 > m_variables = { "a", "b", "c" };
-};
 
 TEST_P(SubstitutionTest, substitutions) {
 	ASSERT_EQ(evaluate(m_tree, m_variableDefinitions), 4);
@@ -620,6 +645,28 @@ TEST_P(SubstitutionTest, substitutions) {
 
 	EXPECT_EQ(evaluate(m_tree, m_variableDefinitions), expectedResult);
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////// TEST SUITE INSTANTIATIONS ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////
+
+INSTANTIATE_TEST_SUITE_P(ExpressionTree, IterationTest,
+						 ::testing::Combine(::testing::Values(TreeTraversal::DepthFirst_InOrder,
+															  TreeTraversal::DepthFirst_PostOrder,
+															  TreeTraversal::DepthFirst_PreOrder),
+											::testing::Values(0, 1)));
+
+INSTANTIATE_TEST_SUITE_P(ExpressionTree, EvaluationTest,
+						 ::testing::Values(
+							 // a + (b + -2)
+							 EvaluationTest::ParamPack{ "a b -2 + +", 7 },
+							 // 2 + -1 * b
+							 EvaluationTest::ParamPack{ "2 -1 b * +", -10 },
+							 // (2 + a) * (4 * (2 + -1 * b))
+							 EvaluationTest::ParamPack{ "2 a + 4 2 -1 b * + * *", 40 },
+							 // 2 + (4 * (a * (2 + -3) + b) + -1 * b) + (4 * 3 * 2 * 1)
+							 EvaluationTest::ParamPack{ "2 4 a 2 -3 + * b + * -1 b * + + 4 3 * 2 * 1 * +", 74 }));
 
 INSTANTIATE_TEST_SUITE_P(ExpressionTree, SubstitutionTest,
 						 ::testing::Values(
