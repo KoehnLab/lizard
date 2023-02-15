@@ -107,7 +107,7 @@ template< typename Container > static void BM_expressionIteration(benchmark::Sta
 		if constexpr (std::is_same_v< typename Container::iterator::value_type, Expression >) {
 			for (const Expression &current : data) {
 				if (current.getType() == lizard::ExpressionType::Literal) {
-					sum += current.getNumerator();
+					sum += current.getLiteral().getNumerator();
 				}
 			}
 		} else {

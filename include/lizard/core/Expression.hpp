@@ -11,9 +11,11 @@
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/ExpressionTree.hpp"
 #include "lizard/core/ExpressionType.hpp"
+#include "lizard/core/Fraction.hpp"
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
+#include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
 #include "lizard/core/type_traits.hpp"
 
 #include <cassert>
@@ -23,12 +25,13 @@
 #include <utility>
 #include <vector>
 
+#include <hedley.h>
+
 namespace lizard {
 
 template< typename Variable >
-ConstExpression< Variable >::ConstExpression(Numeric nodeIndex, const Node &node,
-											 const ExpressionTree< Variable > &tree)
-	: m_nodeIndex(std::move(nodeIndex)), m_node(&node), m_tree(&tree) {
+ConstExpression< Variable >::ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree)
+	: m_nodeID(std::move(nodeID)), m_node(&node), m_tree(&tree) {
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getCardinality() const -> ExpressionCardinality {
@@ -37,6 +40,12 @@ template< typename Variable > auto ConstExpression< Variable >::getCardinality()
 
 template< typename Variable > auto ConstExpression< Variable >::getType() const -> ExpressionType {
 	return m_node->getType();
+}
+
+template< typename Variable > auto ConstExpression< Variable >::getParent() const -> ConstExpression< Variable > {
+	assert(!isRoot());
+
+	return { m_node->getParent(), m_tree->m_nodes[m_node->getParent()], *m_tree };
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getVariable() const -> const Variable & {
@@ -54,29 +63,17 @@ template< typename Variable > auto ConstExpression< Variable >::getOperator() co
 	return m_node->getOperator();
 }
 
-template< typename Variable > auto ConstExpression< Variable >::getNumerator() const -> std::int32_t {
+template< typename Variable > auto ConstExpression< Variable >::getLiteral() const -> Fraction {
 	assert(getCardinality() == ExpressionCardinality::Nullary);
 	assert(getType() == ExpressionType::Literal);
 
-	// For literals the left child's ID really is to be taken as a numeric value representing the literal's
-	// numerator
-	return signed_cast< std::int32_t >(m_node->getLeftChild());
-}
+	static_assert(std::is_same_v< Fraction::field_type, std::make_signed_t< Numeric::numeric_type > >,
+				  "Expected integers to be of same width in order for signed_cast to work");
 
-template< typename Variable > auto ConstExpression< Variable >::getDenominator() const -> std::int32_t {
-	assert(getCardinality() == ExpressionCardinality::Nullary);
-	assert(getType() == ExpressionType::Literal);
-
-	// For literals the right child's ID really is to be taken as a numeric value representing the literal's
-	// denominator
-	return signed_cast< std::int32_t >(m_node->getRightChild());
-}
-
-template< typename Variable > auto ConstExpression< Variable >::getLiteral() const -> double {
-	assert(getCardinality() == ExpressionCardinality::Nullary);
-	assert(getType() == ExpressionType::Literal);
-
-	return static_cast< double >(getNumerator()) / getDenominator();
+	// For literals, the left and right child's ID is the numerator and denominator of the represented literal value
+	// respectively
+	return { signed_cast< Fraction::field_type >(m_node->getLeftChild()),
+			 signed_cast< Fraction::field_type >(m_node->getRightChild()) };
 }
 
 template< typename Variable > auto ConstExpression< Variable >::getLeftArg() const -> ConstExpression< Variable > {
@@ -104,8 +101,18 @@ template< typename Variable > auto ConstExpression< Variable >::isRoot() const -
 	return !m_node->hasParent();
 }
 
-template< typename Variable > auto ConstExpression< Variable >::nodeIndex() const -> const Numeric & {
-	return m_nodeIndex;
+template< typename Variable > auto ConstExpression< Variable >::size() const -> Numeric::numeric_type {
+	if (m_nodeID == m_tree->m_rootID) {
+		// The represented expression is the same as the one represented by the associated expression tree
+		// -> Use it to obtain the size as that's more efficient
+		return m_tree->size();
+	}
+
+	return computeSize();
+}
+
+template< typename Variable > auto ConstExpression< Variable >::nodeID() const -> const Numeric & {
+	return m_nodeID;
 }
 
 template< typename Variable > auto ConstExpression< Variable >::node() const -> const Node & {
@@ -116,11 +123,24 @@ template< typename Variable > auto ConstExpression< Variable >::tree() const -> 
 	return *m_tree;
 }
 
+template< typename Variable > auto ConstExpression< Variable >::computeSize() const -> Numeric::numeric_type {
+	switch (getCardinality()) {
+		case ExpressionCardinality::Nullary:
+			return 1;
+		case ExpressionCardinality::Unary:
+			return getLeftArg().computeSize() + 1;
+		case ExpressionCardinality::Binary:
+			return getLeftArg().computeSize() + getRightArg().computeSize() + 1;
+	}
+
+	HEDLEY_UNREACHABLE();
+}
+
 
 
 template< typename Variable >
 auto operator==(const ConstExpression< Variable > &lhs, const ConstExpression< Variable > &rhs) -> bool {
-	return lhs.m_nodeIndex == rhs.m_nodeIndex && *lhs.m_node == *rhs.m_node && lhs.m_tree == rhs.m_tree;
+	return lhs.m_nodeID == rhs.m_nodeID && *lhs.m_node == *rhs.m_node && lhs.m_tree == rhs.m_tree;
 }
 
 template< typename Variable >
@@ -130,7 +150,7 @@ auto operator!=(const ConstExpression< Variable > &lhs, const ConstExpression< V
 
 template< typename Variable >
 auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -> std::ostream & {
-	return stream << "Node " << expr.m_nodeIndex << ": " << *expr.m_node << " (" << expr.m_tree << ")";
+	return stream << "Node " << expr.m_nodeID << ": " << *expr.m_node << " (" << expr.m_tree << ")";
 }
 
 
@@ -147,23 +167,24 @@ auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -
  */
 
 template< typename Variable >
-Expression< Variable >::Expression(Numeric nodeIndex, Node &node, ExpressionTree< Variable > &tree)
-	: ConstExpression< Variable >(std::move(nodeIndex), node, tree) {
+Expression< Variable >::Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree)
+	: ConstExpression< Variable >(std::move(nodeID), node, tree) {
 }
 
 template< typename Variable > auto Expression< Variable >::getVariable() -> Variable & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Variable & >(std::as_const(*this).getVariable());
+	return const_cast< Variable & >(ConstExpression< Variable >::getVariable());
 }
 
 
-template< typename Variable >
-void Expression< Variable >::setLiteral(std::int32_t numerator, std::int32_t denominator) {
+template< typename Variable > void Expression< Variable >::setLiteral(const Fraction &fraction) {
 	assert(this->getCardinality() == ExpressionCardinality::Nullary);
 	assert(this->getType() == ExpressionType::Literal);
+	static_assert(std::is_same_v< Fraction::field_type, std::make_signed_t< Numeric::numeric_type > >,
+				  "Expected integers to be of same width in order for signed_cast to work");
 
-	node().setLeftChild(Numeric(signed_cast< Numeric::numeric_type >(numerator)));
-	node().setRightChild(Numeric(signed_cast< Numeric::numeric_type >(denominator)));
+	node().setLeftChild(Numeric(signed_cast< Numeric::numeric_type >(fraction.getNumerator())));
+	node().setRightChild(Numeric(signed_cast< Numeric::numeric_type >(fraction.getDenominator())));
 }
 
 template< typename Variable > auto Expression< Variable >::getLeftArg() -> Expression< Variable > {
@@ -187,19 +208,28 @@ template< typename Variable > auto Expression< Variable >::getArg() -> Expressio
 	return { node().getLeftChild(), tree().m_nodes[node().getLeftChild()], tree() };
 }
 
-template< typename Variable > auto Expression< Variable >::nodeIndex() -> Numeric & {
-	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Numeric & >(std::as_const(*this).nodeIndex());
-}
-
 template< typename Variable > auto Expression< Variable >::node() -> Node & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Node & >(std::as_const(*this).node());
+	return const_cast< Node & >(ConstExpression< Variable >::node());
 }
 
 template< typename Variable > auto Expression< Variable >::tree() -> ExpressionTree< Variable > & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< ExpressionTree< Variable > & >(std::as_const(*this).tree());
+	return const_cast< ExpressionTree< Variable > & >(ConstExpression< Variable >::tree());
+}
+
+template< typename Variable > void Expression< Variable >::substituteWith(Variable variable) {
+	tree().substitute(this->nodeID(), std::move(variable));
+}
+
+template< typename Variable > void Expression< Variable >::substituteWith(const ConstExpression< Variable > &expr) {
+	using Iterator = typename ExpressionTree< Variable >::const_post_order_iterator;
+	using Core     = details::ExpressionTreeIteratorCore< Variable, true, TreeTraversal::DepthFirst_PostOrder >;
+
+	Iterator begin(Core::fromRoot(expr.tree(), expr.nodeID()));
+	Iterator end(Core::afterRoot(expr.tree(), expr.nodeID()));
+
+	tree().substitute(this->nodeID(), begin, end);
 }
 
 

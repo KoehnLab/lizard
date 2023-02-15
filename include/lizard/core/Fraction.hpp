@@ -8,8 +8,13 @@
 #include <cstdint>
 #include <iosfwd>
 #include <limits>
+#include <sstream>
+#include <string>
 
 namespace lizard {
+
+class Fraction;
+auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream &;
 
 /**
  * Simple representation of a fraction using numerator and denominator
@@ -109,6 +114,12 @@ public:
 		return fraction;
 	}
 
+	explicit operator std::string() const {
+		std::stringstream sstream;
+		sstream << *this;
+		return sstream.str();
+	}
+
 
 private:
 	field_type m_numerator   = 0;
@@ -138,7 +149,5 @@ constexpr auto operator>(const Fraction &lhs, const Fraction &rhs) -> bool {
 constexpr auto operator>=(const Fraction &lhs, const Fraction &rhs) -> bool {
 	return lhs == rhs || lhs > rhs;
 }
-
-auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream &;
 
 } // namespace lizard

@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "lizard/core/Expression.hpp"
 #include "lizard/core/ExpressionCardinality.hpp"
 #include "lizard/core/ExpressionException.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
@@ -17,6 +18,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <iterator>
 #include <stack>
 #include <type_traits>
 #include <vector>
@@ -69,12 +71,12 @@ public:
 	/**
 	 * @returns The amount of nodes currently in this tree
 	 */
-	[[nodiscard]] auto size() const -> std::size_t { return m_size; }
+	[[nodiscard]] auto size() const -> Numeric::numeric_type { return m_size; }
 
 	/**
 	 * @returns Whether this tree is in a valid state
 	 */
-	[[nodiscard]] auto isValid() const -> bool { return isEmpty() || m_root.isValid(); }
+	[[nodiscard]] auto isValid() const -> bool { return isEmpty() || m_rootID.isValid(); }
 
 	/**
 	 * Ensures that the internally used buffers are big enough to hold at least the given amount of nodes and variables
@@ -92,32 +94,25 @@ public:
 		m_variables.clear();
 		m_nodes.clear();
 		m_consumableNodes = {};
-		m_root.reset();
+		m_rootID.reset();
 		m_size = 0;
 	}
 
 	/**
 	 * @returns The root expression in this tree
 	 */
-	auto getRoot() const -> ConstExpression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+	auto getRoot() const -> ConstExpression< Variable > { return { m_rootID, m_nodes[m_rootID], *this }; }
 
 	/**
 	 * @returns The root expression in this tree
 	 */
-	auto getRoot() -> Expression< Variable > { return { m_root, m_nodes[m_root], *this }; }
+	auto getRoot() -> Expression< Variable > { return { m_rootID, m_nodes[m_rootID], *this }; }
 
 	/**
 	 * Adds the given Variable object as a nullary expression to this tree. The general rules for adding nodes
 	 * to the tree apply.
 	 */
-	void add(Variable var) {
-		m_variables.push_back(std::move(var));
-
-		// Create an Expression object the references the variable
-		Node varExpr(ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)));
-
-		add(std::move(varExpr));
-	}
+	void add(Variable var) { add(addVariable(std::move(var))); }
 
 	/**
 	 * Adds the given node to this tree. Nodes have to be added in the order in which they
@@ -165,13 +160,14 @@ public:
 
 		// Store the expression as a new node
 		m_nodes.push_back(std::move(node));
+		m_size++;
 
 		if (m_consumableNodes.empty()) {
 			// The node that has consumed the last arguments available thus far must be the new root node
-			m_root = nodeID;
+			m_rootID = nodeID;
 		} else {
 			// At the moment there is no root node as the expression is unfinished
-			m_root = {};
+			m_rootID = {};
 		}
 
 		// Every expression is understood to create (return) a value and therefore, it can be used
@@ -181,32 +177,32 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::end(*this) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cbegin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >(*this, m_root) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cend() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::createEnd(*this) };
+		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
 	}
 
 	friend auto operator==(const ExpressionTree &lhs, const ExpressionTree &rhs) -> bool {
@@ -242,8 +238,101 @@ private:
 	std::vector< Variable > m_variables;
 	std::vector< Node > m_nodes;
 	std::stack< Numeric > m_consumableNodes;
-	Numeric m_root;
-	std::size_t m_size = 0;
+	Numeric m_rootID;
+	Numeric::numeric_type m_size = 0;
+
+	friend class ConstExpression< Variable >;
+	friend class Expression< Variable >;
+
+	/**
+	 * Adds the given Variable to this tree by appending the Variable to the variable store and creating a new
+	 * Node that points to this newly appended Variable. However, the Node itself is not added to the tree.
+	 *
+	 * @returns The created Node
+	 */
+	auto addVariable(Variable var) -> Node {
+		m_variables.push_back(std::move(var));
+
+		// Create an Expression object the references the variable
+		return Node{ ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)) };
+	}
+
+	/**
+	 * Substitutes the Node with the given ID with a new Node representing the provided Variable
+	 * (which will be stored inside this tree).
+	 */
+	void substitute(const Numeric &nodeID, Variable variable) {
+		assert(nodeID < m_nodes.size());
+
+		// TODO: Mark space currently occupied by sub-tree under m_nodes[nodeID] as reusable
+		Node node = addVariable(variable);
+		node.setParent(m_nodes[nodeID].getParent());
+
+		m_nodes[nodeID] = std::move(node);
+	}
+
+	/**
+	 * Substitutes the Node with the given ID with the sub-tree iterated over by means of the provided
+	 * iterator pair. The iteration order is expected to be depth-first, post-order. Using any other
+	 * iteration / tree traversal order is not supported!
+	 */
+	template< typename Iterator > void substitute(const Numeric &nodeID, Iterator iter, const Iterator end) {
+		static_assert(
+			std::is_base_of_v< ConstExpression< Variable >, typename std::iterator_traits< Iterator >::value_type >,
+			"ExpressionTree::substitute expects iterators working on Expressions");
+
+		if (iter == end) {
+			return;
+		}
+
+		assert(nodeID < m_nodes.size());
+
+		Numeric parentID = m_nodes[nodeID].getParent();
+		Numeric::numeric_type replacedSize =
+			ConstExpression< Variable >(nodeID, std::move(m_nodes[nodeID]), *this).size();
+		// TODO: Mark space currently occupied by the sub-tree under m_nodes[nodeID] as reusable
+
+		assert(m_size >= replacedSize);
+		m_size -= replacedSize;
+
+		// Save state and clear it for the duration of the substitution
+		decltype(m_consumableNodes) copy = std::move(m_consumableNodes);
+		m_consumableNodes                = {};
+		decltype(m_rootID) rootCopy      = std::move(m_rootID);
+		m_rootID.reset();
+
+		for (; iter != end; ++iter) {
+			if (iter->getType() == ExpressionType::Variable) {
+				add(iter->getVariable());
+			} else {
+				add(*iter->m_node);
+			}
+		}
+
+		// Perform post-substitution verification and postprocessing
+		assert(isValid());
+		assert(m_consumableNodes.size() == 1);
+		assert(m_rootID.isValid());
+		assert(m_rootID < m_nodes.size());
+		if (!isValid() || m_consumableNodes.size() != 1 || !m_rootID.isValid()) {
+			throw ExpressionException("Substitution lead to an inconsistent tree state");
+		}
+
+		m_nodes[m_rootID].setParent(parentID);
+
+		if (parentID.isValid()) {
+			Node &parent = m_nodes[parentID];
+			if (parent.getLeftChild() == nodeID) {
+				parent.setLeftChild(std::move(m_rootID));
+			} else {
+				parent.setRightChild(std::move(m_rootID));
+			}
+		}
+
+		// Restore previous state
+		m_consumableNodes = std::move(copy);
+		m_rootID          = std::move(rootCopy);
+	}
 };
 
 

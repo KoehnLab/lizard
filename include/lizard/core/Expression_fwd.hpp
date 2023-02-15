@@ -8,7 +8,9 @@
 #include "lizard/core/ExpressionCardinality.hpp"
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/ExpressionType.hpp"
+#include "lizard/core/Fraction.hpp"
 #include "lizard/core/Numeric.hpp"
+#include "lizard/core/TreeTraversal.hpp"
 #include "lizard/core/type_traits.hpp"
 
 #include <cstdint>
@@ -20,6 +22,10 @@ namespace lizard {
 
 template< typename > class ExpressionTree;
 class Node;
+
+namespace details {
+	template< typename, bool, TreeTraversal > class ExpressionTreeIteratorCore;
+}
 
 /**
  * Class providing a rich API for accessing individual (sub-)expressions in an expression tree.
@@ -33,7 +39,7 @@ class Node;
  */
 template< typename Variable > class ConstExpression {
 public:
-	ConstExpression(Numeric nodeIndex, const Node &node, const ExpressionTree< Variable > &tree);
+	ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree);
 	ConstExpression(const ConstExpression &)     = default;
 	ConstExpression(ConstExpression &&) noexcept = default;
 	~ConstExpression()                           = default;
@@ -51,6 +57,13 @@ public:
 	[[nodiscard]] auto getType() const -> ExpressionType;
 
 	/**
+	 * @returns The parent of the currently represented expression
+	 *
+	 * Note: Calling this function on a root expression (isRoot() returns true) is undefined behavior!
+	 */
+	[[nodiscard]] auto getParent() const -> ConstExpression;
+
+	/**
 	 * @returns The represented variable object
 	 *
 	 * Note: If this expression doesn't actually represent a variable, calling this function is undefined behavior
@@ -65,25 +78,11 @@ public:
 	[[nodiscard]] auto getOperator() const -> ExpressionOperator;
 
 	/**
-	 * @returns The numerator of the represented literal
+	 * @returns The literal value this expression represents
 	 *
 	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
 	 */
-	[[nodiscard]] auto getNumerator() const -> std::int32_t;
-
-	/**
-	 * @returns The denominator of the represented literal
-	 *
-	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
-	 */
-	[[nodiscard]] auto getDenominator() const -> std::int32_t;
-
-	/**
-	 * @returns The numerical value of the represented literal (as a floating point value)
-	 *
-	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
-	 */
-	[[nodiscard]] auto getLiteral() const -> double;
+	[[nodiscard]] auto getLiteral() const -> Fraction;
 
 	/**
 	 * @returns The Expression representing the left argument of the represented binary expression
@@ -111,6 +110,11 @@ public:
 	 */
 	[[nodiscard]] auto isRoot() const -> bool;
 
+	/**
+	 * @returns The size of the expression rooted at the currently represented element
+	 */
+	[[nodiscard]] auto size() const -> Numeric::numeric_type;
+
 	template< typename V >
 	friend auto operator==(const ConstExpression< V > &lhs, const ConstExpression< V > &rhs) -> bool;
 	template< typename V >
@@ -119,14 +123,23 @@ public:
 	friend auto operator<<(std::ostream &stream, const ConstExpression< V > &expr) -> std::ostream &;
 
 protected:
-	[[nodiscard]] auto nodeIndex() const -> const Numeric &;
+	[[nodiscard]] auto nodeID() const -> const Numeric &;
 	[[nodiscard]] auto node() const -> const Node &;
 	[[nodiscard]] auto tree() const -> const ExpressionTree< Variable > &;
 
 private:
-	Numeric m_nodeIndex;
+	Numeric m_nodeID;
 	const Node *m_node;
 	const ExpressionTree< Variable > *m_tree;
+
+	template< typename > friend class ExpressionTree;
+	template< typename, bool, TreeTraversal > friend class details::ExpressionTreeIteratorCore;
+	template< typename > friend class Expression;
+
+	/**
+	 * @returns The computed size of this expression
+	 */
+	[[nodiscard]] auto computeSize() const -> Numeric::numeric_type;
 };
 
 
@@ -143,7 +156,7 @@ private:
  */
 template< typename Variable > class Expression : public ConstExpression< Variable > {
 public:
-	Expression(Numeric nodeIndex, Node &node, ExpressionTree< Variable > &tree);
+	Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree);
 
 	// Inherit constructors from base class
 	using ConstExpression< Variable >::ConstExpression;
@@ -160,7 +173,7 @@ public:
 	 *
 	 * Note: If this expression doesn't actually represent a literal value, calling this function is undefined behavior!
 	 */
-	void setLiteral(std::int32_t numerator, std::int32_t denominator = 1);
+	void setLiteral(const Fraction &fraction);
 
 	/**
 	 * @returns The Expression representing the left argument of the represented binary expression
@@ -183,12 +196,22 @@ public:
 	 */
 	[[nodiscard]] auto getArg() -> Expression;
 
-protected:
-	[[nodiscard]] auto nodeIndex() -> Numeric &;
+	/**
+	 * Replaces the represented expression with an expression containing only the given Variable.
+	 */
+	void substituteWith(Variable variable);
 
+	/**
+	 * Replaces the represented expression with the provided one.
+	 */
+	void substituteWith(const ConstExpression< Variable > &expr);
+
+protected:
 	[[nodiscard]] auto node() -> Node &;
 
 	[[nodiscard]] auto tree() -> ExpressionTree< Variable > &;
+
+	template< typename, bool, TreeTraversal > friend class details::ExpressionTreeIteratorCore;
 };
 
 } // namespace lizard
