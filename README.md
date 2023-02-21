@@ -9,7 +9,7 @@ A quantum chemistry application used for the symbolic derivation and manipulatio
 
 In order to build `lizard`, your system will have to meet the following requirements:
 - An ISO-Cpp17 conform C++ compiler (+ the corresponding standard library)
-- Java Runtime Environment (JRE) v11 or more recent
+- JRE (Java Runtime Environment) v11 or more recent, e.g. [OpenJDK](https://openjdk.org/) or [Oracle Java](https://www.oracle.com/java)
 - [cmake](https://cmake.org/) v3.18 or more recent
 
 All other dependencies will be fetched automatically while running cmake (requires an active internet connection). These dependencies are
