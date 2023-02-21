@@ -21,7 +21,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	antlr4
 	GIT_REPOSITORY https://github.com/antlr/antlr4.git
-	GIT_TAG        v4.11.1
+	GIT_TAG        4.12.0
 	GIT_SHALLOW    true
 	SOURCE_SUBDIR  runtime/Cpp
 )
@@ -69,11 +69,12 @@ FetchContent_Declare(
 )
 
 # ANTLR options
-set(DISABLE_WARNINGS TRUE  CACHE INTERNAL "")
-set(WITH_DEMO        FALSE CACHE INTERNAL "")
-set(ANTLR4_INSTALL   FALSE CACHE INTERNAL "")
+set(DISABLE_WARNINGS   TRUE  CACHE INTERNAL "")
+set(WITH_DEMO          FALSE CACHE INTERNAL "")
+set(ANTLR4_INSTALL     FALSE CACHE INTERNAL "")
+set(ANTLR_BUILD_SHARED FALSE CACHE INTERNAL "")
 set(ANTLR_BUILD_CPP_TESTS ${LIZARD_BUILD_TESTS} CACHE INTERNAL "")
-set(ANTLR_EXECUTABLE "${3RDPARTY_DIR}/antlr4/antlr-4.11.1-complete.jar" CACHE INTERNAL "")
+set(ANTLR_EXECUTABLE "${3RDPARTY_DIR}/antlr4/antlr-4.12.0-complete.jar" CACHE INTERNAL "")
 if(MSVC_RUNTIME_LIBRARY MATCHES ".*DLL$")
 	set(USE_STATIC_CRT OFF)
 else()
@@ -135,7 +136,6 @@ find_package(ANTLR REQUIRED)
 
 # ANTLR's CMakeLists.txt does not specify the include directories for 
 target_include_directories(antlr4_static PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")
-target_include_directories(antlr4_shared PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp/runtime/src")
 
 # Add hedley to include path
 FetchContent_GetProperties(hedley SOURCE_DIR HEDLEY_SOURCE_DIR)
