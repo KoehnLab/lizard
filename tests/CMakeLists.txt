@@ -35,5 +35,6 @@ if (LIZARD_BUILD_TESTS)
 	FetchContent_MakeAvailable(googletest)
 
 	add_subdirectory(core)
+	add_subdirectory(symbolic)
 	add_subdirectory(parser)
 endif()

@@ -6,6 +6,7 @@
 include(setup_tools)
 
 add_subdirectory(core)
+add_subdirectory(symbolic)
 add_subdirectory(parser)
 
 
