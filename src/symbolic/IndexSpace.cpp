@@ -4,6 +4,7 @@
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 #include "lizard/symbolic/IndexSpace.hpp"
+#include "lizard/core/BitOperations.hpp"
 
 #include <iostream>
 
@@ -49,5 +50,5 @@ auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream &
 
 auto std::hash< const lizard::IndexSpace >::operator()(const lizard::IndexSpace &space) -> std::size_t {
 	return std::hash< decltype(space.getID()) >{}(space.getID())
-		   ^ (std::hash< decltype(space.getSpin()) >{}(space.getSpin()) << 4);
+		   ^ lizard::bit_rotate< std::size_t >(std::hash< decltype(space.getSpin()) >{}(space.getSpin()), 4);
 }
