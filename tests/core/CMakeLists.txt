@@ -4,6 +4,7 @@
 # tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 add_executable(CoreTest
+	BitOperationsTest.cpp
 	ExpressionTreeTest.cpp
 	FractionTest.cpp
 	MetaprogrammingTest.cpp
