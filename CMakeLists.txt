@@ -10,10 +10,12 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(BUILD_SHARED_LIBS OFF)
 
 
-project(lizard,
+project(lizard
 	VERSION "1.0.0"
 	LANGUAGES "CXX"
 )
+
+message(STATUS "Building ${CMAKE_PROJECT_NAME} v${CMAKE_PROJECT_VERSION} (${CMAKE_BUILD_TYPE})")
 
 
 set(CMAKE_MODULE_PATH
