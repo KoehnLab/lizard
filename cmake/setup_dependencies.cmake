@@ -67,6 +67,12 @@ FetchContent_Declare(
 	GIT_TAG        v1.0.0
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	libperm
+	GIT_REPOSITORY https://github.com/Krzmbrzl/libPerm
+	GIT_TAG        v1.0.1
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS   TRUE  CACHE INTERNAL "")
@@ -119,7 +125,13 @@ set(SPDLOG_INSTALL          OFF CACHE INTERNAL "")
 set(SPDLOG_FMT_EXTERNAL     ON  CACHE INTERNAL "")
 set(SPDLOG_TIDY             OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators)
+# libPerm options
+set(LIBPERM_TESTS ${LIZARD_BUILD_TESTS} CACHE INTERNAL "")
+set(LIBPERM_EXAMPLES OFF CACHE INTERNAL "")
+set(LIBPERM_DISABLE_WARNINGS ON CACHE INTERNAL "")
+set(LIBPERM_WARNINGS_AS_ERRORS OFF CACHE INTERNAL "")
+
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators libperm)
 
 
 # Append the compiler flags CMake module to the module path
