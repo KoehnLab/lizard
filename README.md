@@ -53,4 +53,5 @@ might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIZARD_LTO=ON ..`
 | `LIZARD_IWYU` | Enable the [include-what-you-use](https://include-what-you-use.org/) tool, if installed | `ON` |
 | `LIZARD_LWYU` | Enable cmake's link-what-you-use tool, if available | `ON` |
 | `LIZARD_CLANG_TIDY` | Enable [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) static analysis, if installed | `ON` |
+| `LIZARD_DEPENDENCIES_BUILD_TYPE` | The build type to use for lizard's dependencies | `Release` |
 

@@ -9,8 +9,15 @@ list(APPEND CMAKE_MODULE_PATH
 	"${PROJECT_SOURCE_DIR}/cmake/antlr4"
 )
 
-message(STATUS "Fetching and configuring dependencies...")
+set(LIZARD_DEPENDENCIES_BUILD_TYPE "Release" CACHE STRING "The build type to use for lizard's dependencies")
 
+message(STATUS "Fetching and configuring dependencies...")
+message(VERBOSE "External depdendencies build type: ${LIZARD_DEPENDENCIES_BUILD_TYPE}")
+
+
+# Set the build type to use for dependencies (may be different from lizard's own build type)
+set(GENERAL_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+set(CMAKE_BUILD_TYPE ${LIZARD_DEPENDENCIES_BUILD_TYPE} CACHE INTERNAL "" FORCE)
 
 FetchContent_Declare(
 	cmake_compiler_flags
@@ -152,3 +159,8 @@ target_include_directories(antlr4_static PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp
 # Add hedley to include path
 FetchContent_GetProperties(hedley SOURCE_DIR HEDLEY_SOURCE_DIR)
 include_directories("${HEDLEY_SOURCE_DIR}")
+
+
+# Restore build type
+set(CMAKE_BUILD_TYPE ${GENERAL_BUILD_TYPE} CACHE INTERNAL "" FORCE)
+unset(GENERAL_BUILD_TYPE)
