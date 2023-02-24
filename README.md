@@ -19,7 +19,7 @@ All other dependencies will be fetched automatically while running cmake (requir
 - [CLI11](https://github.com/CLIUtils/CLI11) (BSD-3-Clause)
 - [fmt](https://github.com/fmtlib/fmt) (MIT)
 - [spdlog](https://github.com/gabime/spdlog) (MIT)
-- [Headley](https://github.com/nemequ/hedley) (CC0-1.0)
+- [Hedley](https://github.com/nemequ/hedley) (CC0-1.0)
 - [iterators](https://github.com/Krzmbrzl/iterators) (BSD-3-Clause)
 - [libPerm](https://github.com/Krzmbrzl/libPerm) (BSD-3-Clause)
 
