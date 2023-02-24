@@ -32,10 +32,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 include(CheckIPOSupported)
-include(CTest)
-include(setup_dependencies)
-include(register_lizard_target)
-
 
 check_ipo_supported(RESULT LTO_DEFAULT)
 
@@ -44,6 +40,10 @@ option(LIZARD_BUILD_BENCHMARKS "Whether to build benchmarks" OFF)
 option(LIZARD_LTO "Whether to use link-time optimizations (if available)" ${LTO_DEFAULT})
 option(LIZARD_DISABLE_WARNINGS "Whether to disable compiler warnings" OFF)
 option(LIZARD_WARNINGS_AS_ERRORS "Whether to disable compiler warnings" OFF)
+
+include(CTest)
+include(setup_dependencies)
+include(register_lizard_target)
 
 
 # Make sure that libraries and executables end up in the correct directories
