@@ -41,14 +41,32 @@ constexpr auto bit_rotate(details::dont_deduce< Integer > value, unsigned int am
 	using promoted_type          = std::common_type_t< int, Integer >;
 	using unsigned_promoted_type = std::make_unsigned_t< promoted_type >;
 
-	// The shift amount must always be < the number of bits in the shifted integer
+	// We want a mask that has exactly as many 1s in its binary representation (starting at the least significant bit)
+	// as representing a maximum value of bitWidth - 1 requires digits in binary representation.
+	// Since we assert that bitWidth is a power of 2, it will look like 0b10000 (for bitWidth = 16) and subtracting
+	// one from that will give us 0b01111. These are exactly the required binary digits required to represent
+	// values in the range [0, 15].
 	constexpr unsigned int countMask{ bitWidth - 1 };
+
+	// The shift amount must always be < the number of bits in the shifted integer
+	// We achieve this trimming of the value by using the previously constructed mask that will
+	// simply zero out anything that would exceed the valid range (in the binary representation)
 	amount &= countMask;
 
+	// Take two's complement of the given amount
+	// The two's complement is achieved by first flipping all bits and then adding one. Combined with
+	// the subsequent masking of this value, this effectively achieves the calculation of bitWidth - amount
+	// with the exception that if amount == 0 (which would cause a shift of bitWidth below, which is undefined
+	// behavior), the result is 1 rather than bitWidth. However, this doesn't change the result of our rotation
+	// as that'll effectively OR the least significant bit in value with itself, which doesn't change anything.
+	unsigned int amountComplement = ~amount + 1;
+	// Restrict amountComplement to the same number of set bits as we already did for amount itself
+	amountComplement &= countMask;
+
 	if constexpr (direction == RotateDirection::Left) {
-		return (unsigned_promoted_type{ value } << amount) | (unsigned_promoted_type{ value } >> (-amount & countMask));
+		return (unsigned_promoted_type{ value } << amount) | (unsigned_promoted_type{ value } >> amountComplement);
 	} else {
-		return (unsigned_promoted_type{ value } >> amount) | (unsigned_promoted_type{ value } << (-amount & countMask));
+		return (unsigned_promoted_type{ value } >> amount) | (unsigned_promoted_type{ value } << amountComplement);
 	}
 }
 
