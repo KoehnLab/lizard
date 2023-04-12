@@ -5,10 +5,14 @@
 
 add_library(lizard_symbolic STATIC
 	EnumStreamOperators.cpp
+	Index.cpp
 	IndexSpace.cpp
+	Tensor.cpp
+	TensorBlock.cpp
+	TensorElement.cpp
 )
 register_lizard_target(lizard_symbolic)
 
 add_library(lizard::symbolic ALIAS lizard_symbolic)
 
-target_link_libraries(lizard_symbolic PUBLIC lizard::core)
+target_link_libraries(lizard_symbolic PUBLIC lizard::core libperm::libperm nonstd::span-lite)

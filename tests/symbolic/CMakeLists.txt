@@ -5,6 +5,10 @@
 
 add_executable(SymbolicTest
 	IndexSpaceTest.cpp
+	IndexTest.cpp
+	TensorBlockTest.cpp
+	TensorElementTest.cpp
+	TensorTest.cpp
 )
 
 target_link_libraries(SymbolicTest PRIVATE lizard::symbolic)
