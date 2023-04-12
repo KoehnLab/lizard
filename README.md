@@ -22,6 +22,7 @@ All other dependencies will be fetched automatically while running cmake (requir
 - [Hedley](https://github.com/nemequ/hedley) (CC0-1.0)
 - [iterators](https://github.com/Krzmbrzl/iterators) (BSD-3-Clause)
 - [libPerm](https://github.com/Krzmbrzl/libPerm) (BSD-3-Clause)
+- [span_lite](https://github.com/martinmoene/span-lite) (BSL 1.0)
 
 
 ### Build `lizard`

@@ -80,6 +80,12 @@ FetchContent_Declare(
 	GIT_TAG        v1.0.1
 	GIT_SHALLOW    true
 )
+FetchContent_Declare(
+	span_lite
+	GIT_REPOSITORY https://github.com/martinmoene/span-lite
+	GIT_TAG        v0.10.3
+	GIT_SHALLOW    true
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS   TRUE  CACHE INTERNAL "")
@@ -138,7 +144,7 @@ set(LIBPERM_EXAMPLES OFF CACHE INTERNAL "")
 set(LIBPERM_DISABLE_WARNINGS ON CACHE INTERNAL "")
 set(LIBPERM_WARNINGS_AS_ERRORS OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators libperm)
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators libperm span_lite)
 
 
 # Append the compiler flags CMake module to the module path
