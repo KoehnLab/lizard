@@ -15,11 +15,11 @@ namespace lizard {
 auto operator<<(std::ostream &stream, IndexType type) -> std::ostream & {
 	switch (type) {
 		case IndexType::Annihilator:
-			return stream << "Annihilator";
+			return stream << "Ann";
 		case IndexType::External:
-			return stream << "External";
+			return stream << "Ext";
 		case IndexType::Creator:
-			return stream << "Creator";
+			return stream << "Cre";
 	}
 
 	HEDLEY_UNREACHABLE();
@@ -28,13 +28,13 @@ auto operator<<(std::ostream &stream, IndexType type) -> std::ostream & {
 auto operator<<(std::ostream &stream, Spin spin) -> std::ostream & {
 	switch (spin) {
 		case Spin::Alpha:
-			return stream << "Alpha";
+			return stream << "Al";
 		case Spin::Beta:
-			return stream << "Beta";
+			return stream << "Be";
 		case Spin::Both:
-			return stream << "Both";
+			return stream << "Bo";
 		case Spin::None:
-			return stream << "None";
+			return stream << "No";
 	}
 
 	HEDLEY_UNREACHABLE();

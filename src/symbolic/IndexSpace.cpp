@@ -37,7 +37,7 @@ auto operator!=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
 }
 
 auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream & {
-	stream << "IndexSpace{" << space.getID();
+	stream << "IdxSp{" << static_cast< unsigned int >(space.getID());
 
 	if (space.getSpin() != Spin::None) {
 		stream << ", " << space.getSpin();
