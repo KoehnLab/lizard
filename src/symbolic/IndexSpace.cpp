@@ -68,7 +68,7 @@ auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream &
 
 } // namespace lizard
 
-auto std::hash< const lizard::IndexSpace >::operator()(const lizard::IndexSpace &space) -> std::size_t {
+auto std::hash< lizard::IndexSpace >::operator()(const lizard::IndexSpace &space) -> std::size_t {
 	return std::hash< decltype(space.getID()) >{}(space.getID())
 		   ^ lizard::bit_rotate< std::size_t >(std::hash< decltype(space.getSpin()) >{}(space.getSpin()), 4);
 }

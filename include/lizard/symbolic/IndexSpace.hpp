@@ -58,6 +58,6 @@ auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream &
 
 } // namespace lizard
 
-template<> struct std::hash< const lizard::IndexSpace > {
+template<> struct std::hash< lizard::IndexSpace > {
 	[[nodiscard]] auto operator()(const lizard::IndexSpace &space) -> std::size_t;
 };

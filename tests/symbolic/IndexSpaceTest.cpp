@@ -60,9 +60,9 @@ TEST_P(IndexSpaceTest, hash) {
 	const IndexSpace space2(secondID, secondSpin);
 	const IndexSpace defaultSpace;
 
-	const std::size_t hash1       = std::hash< decltype(space1) >{}(space1);
-	const std::size_t hash2       = std::hash< decltype(space2) >{}(space2);
-	const std::size_t defaultHash = std::hash< decltype(defaultSpace) >{}(defaultSpace);
+	const std::size_t hash1       = std::hash< IndexSpace >{}(space1);
+	const std::size_t hash2       = std::hash< IndexSpace >{}(space2);
+	const std::size_t defaultHash = std::hash< IndexSpace >{}(defaultSpace);
 
 	if (space1 == space2) {
 		ASSERT_EQ(hash1, hash2);
