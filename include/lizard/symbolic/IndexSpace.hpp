@@ -49,6 +49,10 @@ private:
 
 [[nodiscard]] auto operator==(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
 [[nodiscard]] auto operator!=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
+[[nodiscard]] auto operator<(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
+[[nodiscard]] auto operator<=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
+[[nodiscard]] auto operator>(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
+[[nodiscard]] auto operator>=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool;
 
 auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream &;
 

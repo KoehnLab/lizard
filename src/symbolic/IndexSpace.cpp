@@ -36,6 +36,26 @@ auto operator!=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
 	return !(lhs == rhs);
 }
 
+auto operator<(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
+	if (lhs.getID() != rhs.getID()) {
+		return lhs.getID() < rhs.getID();
+	}
+
+	return lhs.getSpin() < rhs.getSpin();
+}
+
+auto operator<=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
+	return lhs == rhs || lhs < rhs;
+}
+
+auto operator>(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
+	return !(lhs <= rhs);
+}
+
+auto operator>=(const IndexSpace &lhs, const IndexSpace &rhs) -> bool {
+	return !(lhs < rhs);
+}
+
 auto operator<<(std::ostream &stream, const IndexSpace &space) -> std::ostream & {
 	stream << "IdxSp{" << static_cast< unsigned int >(space.getID());
 
