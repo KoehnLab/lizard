@@ -41,7 +41,7 @@ struct TensorElementTest
 TEST_P(TensorElementTest, construction_and_equality) {
 	const Tensor tensor                            = std::get< 0 >(GetParam());
 	const perm::PrimitivePermutationGroup symmetry = std::get< 1 >(GetParam());
-	const std::vector< Index > indices             = std::get< 2 >(GetParam());
+	std::vector< Index > indices                   = std::get< 2 >(GetParam());
 
 	std::vector< Index > canonicalIndices = indices;
 	int canonicalizationSign              = perm::canonicalize(canonicalIndices, symmetry);
@@ -56,14 +56,21 @@ TEST_P(TensorElementTest, construction_and_equality) {
 		slots[i] = indices[i].getSpace();
 	}
 
+	perm::Permutation slotCanonicalization = perm::computeCanonicalizationPermutation(slots, symmetry);
+
 	auto [block, blockSign] = TensorBlock::create(tensor, slots, symmetry);
-	ASSERT_EQ(sign1, blockSign);
+	ASSERT_EQ(slotCanonicalization->sign(), blockSign);
 	ASSERT_EQ(element1.getBlock(), block);
 
 
+	// Before we can use the indices to construct the element corresponding to the just generated block, we have
+	// to apply the slot-canonicalization to the indices in order to ensure that the index-to-slot correspondence
+	// is retained
+	perm::applyPermutation(indices, slotCanonicalization);
+
 	auto [element2, sign2] = TensorElement::create(block, indices);
 	ASSERT_EQ(element2.getBlock(), block);
-	ASSERT_EQ(sign2, canonicalizationSign);
+	ASSERT_EQ(sign2 * slotCanonicalization->sign(), canonicalizationSign);
 	ASSERT_THAT(element2.getIndices(), ::testing::ElementsAreArray(canonicalIndices));
 
 	ASSERT_EQ(element1, element2);
@@ -74,6 +81,9 @@ TEST(TensorElement, hash) {
 		{ perm::ExplicitPermutation(perm::Cycle({ 0, 1 }), -1), perm::ExplicitPermutation(perm::Cycle({ 2, 3 }), -1) });
 
 	std::vector< Index > indices = test::indexSequence(4);
+
+	// Ensure indices are sorted to make next_permutation work as expected
+	std::sort(indices.begin(), indices.end());
 
 	std::vector< std::size_t > uniqueHashes;
 	std::vector< TensorElement > uniqueElements;
@@ -111,8 +121,8 @@ TEST(TensorElement, hash) {
 
 INSTANTIATE_TEST_SUITE_P(
 	TensorElement, TensorElementTest,
-	::testing::Combine(::testing::Values(Tensor("T"), Tensor("H")),
+	::testing::Combine(::testing::Values(Tensor("T")),
 					   ::testing::Values(perm::Sym(3), perm::Sym(4),
 										 test::generate({ perm::ExplicitPermutation(perm::Cycle({ 0, 1 }), -1),
 														  perm::ExplicitPermutation(perm::Cycle({ 2, 3 }), -1) })),
-					   ::testing::Values(test::indexSequence(4, 0), test::indexSequence(4, 1))));
+					   ::testing::Values(test::indexSequence(4, 1), test::indexSequence(4, 2))));
