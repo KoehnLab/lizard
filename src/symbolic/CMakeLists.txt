@@ -7,6 +7,8 @@ add_library(lizard_symbolic STATIC
 	EnumStreamOperators.cpp
 	Index.cpp
 	IndexSpace.cpp
+	IndexSpaceData.cpp
+	IndexSpaceManager.cpp
 	Tensor.cpp
 	TensorBlock.cpp
 	TensorElement.cpp

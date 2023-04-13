@@ -5,6 +5,7 @@
 
 add_executable(SymbolicTest
 	IndexSpaceTest.cpp
+	IndexSpaceManagerTest.cpp
 	IndexTest.cpp
 	TensorBlockTest.cpp
 	TensorElementTest.cpp
