@@ -151,9 +151,8 @@ public:
 						// State: Just visited the Node itself
 						return at(tree, nodeID);
 					}
-
-					HEDLEY_UNREACHABLE();
 			}
+			HEDLEY_UNREACHABLE();
 		}();
 
 		core.increment();

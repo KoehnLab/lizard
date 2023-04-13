@@ -64,9 +64,11 @@ constexpr auto bit_rotate(details::dont_deduce< Integer > value, unsigned int am
 	amountComplement &= countMask;
 
 	if constexpr (direction == RotateDirection::Left) {
-		return (unsigned_promoted_type{ value } << amount) | (unsigned_promoted_type{ value } >> amountComplement);
+		return static_cast< Integer >((unsigned_promoted_type{ value } << amount)
+									  | (unsigned_promoted_type{ value } >> amountComplement));
 	} else {
-		return (unsigned_promoted_type{ value } >> amount) | (unsigned_promoted_type{ value } << amountComplement);
+		return static_cast< Integer >((unsigned_promoted_type{ value } >> amount)
+									  | (unsigned_promoted_type{ value } << amountComplement));
 	}
 }
 

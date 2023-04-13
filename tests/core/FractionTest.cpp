@@ -34,7 +34,7 @@ TEST(Fraction, comparison) {
 }
 
 TEST_P(ConversionTest, fromDecimal) {
-	constexpr const float maxError = 1e-5; // NOLINT(*-magic-numbers)
+	constexpr const float maxError = 1e-5F; // NOLINT(*-magic-numbers)
 
 	const int numerator   = std::get< 0 >(GetParam());
 	const int denominator = std::get< 1 >(GetParam());

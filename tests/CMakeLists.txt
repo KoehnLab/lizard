@@ -25,6 +25,7 @@ function(register_test)
 			message(FATAL_ERROR "\"${CURRENT} is not a target")
 		endif()
 
+		register_lizard_target("${CURRENT}")
 		target_compile_definitions("${CURRENT}" PRIVATE TEST_FILE_DIR="${TEST_FILE_DIR}")
 		target_link_libraries("${CURRENT}" PRIVATE gmock gtest_main)
 		gtest_discover_tests("${CURRENT}")

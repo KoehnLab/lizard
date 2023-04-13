@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <initializer_list>
 #include <random>
 #include <type_traits>
@@ -65,7 +66,7 @@ auto equivalentSequences(const std::initializer_list< T > &sequence, const Group
 }
 
 
-inline auto getSpins(std::size_t seed = 1) -> std::array< Spin, 4 > {
+inline auto getSpins(std::uint_fast32_t seed = 1) -> std::array< Spin, 4 > {
 	std::array< Spin, 4 > spins = { Spin::Alpha, Spin::Beta, Spin::None, Spin::Both };
 
 	std::mt19937 generator(seed);
@@ -75,7 +76,7 @@ inline auto getSpins(std::size_t seed = 1) -> std::array< Spin, 4 > {
 	return spins;
 }
 
-inline auto getIndexTypes(std::size_t seed = 2) -> std::array< IndexType, 3 > {
+inline auto getIndexTypes(std::uint_fast32_t seed = 2) -> std::array< IndexType, 3 > {
 	std::array< IndexType, 3 > types = { IndexType::Annihilator, IndexType::Creator, IndexType::External };
 
 	std::mt19937 generator(seed);
@@ -85,12 +86,17 @@ inline auto getIndexTypes(std::size_t seed = 2) -> std::array< IndexType, 3 > {
 	return types;
 }
 
-inline auto indexSpaceSequence(std::size_t size, std::size_t seed = 4) -> std::vector< IndexSpace > {
+inline auto indexSpaceSequence(std::size_t size, std::uint_fast32_t seed = 4) -> std::vector< IndexSpace > {
 	std::vector< IndexSpace > spaces;
 	spaces.reserve(size);
 
 	if (size == 0) {
 		return spaces;
+	}
+
+	if (size > std::numeric_limits< IndexSpace::Id >::max()) {
+		throw std::runtime_error("Can't generate " + std::to_string(size)
+								 + " index spaces as there are not that many valid space IDs");
 	}
 
 	const std::array< Spin, 4 > spins = getSpins(seed * 2 + 1);
@@ -99,7 +105,7 @@ inline auto indexSpaceSequence(std::size_t size, std::size_t seed = 4) -> std::v
 	std::uniform_int_distribution< std::size_t > dist(0, size - 1);
 
 	for (std::size_t i = 0; i < size; ++i) {
-		spaces.emplace_back(i, spins.at(dist(generator)));
+		spaces.emplace_back(static_cast< IndexSpace::Id >(i), spins.at(dist(generator)));
 	}
 
 	std::shuffle(spaces.begin(), spaces.end(), generator);
@@ -108,12 +114,17 @@ inline auto indexSpaceSequence(std::size_t size, std::size_t seed = 4) -> std::v
 }
 
 
-inline auto indexSequence(std::size_t size, std::size_t seed = 16) -> std::vector< Index > {
+inline auto indexSequence(std::size_t size, std::uint_fast32_t seed = 16) -> std::vector< Index > {
 	std::vector< Index > indices;
 	indices.reserve(size);
 
 	if (size == 0) {
 		return indices;
+	}
+
+	if (size > std::numeric_limits< Index::Id >::max()) {
+		throw std::runtime_error("Can't create " + std::to_string(size)
+								 + " indices because there are not that many valid index IDs");
 	}
 
 	std::vector< IndexSpace > spaces = indexSpaceSequence(size);
@@ -126,7 +137,7 @@ inline auto indexSequence(std::size_t size, std::size_t seed = 16) -> std::vecto
 		const std::size_t spaceIndex = dist(generator) % spaces.size();
 		const std::size_t typeIndex  = dist(generator) % types.size();
 
-		indices.emplace_back(i, spaces.at(spaceIndex), types.at(typeIndex));
+		indices.emplace_back(static_cast< Index::Id >(i), spaces.at(spaceIndex), types.at(typeIndex));
 	}
 
 	std::shuffle(indices.begin(), indices.end(), generator);

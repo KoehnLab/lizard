@@ -63,12 +63,12 @@ public:
 		// until we have found a fraction that represents the given literal to a given precision
 		// Adapted from https://stackoverflow.com/a/5128558
 
-		int sign = value < 0 ? -1 : 1;
+		Decimal sign = static_cast< Decimal >(value < 0 ? -1 : 1);
 		value *= sign; // Make literal positive
 
 		Fraction fraction(static_cast< field_type >(value));
 
-		Decimal fractionalPart = value - fraction.m_numerator;
+		Decimal fractionalPart = value - static_cast< Decimal >(fraction.m_numerator);
 
 		if (fractionalPart > precision) {
 			if (1 - precision < fractionalPart) {
@@ -87,15 +87,15 @@ public:
 					field_type mediantNum   = upperNum + lowerNum;
 					field_type mediantDenom = upperDenom + lowerDenom;
 
-					const Decimal upperBound = (fractionalPart + precision) * mediantDenom;
-					const Decimal lowerBound = (fractionalPart - precision) * mediantDenom;
+					const Decimal upperBound = (fractionalPart + precision) * static_cast< Decimal >(mediantDenom);
+					const Decimal lowerBound = (fractionalPart - precision) * static_cast< Decimal >(mediantDenom);
 
 					// If fractionalPart + precision < mediant
-					if (upperBound < mediantNum) {
+					if (upperBound < static_cast< Decimal >(mediantNum)) {
 						// mediant is new upper bound
 						upperNum   = mediantNum;
 						upperDenom = mediantDenom;
-					} else if (lowerBound > mediantNum) {
+					} else if (lowerBound > static_cast< Decimal >(mediantNum)) {
 						// mediant is new lower bound
 						lowerNum   = mediantNum;
 						lowerDenom = mediantDenom;
@@ -109,7 +109,7 @@ public:
 			}
 		}
 
-		fraction.m_numerator *= sign;
+		fraction.m_numerator *= static_cast< Fraction::field_type >(sign);
 
 		return fraction;
 	}

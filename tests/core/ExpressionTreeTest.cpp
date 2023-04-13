@@ -270,7 +270,7 @@ protected:
 		{ "c", 5 },
 	};
 
-	const std::array< Variable, 3 > m_variables = { "a", "b", "c" };
+	const std::array< Variable, 3 > m_variables = { Variable{ "a" }, Variable{ "b" }, Variable{ "c" } };
 };
 
 
@@ -342,6 +342,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return Core::at(tree, timesExpr);
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 	ASSERT_EQ(Core::fromRoot(tree, plusExpr).dereference(), [&]() {
 		switch (traversalOrder) {
@@ -351,6 +352,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return plusExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 	ASSERT_EQ(Core::afterRoot(tree, plusExpr), Core::end(tree));
 
@@ -365,6 +367,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return twoExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 	ASSERT_EQ(Core::fromRoot(tree, timesExpr).dereference(), [&]() {
 		switch (traversalOrder) {
@@ -374,6 +377,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return timesExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 	ASSERT_EQ(Core::afterRoot(tree, timesExpr).dereference(), [&]() {
 		switch (traversalOrder) {
@@ -383,6 +387,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return threeExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 
 	// From non-root, leaf Node
@@ -395,6 +400,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return varExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 	ASSERT_EQ(Core::fromRoot(tree, twoExpr).dereference(), twoExpr);
 	ASSERT_EQ(Core::afterRoot(tree, twoExpr).dereference(), [&]() {
@@ -405,6 +411,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 			case TreeTraversal::DepthFirst_PreOrder:
 				return varExpr;
 		}
+		HEDLEY_UNREACHABLE();
 	}());
 
 	// From root, leaf Node
@@ -491,6 +498,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 				case TreeTraversal::DepthFirst_PreOrder:
 					return {};
 			}
+			HEDLEY_UNREACHABLE();
 		}();
 		EXPECT_EQ(visitedNodes, expectedNodeVisits);
 	}
@@ -509,6 +517,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 				case TreeTraversal::DepthFirst_PreOrder:
 					return { "+" };
 			}
+			HEDLEY_UNREACHABLE();
 		}();
 		EXPECT_EQ(visitedNodes, expectedNodeVisits);
 	}
@@ -530,6 +539,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 					EXPECT_EQ(begin->getType(), ExpressionType::Operator);
 					return { "*", "2", "x" };
 			}
+			HEDLEY_UNREACHABLE();
 		}();
 
 		EXPECT_EQ(visitedNodes, expectedNodeVisits);
@@ -598,10 +608,10 @@ TEST(ExpressionTree, size) {
 	 */
 	ExpressionTree< Variable > tree = treeFromPostfix("1 2 3 + *");
 
-	EXPECT_EQ(tree.size(), 5);
-	EXPECT_EQ(tree.getRoot().size(), 5);
-	EXPECT_EQ(tree.getRoot().getLeftArg().size(), 1);
-	EXPECT_EQ(tree.getRoot().getRightArg().size(), 3);
+	EXPECT_EQ(tree.size(), static_cast< std::size_t >(5));
+	EXPECT_EQ(tree.getRoot().size(), static_cast< std::size_t >(5));
+	EXPECT_EQ(tree.getRoot().getLeftArg().size(), static_cast< std::size_t >(1));
+	EXPECT_EQ(tree.getRoot().getRightArg().size(), static_cast< std::size_t >(3));
 }
 
 TEST_P(SubstitutionTest, substitutions) {

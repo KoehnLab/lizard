@@ -18,7 +18,7 @@ using namespace ::lizard;
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 TEST(bit_rotate_left, uint8) {
-	std::uint8_t value = 0b10011011;
+	std::uint8_t value = 0b10011011; // NOLINT(*-magic-numbers)
 	const std::bitset< 8 > noRotate(value);
 	const std::bitset< 8 > rotateOne(0b00110111);
 	const std::bitset< 8 > rotateTwo(0b01101110);
@@ -119,11 +119,13 @@ TEST(bit_rotate_left, uint16) {
 		ASSERT_EQ(rotated, noRotate);
 	}
 	{
-		std::bitset< 16 > rotated = bit_rotate< std::uint16_t, RotateDirection::Left >(value, 17);
+		std::bitset< 16 > rotated =
+			bit_rotate< std::uint16_t, RotateDirection::Left >(value, 17); // NOLINT(*-magic-numbers)
 		ASSERT_EQ(rotated, rotateOne);
 	}
 	{
-		std::bitset< 16 > rotated = bit_rotate< std::uint16_t, RotateDirection::Left >(value, 18);
+		std::bitset< 16 > rotated =
+			bit_rotate< std::uint16_t, RotateDirection::Left >(value, 18); // NOLINT(*-magic-numbers)
 		ASSERT_EQ(rotated, rotateTwo);
 	}
 }
@@ -156,11 +158,13 @@ TEST(bit_rotate_right, uint16) {
 		ASSERT_EQ(rotated, noRotate);
 	}
 	{
-		std::bitset< 16 > rotated = bit_rotate< std::uint16_t, RotateDirection::Right >(value, 17);
+		std::bitset< 16 > rotated =
+			bit_rotate< std::uint16_t, RotateDirection::Right >(value, 17); // NOLINT(*-magic-numbers)
 		ASSERT_EQ(rotated, rotateOne);
 	}
 	{
-		std::bitset< 16 > rotated = bit_rotate< std::uint16_t, RotateDirection::Right >(value, 18);
+		std::bitset< 16 > rotated =
+			bit_rotate< std::uint16_t, RotateDirection::Right >(value, 18); // NOLINT(*-magic-numbers)
 		ASSERT_EQ(rotated, rotateTwo);
 	}
 }

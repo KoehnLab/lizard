@@ -41,7 +41,7 @@ TEST_P(IndexTest, equality_and_hash) {
 	// Create all possible indices with the given space
 	for (std::size_t id = 0; id < std::numeric_limits< Index::Id >::max(); ++id) {
 		for (IndexType type : { IndexType::Annihilator, IndexType::Creator, IndexType::External }) {
-			indices.emplace_back(id, space, type);
+			indices.emplace_back(static_cast< Index::Id >(id), space, type);
 		}
 	}
 

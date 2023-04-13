@@ -14,7 +14,7 @@
 template< typename T > class SignedCast : public ::testing::Test {};
 
 using TestTypes = ::testing::Types< std::int8_t, std::int16_t, std::int32_t, std::int64_t >;
-TYPED_TEST_SUITE(SignedCast, TestTypes);
+TYPED_TEST_SUITE(SignedCast, TestTypes, );
 
 TYPED_TEST(SignedCast, casting) {
 	using SignedInt   = std::make_signed_t< TypeParam >;
@@ -33,7 +33,7 @@ TYPED_TEST(SignedCast, casting) {
 			// Ensure we test the max. value
 			signedInt = std::numeric_limits< SignedInt >::max();
 		} else {
-			signedInt = i * increment;
+			signedInt = static_cast< SignedInt >(i * increment);
 		}
 
 		SCOPED_TRACE("signedInt = " + std::to_string(signedInt) + " (iteration " + std::to_string(i) + " of "
@@ -48,7 +48,7 @@ TYPED_TEST(SignedCast, casting) {
 		if (signedInt > 0) {
 			// For negative numbers we require that the corresponding unsigned representation is bigger
 			// than any positive number that can be represented with the signed type.
-			signedInt *= -1;
+			signedInt   = static_cast< SignedInt >(signedInt * -1);
 			unsignedInt = lizard::signed_cast< UnsignedInt >(signedInt);
 			ASSERT_GT(unsignedInt, static_cast< UnsignedInt >(std::numeric_limits< decltype(signedInt) >::max()));
 			ASSERT_EQ(signedInt, lizard::signed_cast< SignedInt >(unsignedInt));
@@ -61,15 +61,15 @@ TYPED_TEST(SignedCast, casting) {
 	}
 
 	for (SignedInt i = 0; i <= iterations; ++i) {
+		constexpr UnsignedInt signedMax = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max());
 		if (i == iterations) {
 			// Ensure we test the max. value
 			unsignedInt = std::numeric_limits< UnsignedInt >::max();
 		} else if (i == 0) {
 			// Ensure we test the value just outside the range of the signed type
-			unsignedInt = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max()) + 1;
+			unsignedInt = signedMax + 1;
 		} else {
-			unsignedInt = static_cast< UnsignedInt >(std::numeric_limits< SignedInt >::max())
-						  + static_cast< UnsignedInt >(i * increment);
+			unsignedInt = static_cast< UnsignedInt >(signedMax + static_cast< UnsignedInt >(i * increment));
 		}
 
 		SCOPED_TRACE("unsignedInt = " + std::to_string(unsignedInt) + " (iteration " + std::to_string(i) + " of "
