@@ -23,68 +23,68 @@ FetchContent_Declare(
 	cmake_compiler_flags
 	GIT_REPOSITORY https://github.com/Krzmbrzl/cmake-compiler-flags.git
 	GIT_TAG        v2.0.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	antlr4
 	GIT_REPOSITORY https://github.com/antlr/antlr4.git
 	GIT_TAG        4.12.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 	SOURCE_SUBDIR  runtime/Cpp
 )
 FetchContent_Declare(
 	googletest
 	GIT_REPOSITORY https://github.com/google/googletest
 	GIT_TAG        release-1.12.1
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	googlebenchmark
 	GIT_REPOSITORY https://github.com/google/benchmark
 	GIT_TAG        v1.7.1
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	CLI11
 	GIT_REPOSITORY https://github.com/CLIUtils/CLI11
 	GIT_TAG        v2.3.2
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	fmt
 	GIT_REPOSITORY https://github.com/fmtlib/fmt
 	GIT_TAG        9.1.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	spdlog
 	GIT_REPOSITORY https://github.com/gabime/spdlog
 	GIT_TAG        v1.11.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	hedley
 	GIT_REPOSITORY https://github.com/nemequ/hedley
 	GIT_TAG        v15
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	iterators
 	GIT_REPOSITORY https://github.com/Krzmbrzl/iterators
 	GIT_TAG        v1.0.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	libperm
 	GIT_REPOSITORY https://github.com/Krzmbrzl/libPerm
 	GIT_TAG        v1.3.0
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
 	span_lite
 	GIT_REPOSITORY https://github.com/martinmoene/span-lite
 	GIT_TAG        v0.10.3
-	GIT_SHALLOW    true
+	GIT_SHALLOW    ON
 )
 
 # ANTLR options
