@@ -9,8 +9,8 @@
 #include "lizard/core/ExpressionOperator.hpp"
 #include "lizard/core/Node.hpp"
 #include "lizard/core/TreeTraversal.hpp"
+#include "lizard/core/TypeTraits.hpp"
 #include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
-#include "lizard/core/type_traits.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

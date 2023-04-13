@@ -15,8 +15,8 @@
 #include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
+#include "lizard/core/TypeTraits.hpp"
 #include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
-#include "lizard/core/type_traits.hpp"
 
 #include <cassert>
 #include <iostream>

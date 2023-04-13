@@ -11,7 +11,7 @@
 #include "lizard/core/Fraction.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/TreeTraversal.hpp"
-#include "lizard/core/type_traits.hpp"
+#include "lizard/core/TypeTraits.hpp"
 
 #include <cstdint>
 #include <iosfwd>
