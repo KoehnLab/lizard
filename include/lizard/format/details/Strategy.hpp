@@ -5,6 +5,10 @@
 
 #pragma once
 
-#include "details/Exceptions.hpp"
+#include "lizard/process/Strategy.hpp"
 
-#include "details/Strategy.hpp"
+#include <fmt/core.h>
+#include <fmt/ostream.h>
+
+
+template<> struct fmt::formatter< lizard::Strategy > : fmt::ostream_formatter {};
