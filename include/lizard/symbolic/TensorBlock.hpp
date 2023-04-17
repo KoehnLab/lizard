@@ -49,6 +49,11 @@ public:
 		-> std::tuple< TensorBlock, int >;
 
 	/**
+	 * Creates a "tensor" block of a scalar quantity
+	 */
+	TensorBlock(Tensor tensor);
+
+	/**
 	 * @returns The block's dimension (amount of slots)
 	 */
 	[[nodiscard]] auto dimension() const -> std::size_t;

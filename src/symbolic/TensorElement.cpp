@@ -20,6 +20,9 @@ TensorElement::TensorElement(TensorBlock block, std::vector< Index > indices)
 	assert(perm::computeCanonicalizationPermutation(indices, m_block.getSlotSymmetry())->isIdentity()); // NOLINT
 }
 
+TensorElement::TensorElement(Tensor tensor) : TensorElement(TensorBlock{ std::move(tensor), {}, {} }, {}) {
+}
+
 auto TensorElement::create(TensorBlock block, std::vector< Index > indices) -> std::tuple< TensorElement, int > {
 	// Assert that the index spaces in the block are compatible with the provided index list
 	assert(block.dimension() == indices.size()); // NOLINT

@@ -49,6 +49,11 @@ public:
 	[[nodiscard]] auto static create(Tensor tensor, std::vector< Index > indices, TensorBlock::SlotSymmetry symmetry)
 		-> std::tuple< TensorElement, int >;
 
+	/**
+	 * Constructs a "tensor" element that in reality is only a scalar
+	 */
+	TensorElement(Tensor tensor);
+
 
 	/**
 	 * @returns The TensorBlock this element belongs to

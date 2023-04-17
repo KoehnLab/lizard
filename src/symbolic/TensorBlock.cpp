@@ -18,6 +18,9 @@ TensorBlock::TensorBlock(Tensor tensor, IndexSlots indexSlots, SlotSymmetry symm
 	assert(perm::computeCanonicalizationPermutation(m_slots, m_symmetry)->isIdentity()); // NOLINT
 }
 
+TensorBlock::TensorBlock(Tensor tensor) : TensorBlock(std::move(tensor), {}, {}) {
+}
+
 auto TensorBlock::create(Tensor tensor, IndexSlots indexSlots, SlotSymmetry symmetry)
 	-> std::tuple< TensorBlock, int > {
 	int sign = perm::canonicalize(indexSlots, symmetry);
