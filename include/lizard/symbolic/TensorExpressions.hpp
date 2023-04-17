@@ -7,11 +7,13 @@
 
 #include "lizard/symbolic/Expression.hpp"
 #include "lizard/symbolic/ExpressionTree.hpp"
+#include "lizard/symbolic/NamedExpressionTree.hpp"
 #include "lizard/symbolic/TensorElement.hpp"
 
 namespace lizard {
 
-using TensorExpr     = Expression< TensorElement >;
-using TensorExprTree = ExpressionTree< TensorElement >;
+using TensorExpr          = Expression< TensorElement >;
+using TensorExprTree      = ExpressionTree< TensorElement >;
+using NamedTensorExprTree = NamedExpressionTree< TensorElement, TensorElement >;
 
 } // namespace lizard

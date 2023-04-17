@@ -57,7 +57,7 @@ public:
 	ExpressionTree()                           = default;
 	ExpressionTree(const ExpressionTree &)     = default;
 	ExpressionTree(ExpressionTree &&) noexcept = default;
-	~ExpressionTree()                          = default;
+	virtual ~ExpressionTree()                  = default;
 
 	auto operator=(const ExpressionTree &) -> ExpressionTree & = default;
 	auto operator=(ExpressionTree &&) noexcept -> ExpressionTree & = default;
