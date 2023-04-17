@@ -13,6 +13,8 @@
 
 namespace lizard {
 
+class IndexSpaceManager;
+
 /**
  * Base class for all processing strategies that are related to exporting a given set of tensor expressions
  * (where exporting is defined as anything that transports the information about the expressions to somewhere
@@ -29,11 +31,13 @@ public:
 	 * depends on the concrete strategy that is used and potentially also on parameters passed to that
 	 * strategy' constructor.
 	 *
+	 * @param manager The current IndexSpaceManager
 	 * @param expressions The list of tensor expressions that shall be exported
 	 *
 	 * @throws ExportException if something goes wrong during the export
 	 */
-	virtual void exportExpressions(nonstd::span< const TensorExprTree > expressions) = 0;
+	virtual void exportExpressions(nonstd::span< const TensorExprTree > expressions,
+								   const IndexSpaceManager &manager) = 0;
 };
 
 } // namespace lizard

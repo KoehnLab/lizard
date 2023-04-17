@@ -13,6 +13,8 @@
 
 namespace lizard {
 
+class IndexSpaceManager;
+
 /**
  * Base class for processing strategies that deal with importing a set of tensor expressions
  */
@@ -26,11 +28,13 @@ public:
 	 * Performs the actual step of (parsing and) importing the data. If the import depends on any
 	 * configuration (e.g. a file path), these will have been passed to the constructor of this strategy.
 	 *
+	 * @param manager The current IndexSpaceManager
 	 * @returns The list of imported expressions
 	 *
 	 * @throws ImportException if something goes wrong during the import
 	 */
-	[[nodiscard]] virtual auto importExpressions() const -> std::vector< TensorExprTree > = 0;
+	[[nodiscard]] virtual auto importExpressions(const IndexSpaceManager &manager) const
+		-> std::vector< TensorExprTree > = 0;
 };
 
 } // namespace lizard

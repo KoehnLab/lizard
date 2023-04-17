@@ -6,6 +6,7 @@
 #pragma once
 
 #include "lizard/process/Strategy.hpp"
+#include "lizard/symbolic/IndexSpaceManager.hpp"
 
 #include <memory>
 #include <vector>
@@ -21,7 +22,12 @@ namespace lizard {
  */
 class Processor {
 public:
-	Processor() = default;
+	Processor(IndexSpaceManager manager = {});
+
+	/**
+	 * Sets the IndexSpaceManager that shall be used during processing
+	 */
+	void setIndexSpaceManager(IndexSpaceManager manager);
 
 	/**
 	 * Queues the provided processing step to be executed after all steps that have been queued before
@@ -39,6 +45,7 @@ public:
 	void run() const;
 
 private:
+	IndexSpaceManager m_spaceManager;
 	std::vector< std::unique_ptr< Strategy > > m_processingSteps;
 };
 

@@ -12,6 +12,8 @@
 
 namespace lizard {
 
+class IndexSpaceManager;
+
 /**
  * Base class for all processing strategy that rewrite the expressions given to them in one
  * way or another
@@ -23,11 +25,12 @@ public:
 	/**
 	 * Performs the respective modifications on the provided tensor expressions
 	 *
+	 * @param manager The current IndexSpaceManager
 	 * @param expressions The expressions to work on
 	 *
 	 * @throws ProcessingException if something goes wrong during processing
 	 */
-	virtual void process(std::vector< TensorExprTree > &expressions) = 0;
+	virtual void process(std::vector< TensorExprTree > &expressions, const IndexSpaceManager &manager) = 0;
 };
 
 } // namespace lizard

@@ -18,6 +18,13 @@
 
 namespace lizard {
 
+Processor::Processor(IndexSpaceManager manager) : m_spaceManager(std::move(manager)) {
+}
+
+void Processor::setIndexSpaceManager(IndexSpaceManager manager) {
+	m_spaceManager = std::move(manager);
+}
+
 void Processor::enqueue(std::unique_ptr< Strategy > step) {
 	assert(step); // NOLINT
 
@@ -44,7 +51,7 @@ void Processor::run() const {
 			case StrategyType::Import: {
 				const auto &strategy = dynamic_cast< const ImportStrategy & >(current);
 
-				std::vector< TensorExprTree > newExpressions = strategy.importExpressions();
+				std::vector< TensorExprTree > newExpressions = strategy.importExpressions(m_spaceManager);
 
 				if (expressions.empty()) {
 					expressions = std::move(newExpressions);
@@ -57,7 +64,7 @@ void Processor::run() const {
 			case StrategyType::Export: {
 				auto &strategy = dynamic_cast< ExportStrategy & >(current);
 
-				strategy.exportExpressions(expressions);
+				strategy.exportExpressions(expressions, m_spaceManager);
 			} break;
 			case StrategyType::Optimization:
 			case StrategyType::SpinIntegration:
@@ -65,7 +72,7 @@ void Processor::run() const {
 			case StrategyType::Substitution: {
 				auto &strategy = dynamic_cast< RewriteStrategy & >(current);
 
-				strategy.process(expressions);
+				strategy.process(expressions, m_spaceManager);
 				break;
 			}
 		}
