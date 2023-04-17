@@ -41,7 +41,7 @@ void Processor::insert(std::unique_ptr< Strategy > step, std::size_t position) {
 }
 
 void Processor::run() const {
-	std::vector< TensorExprTree > expressions;
+	std::vector< NamedTensorExprTree > expressions;
 
 	for (const std::unique_ptr< Strategy > &currentPtr : m_processingSteps) {
 		assert(currentPtr); // NOLINT
@@ -51,7 +51,7 @@ void Processor::run() const {
 			case StrategyType::Import: {
 				const auto &strategy = dynamic_cast< const ImportStrategy & >(current);
 
-				std::vector< TensorExprTree > newExpressions = strategy.importExpressions(m_spaceManager);
+				std::vector< NamedTensorExprTree > newExpressions = strategy.importExpressions(m_spaceManager);
 
 				if (expressions.empty()) {
 					expressions = std::move(newExpressions);

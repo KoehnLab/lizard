@@ -34,7 +34,7 @@ public:
 	 * @throws ImportException if something goes wrong during the import
 	 */
 	[[nodiscard]] virtual auto importExpressions(const IndexSpaceManager &manager) const
-		-> std::vector< TensorExprTree > = 0;
+		-> std::vector< NamedTensorExprTree > = 0;
 };
 
 } // namespace lizard

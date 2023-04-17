@@ -30,7 +30,7 @@ public:
 	 *
 	 * @throws ProcessingException if something goes wrong during processing
 	 */
-	virtual void process(std::vector< TensorExprTree > &expressions, const IndexSpaceManager &manager) = 0;
+	virtual void process(std::vector< NamedTensorExprTree > &expressions, const IndexSpaceManager &manager) = 0;
 };
 
 } // namespace lizard

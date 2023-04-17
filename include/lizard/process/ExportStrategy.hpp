@@ -36,7 +36,7 @@ public:
 	 *
 	 * @throws ExportException if something goes wrong during the export
 	 */
-	virtual void exportExpressions(nonstd::span< const TensorExprTree > expressions,
+	virtual void exportExpressions(nonstd::span< const NamedTensorExprTree > expressions,
 								   const IndexSpaceManager &manager) = 0;
 };
 
