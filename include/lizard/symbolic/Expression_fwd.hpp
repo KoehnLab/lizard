@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include "lizard/core/ExpressionCardinality.hpp"
-#include "lizard/core/ExpressionOperator.hpp"
-#include "lizard/core/ExpressionType.hpp"
 #include "lizard/core/Fraction.hpp"
 #include "lizard/core/Numeric.hpp"
-#include "lizard/core/TreeTraversal.hpp"
 #include "lizard/core/TypeTraits.hpp"
+#include "lizard/symbolic/ExpressionCardinality.hpp"
+#include "lizard/symbolic/ExpressionOperator.hpp"
+#include "lizard/symbolic/ExpressionType.hpp"
+#include "lizard/symbolic/TreeTraversal.hpp"
 
 #include <cstdint>
 #include <iosfwd>
@@ -21,7 +21,7 @@
 namespace lizard {
 
 template< typename > class ExpressionTree;
-class Node;
+class TreeNode;
 
 namespace details {
 	template< typename, bool, TreeTraversal > class ExpressionTreeIteratorCore;
@@ -29,17 +29,17 @@ namespace details {
 
 /**
  * Class providing a rich API for accessing individual (sub-)expressions in an expression tree.
- * It should essentially be thought of as a wrapper class around a Node object that makes its
+ * It should essentially be thought of as a wrapper class around a TreeNode object that makes its
  * data accessible in a more straight forward manner.
  *
  * This version of the Expression class is the base class for expressions and incorporates all
- * operations that can be performed on a const Tree (and a const Node therein).
+ * operations that can be performed on a const Tree (and a const TreeNode therein).
  *
- * @see Node
+ * @see TreeNode
  */
 template< typename Variable > class ConstExpression {
 public:
-	ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree);
+	ConstExpression(Numeric nodeID, const TreeNode &node, const ExpressionTree< Variable > &tree);
 	ConstExpression(const ConstExpression &)     = default;
 	ConstExpression(ConstExpression &&) noexcept = default;
 	~ConstExpression()                           = default;
@@ -124,12 +124,12 @@ public:
 
 protected:
 	[[nodiscard]] auto nodeID() const -> const Numeric &;
-	[[nodiscard]] auto node() const -> const Node &;
+	[[nodiscard]] auto node() const -> const TreeNode &;
 	[[nodiscard]] auto tree() const -> const ExpressionTree< Variable > &;
 
 private:
 	Numeric m_nodeID;
-	const Node *m_node;
+	const TreeNode *m_node;
 	const ExpressionTree< Variable > *m_tree;
 
 	template< typename > friend class ExpressionTree;
@@ -145,18 +145,18 @@ private:
 
 /**
  * Class providing a rich API for accessing individual (sub-)expressions in an expression tree.
- * It should essentially be thought of as a wrapper class around a Node object that makes its
+ * It should essentially be thought of as a wrapper class around a TreeNode object that makes its
  * data accessible in a more straight forward manner.
  *
  * This subclass implements all functionality that can only be performed on mutable Trees and
  * mutable Nodes therein.
  *
  *
- * @see Node
+ * @see TreeNode
  */
 template< typename Variable > class Expression : public ConstExpression< Variable > {
 public:
-	Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree);
+	Expression(Numeric nodeID, TreeNode &node, ExpressionTree< Variable > &tree);
 
 	// Inherit constructors from base class
 	using ConstExpression< Variable >::ConstExpression;
@@ -207,7 +207,7 @@ public:
 	void substituteWith(const ConstExpression< Variable > &expr);
 
 protected:
-	[[nodiscard]] auto node() -> Node &;
+	[[nodiscard]] auto node() -> TreeNode &;
 
 	[[nodiscard]] auto tree() -> ExpressionTree< Variable > &;
 

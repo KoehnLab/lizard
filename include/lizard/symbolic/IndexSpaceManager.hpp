@@ -46,7 +46,7 @@ public:
 	 * @throws InvalidIndexSpaceException if there is no index space with the given name that was
 	 * registered with this manager
 	 */
-	[[nodiscard]] auto createFromName(std::string_view name) -> IndexSpace;
+	[[nodiscard]] auto createFromName(std::string_view name) const -> IndexSpace;
 
 private:
 	struct Pair {

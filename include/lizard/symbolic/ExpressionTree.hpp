@@ -5,16 +5,15 @@
 
 #pragma once
 
-#include "lizard/core/Expression.hpp"
-#include "lizard/core/ExpressionCardinality.hpp"
-#include "lizard/core/ExpressionException.hpp"
-#include "lizard/core/ExpressionOperator.hpp"
-#include "lizard/core/ExpressionType.hpp"
-#include "lizard/core/Expression_fwd.hpp"
-#include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
-#include "lizard/core/TreeTraversal.hpp"
-#include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
+#include "lizard/symbolic/Expression.hpp"
+#include "lizard/symbolic/ExpressionCardinality.hpp"
+#include "lizard/symbolic/ExpressionException.hpp"
+#include "lizard/symbolic/ExpressionOperator.hpp"
+#include "lizard/symbolic/ExpressionType.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
+#include "lizard/symbolic/TreeTraversal.hpp"
+#include "lizard/symbolic/details/ExpressionTreeIteratorCore.hpp"
 
 #include <algorithm>
 #include <cassert>
@@ -115,11 +114,11 @@ public:
 	void add(Variable var) { add(addVariable(std::move(var))); }
 
 	/**
-	 * Adds the given node to this tree. Nodes have to be added in the order in which they
+	 * Adds the given node to this tree. TreeNodes have to be added in the order in which they
 	 * would appear in postfix notation. Thus, when an expression of the form a*b shall be added,
 	 * the nodes have to be added in the order "a", "b", "*".
 	 */
-	void add(Node node) {
+	void add(TreeNode node) {
 		static_assert(static_cast< int >(ExpressionCardinality::Binary) == 2,
 					  "Cardinality is expected to numerically represent argument count");
 		if (m_consumableNodes.size() < static_cast< std::size_t >(node.getCardinality())) {
@@ -236,7 +235,7 @@ public:
 
 private:
 	std::vector< Variable > m_variables;
-	std::vector< Node > m_nodes;
+	std::vector< TreeNode > m_nodes;
 	std::stack< Numeric > m_consumableNodes;
 	Numeric m_rootID;
 	Numeric::numeric_type m_size = 0;
@@ -246,33 +245,34 @@ private:
 
 	/**
 	 * Adds the given Variable to this tree by appending the Variable to the variable store and creating a new
-	 * Node that points to this newly appended Variable. However, the Node itself is not added to the tree.
+	 * TreeNode that points to this newly appended Variable. However, the TreeNode itself is not added to the tree.
 	 *
-	 * @returns The created Node
+	 * @returns The created TreeNode
 	 */
-	auto addVariable(Variable var) -> Node {
+	auto addVariable(Variable var) -> TreeNode {
 		m_variables.push_back(std::move(var));
 
 		// Create an Expression object the references the variable
-		return Node{ ExpressionType::Variable, Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)) };
+		return TreeNode{ ExpressionType::Variable,
+						 Numeric(static_cast< Numeric::numeric_type >(m_variables.size() - 1)) };
 	}
 
 	/**
-	 * Substitutes the Node with the given ID with a new Node representing the provided Variable
+	 * Substitutes the TreeNode with the given ID with a new TreeNode representing the provided Variable
 	 * (which will be stored inside this tree).
 	 */
 	void substitute(const Numeric &nodeID, Variable variable) {
 		assert(nodeID < m_nodes.size());
 
 		// TODO: Mark space currently occupied by sub-tree under m_nodes[nodeID] as reusable
-		Node node = addVariable(variable);
+		TreeNode node = addVariable(variable);
 		node.setParent(m_nodes[nodeID].getParent());
 
 		m_nodes[nodeID] = std::move(node);
 	}
 
 	/**
-	 * Substitutes the Node with the given ID with the sub-tree iterated over by means of the provided
+	 * Substitutes the TreeNode with the given ID with the sub-tree iterated over by means of the provided
 	 * iterator pair. The iteration order is expected to be depth-first, post-order. Using any other
 	 * iteration / tree traversal order is not supported!
 	 */
@@ -321,7 +321,7 @@ private:
 		m_nodes[m_rootID].setParent(parentID);
 
 		if (parentID.isValid()) {
-			Node &parent = m_nodes[parentID];
+			TreeNode &parent = m_nodes[parentID];
 			if (parent.getLeftChild() == nodeID) {
 				parent.setLeftChild(std::move(m_rootID));
 			} else {

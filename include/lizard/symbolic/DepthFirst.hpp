@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
 
 #include <utility>
 
@@ -44,6 +44,7 @@ struct TraversalStep {
  * @param order The desired order of the traversal
  * @returns A TraversalStep object indicating the next node in the traversal
  */
-auto stepTraversal(const Node &node, const Numeric &currentID, const Numeric &previousID, Order order) -> TraversalStep;
+auto stepTraversal(const TreeNode &node, const Numeric &currentID, const Numeric &previousID, Order order)
+	-> TraversalStep;
 
 } // namespace lizard::depth_first

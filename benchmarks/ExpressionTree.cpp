@@ -3,13 +3,13 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
-#include <lizard/core/Expression.hpp>
-#include <lizard/core/ExpressionOperator.hpp>
-#include <lizard/core/ExpressionTree.hpp>
-#include <lizard/core/ExpressionType.hpp>
-#include <lizard/core/Node.hpp>
 #include <lizard/core/Numeric.hpp>
-#include <lizard/core/TreeTraversal.hpp>
+#include <lizard/symbolic/Expression.hpp>
+#include <lizard/symbolic/ExpressionOperator.hpp>
+#include <lizard/symbolic/ExpressionTree.hpp>
+#include <lizard/symbolic/ExpressionType.hpp>
+#include <lizard/symbolic/TreeNode.hpp>
+#include <lizard/symbolic/TreeTraversal.hpp>
 
 #include <cstdint>
 #include <limits>
@@ -31,8 +31,8 @@ using Expression     = ::lizard::Expression< int >;
 constexpr const std::int64_t minAddends = 8;
 constexpr const std::int64_t maxAddends = 1 << 20;
 
-auto buildTreeNodes(std::size_t addends) -> std::vector<::lizard::Node > {
-	std::vector<::lizard::Node > nodes;
+auto buildTreeNodes(std::size_t addends) -> std::vector<::lizard::TreeNode > {
+	std::vector<::lizard::TreeNode > nodes;
 
 	// Every addend will result in a literal node and then we have plus nodes between every addend (resulting in addends
 	// - 1 plus nodes)
@@ -42,23 +42,23 @@ auto buildTreeNodes(std::size_t addends) -> std::vector<::lizard::Node > {
 		return nodes;
 	}
 
-	nodes.push_back(::lizard::Node(numericDist(rng)));
+	nodes.push_back(::lizard::TreeNode(numericDist(rng)));
 
 	for (std::size_t i = 1; i < addends; ++i) {
-		nodes.push_back(lizard::Node(numericDist(rng)));
-		nodes.push_back(lizard::Node(::lizard::ExpressionOperator::Plus));
+		nodes.push_back(lizard::TreeNode(numericDist(rng)));
+		nodes.push_back(lizard::TreeNode(::lizard::ExpressionOperator::Plus));
 	}
 
 	return nodes;
 }
 
 auto buildTree(std::size_t addends) -> ExpressionTree {
-	std::vector<::lizard::Node > nodes = buildTreeNodes(addends);
+	std::vector<::lizard::TreeNode > nodes = buildTreeNodes(addends);
 
 	ExpressionTree tree;
 	tree.reserve(nodes.size());
 
-	for (::lizard::Node &currentExpr : nodes) {
+	for (::lizard::TreeNode &currentExpr : nodes) {
 		tree.add(std::move(currentExpr));
 	}
 
@@ -69,15 +69,15 @@ template< typename T > auto getData(std::size_t addends) -> T {
 	(void) addends;
 	static_assert(std::is_same_v< T, int >, "Use specialized func");
 }
-template<> auto getData< std::vector< lizard::Node > >(std::size_t addends) -> std::vector< lizard::Node > {
+template<> auto getData< std::vector< lizard::TreeNode > >(std::size_t addends) -> std::vector< lizard::TreeNode > {
 	return buildTreeNodes(addends);
 }
 template<> auto getData< ExpressionTree >(std::size_t addends) -> ExpressionTree {
 	return buildTree(addends);
 }
-template<> auto getData< std::list< lizard::Node > >(std::size_t addends) -> std::list< lizard::Node > {
-	std::vector< lizard::Node > vec = getData< decltype(vec) >(addends);
-	std::list< lizard::Node > list(vec.begin(), vec.end());
+template<> auto getData< std::list< lizard::TreeNode > >(std::size_t addends) -> std::list< lizard::TreeNode > {
+	std::vector< lizard::TreeNode > vec = getData< decltype(vec) >(addends);
+	std::list< lizard::TreeNode > list(vec.begin(), vec.end());
 
 	return list;
 }
@@ -111,7 +111,7 @@ template< typename Container > static void BM_expressionIteration(benchmark::Sta
 				}
 			}
 		} else {
-			for (const lizard::Node &current : data) {
+			for (const lizard::TreeNode &current : data) {
 				if (current.getType() == lizard::ExpressionType::Literal) {
 					sum += current.getLeftChild();
 				}
@@ -120,19 +120,19 @@ template< typename Container > static void BM_expressionIteration(benchmark::Sta
 		benchmark::DoNotOptimize(sum);
 	}
 
-	state.SetBytesProcessed(sizeof(::lizard::Node) * state.iterations() * state.range(0));
+	state.SetBytesProcessed(sizeof(::lizard::TreeNode) * state.iterations() * state.range(0));
 }
 
 static void BM_iterateExpressionVec(benchmark::State &state) {
-	std::vector<::lizard::Node > expressions = buildTreeNodes(state.range(0));
+	std::vector<::lizard::TreeNode > expressions = buildTreeNodes(state.range(0));
 
 	for (auto _ : state) {
-		for (const lizard::Node &current : expressions) {
+		for (const lizard::TreeNode &current : expressions) {
 			benchmark::DoNotOptimize(current);
 		}
 	}
 
-	state.SetBytesProcessed(sizeof(::lizard::Node) * state.iterations() * state.range(0));
+	state.SetBytesProcessed(sizeof(::lizard::TreeNode) * state.iterations() * state.range(0));
 }
 
 template< lizard::TreeTraversal iteration_order > static void BM_iterateExpressionTree(benchmark::State &state) {
@@ -145,23 +145,23 @@ template< lizard::TreeTraversal iteration_order > static void BM_iterateExpressi
 		}
 	}
 
-	state.SetBytesProcessed(sizeof(::lizard::Node) * state.iterations() * state.range(0));
+	state.SetBytesProcessed(sizeof(::lizard::TreeNode) * state.iterations() * state.range(0));
 }
 
 static void BM_iterateExpressionList(benchmark::State &state) {
-	std::list< lizard::Node > nodeList = getData< decltype(nodeList) >(state.range(0));
+	std::list< lizard::TreeNode > nodeList = getData< decltype(nodeList) >(state.range(0));
 
 	for (auto _ : state) {
-		for (const lizard::Node &current : nodeList) {
+		for (const lizard::TreeNode &current : nodeList) {
 			benchmark::DoNotOptimize(current);
 		}
 	}
 
-	state.SetBytesProcessed(sizeof(::lizard::Node) * state.iterations() * state.range(0));
+	state.SetBytesProcessed(sizeof(::lizard::TreeNode) * state.iterations() * state.range(0));
 }
 
 static void BM_indirectExpressionIteration(benchmark::State &state) {
-	std::vector< lizard::Node > expressions = getData< decltype(expressions) >(state.range(0));
+	std::vector< lizard::TreeNode > expressions = getData< decltype(expressions) >(state.range(0));
 	std::vector< unsigned int > indices;
 	indices.resize(expressions.size());
 	for (unsigned int i = 0; i < indices.size(); ++i) {
@@ -170,7 +170,7 @@ static void BM_indirectExpressionIteration(benchmark::State &state) {
 
 	for (auto _ : state) {
 		std::int64_t sum = 0;
-		for (const lizard::Node &current : expressions) {
+		for (const lizard::TreeNode &current : expressions) {
 			if (current.getType() == lizard::ExpressionType::Literal) {
 				sum += current.getLeftChild();
 			}
@@ -178,7 +178,7 @@ static void BM_indirectExpressionIteration(benchmark::State &state) {
 		benchmark::DoNotOptimize(sum);
 	}
 
-	state.SetBytesProcessed(sizeof(::lizard::Node) * state.iterations() * state.range(0));
+	state.SetBytesProcessed(sizeof(::lizard::TreeNode) * state.iterations() * state.range(0));
 }
 
 BENCHMARK(BM_iterateIntVec)->Range(minAddends, maxAddends)->Unit(benchmark::kMicrosecond);
@@ -194,10 +194,10 @@ BENCHMARK(BM_iterateExpressionTree< lizard::TreeTraversal::DepthFirst_InOrder >)
 	->Range(minAddends, maxAddends)
 	->Unit(benchmark::kMicrosecond);
 
-BENCHMARK(BM_expressionIteration< std::vector< lizard::Node > >)
+BENCHMARK(BM_expressionIteration< std::vector< lizard::TreeNode > >)
 	->Range(minAddends, maxAddends)
 	->Unit(benchmark::kMicrosecond);
-BENCHMARK(BM_expressionIteration< std::list< lizard::Node > >)
+BENCHMARK(BM_expressionIteration< std::list< lizard::TreeNode > >)
 	->Range(minAddends, maxAddends)
 	->Unit(benchmark::kMicrosecond);
 BENCHMARK(BM_expressionIteration< ExpressionTree >)->Range(minAddends, maxAddends)->Unit(benchmark::kMicrosecond);

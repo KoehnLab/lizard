@@ -3,14 +3,14 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
-#include "lizard/core/ExpressionTree.hpp"
-#include "lizard/core/Expression.hpp"
-#include "lizard/core/ExpressionException.hpp"
-#include "lizard/core/ExpressionOperator.hpp"
-#include "lizard/core/Node.hpp"
-#include "lizard/core/TreeTraversal.hpp"
+#include "lizard/symbolic/ExpressionTree.hpp"
 #include "lizard/core/TypeTraits.hpp"
-#include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
+#include "lizard/symbolic/Expression.hpp"
+#include "lizard/symbolic/ExpressionException.hpp"
+#include "lizard/symbolic/ExpressionOperator.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
+#include "lizard/symbolic/TreeTraversal.hpp"
+#include "lizard/symbolic/details/ExpressionTreeIteratorCore.hpp"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -62,11 +62,11 @@ auto treeFromPostfix(const std::string &postfixExpr) -> ExpressionTree< Variable
 		}
 
 		if (currentToken == "+") {
-			tree.add(Node(ExpressionOperator::Plus));
+			tree.add(TreeNode(ExpressionOperator::Plus));
 			continue;
 		}
 		if (currentToken == "*") {
-			tree.add(Node(ExpressionOperator::Times));
+			tree.add(TreeNode(ExpressionOperator::Times));
 			continue;
 		}
 		if (currentToken == "-") {
@@ -77,7 +77,7 @@ auto treeFromPostfix(const std::string &postfixExpr) -> ExpressionTree< Variable
 			int number                 = std::stoi(currentToken, &processedChars);
 			EXPECT_TRUE(processedChars == currentToken.size());
 
-			tree.add(Node(number));
+			tree.add(TreeNode(number));
 		} catch (const std::invalid_argument &) {
 			// currentToken is not a number -> it must be a variable
 			tree.add(Variable{ std::move(currentToken) });
@@ -256,9 +256,9 @@ protected:
 	};
 };
 
-class SubstitutionTest : public ::testing::TestWithParam< std::tuple< Node, std::string, int > > {
+class SubstitutionTest : public ::testing::TestWithParam< std::tuple< TreeNode, std::string, int > > {
 public:
-	using ParamPack = std::tuple< Node, std::string, int >;
+	using ParamPack = std::tuple< TreeNode, std::string, int >;
 
 protected:
 	// (1 * 2) + (a + b)
@@ -288,15 +288,15 @@ TEST(ExpressionTree, construction) {
 	 */
 	ExpressionTree< Variable > tree;
 
-	tree.add(Node(2));
+	tree.add(TreeNode(2));
 	ASSERT_TRUE(tree.isValid());
 	tree.add(Variable{ "x" });
 	ASSERT_FALSE(tree.isValid());
-	tree.add(Node(ExpressionOperator::Times));
+	tree.add(TreeNode(ExpressionOperator::Times));
 	ASSERT_TRUE(tree.isValid());
 
 	// Adding a binary operator when only a single argument is currently available should throw
-	ASSERT_THROW(tree.add(Node(ExpressionOperator::Plus)), ExpressionException);
+	ASSERT_THROW(tree.add(TreeNode(ExpressionOperator::Plus)), ExpressionException);
 
 	ExpressionTree< Variable > other = treeFromPostfix("2 x *");
 
@@ -356,7 +356,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 	}());
 	ASSERT_EQ(Core::afterRoot(tree, plusExpr), Core::end(tree));
 
-	// From binary, non-root Node
+	// From binary, non-root TreeNode
 	ASSERT_EQ(Core::at(tree, timesExpr).dereference(), timesExpr);
 	ASSERT_EQ(Core::after(tree, timesExpr).dereference(), [&]() {
 		switch (traversalOrder) {
@@ -390,7 +390,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 		HEDLEY_UNREACHABLE();
 	}());
 
-	// From non-root, leaf Node
+	// From non-root, leaf TreeNode
 	ASSERT_EQ(Core::at(tree, twoExpr).dereference(), twoExpr);
 	ASSERT_EQ(Core::after(tree, twoExpr).dereference(), [&]() {
 		switch (traversalOrder) {
@@ -414,7 +414,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_iteration_ancho
 		HEDLEY_UNREACHABLE();
 	}());
 
-	// From root, leaf Node
+	// From root, leaf TreeNode
 	decltype(tree) leafTree = treeFromPostfix("x");
 	ASSERT_EQ(Core::at(leafTree, leafTree.getRoot()).dereference(), leafTree.getRoot());
 	ASSERT_EQ(Core::after(leafTree, leafTree.getRoot()), Core::end(leafTree));
@@ -617,14 +617,14 @@ TEST(ExpressionTree, size) {
 TEST_P(SubstitutionTest, substitutions) {
 	ASSERT_EQ(evaluate(m_tree, m_variableDefinitions), 4);
 
-	const Node &replaceTarget                    = std::get< 0 >(GetParam());
+	const TreeNode &replaceTarget                = std::get< 0 >(GetParam());
 	const ExpressionTree< Variable > replacement = treeFromPostfix(std::get< 1 >(GetParam()));
 	const int expectedResult                     = std::get< 2 >(GetParam());
 
 	ASSERT_TRUE(replacement.isValid());
 
 	auto iter = std::find_if(m_tree.begin(), m_tree.end(), [&](const ConstExpression< Variable > &expr) {
-		// Compare only the Node itself (not its parent and not its children)
+		// Compare only the TreeNode itself (not its parent and not its children)
 		if (expr.getCardinality() != replaceTarget.getCardinality() || expr.getType() != replaceTarget.getType()) {
 			return false;
 		}
@@ -681,17 +681,18 @@ INSTANTIATE_TEST_SUITE_P(ExpressionTree, EvaluationTest,
 INSTANTIATE_TEST_SUITE_P(ExpressionTree, SubstitutionTest,
 						 ::testing::Values(
 							 // Replace literal "1" with "2 * 4"
-							 SubstitutionTest::ParamPack{ Node(1), "2 4 *", 18 },
+							 SubstitutionTest::ParamPack{ TreeNode(1), "2 4 *", 18 },
 							 // Replace variable "a" with "1 + 1"
-							 SubstitutionTest::ParamPack{ Node(ExpressionType::Variable, Numeric{ 0 }), "1 1 +", 8 },
+							 SubstitutionTest::ParamPack{ TreeNode(ExpressionType::Variable, Numeric{ 0 }), "1 1 +",
+														  8 },
 							 // Replace multiplication with "(4 + 2) * -1"
-							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "4 2 + -1 *", -4 },
+							 SubstitutionTest::ParamPack{ TreeNode(ExpressionOperator::Times), "4 2 + -1 *", -4 },
 							 // Replace multiplication with literal "7"
-							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "7", 9 },
+							 SubstitutionTest::ParamPack{ TreeNode(ExpressionOperator::Times), "7", 9 },
 
 							 // Replace literal "1" with variable "c"
-							 SubstitutionTest::ParamPack{ Node(1), "c", 12 },
+							 SubstitutionTest::ParamPack{ TreeNode(1), "c", 12 },
 							 // Replace variable "a" with variable "c"
-							 SubstitutionTest::ParamPack{ Node(ExpressionType::Variable, Numeric{ 0 }), "c", 11 },
+							 SubstitutionTest::ParamPack{ TreeNode(ExpressionType::Variable, Numeric{ 0 }), "c", 11 },
 							 // Replace multiplication with variable "c"
-							 SubstitutionTest::ParamPack{ Node(ExpressionOperator::Times), "c", 7 }));
+							 SubstitutionTest::ParamPack{ TreeNode(ExpressionOperator::Times), "c", 7 }));

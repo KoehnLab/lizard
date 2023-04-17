@@ -5,18 +5,17 @@
 
 #pragma once
 
-#include "Expression_fwd.hpp"
-
-#include "lizard/core/ExpressionCardinality.hpp"
-#include "lizard/core/ExpressionOperator.hpp"
-#include "lizard/core/ExpressionTree.hpp"
-#include "lizard/core/ExpressionType.hpp"
 #include "lizard/core/Fraction.hpp"
-#include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
 #include "lizard/core/TypeTraits.hpp"
-#include "lizard/core/details/ExpressionTreeIteratorCore.hpp"
+#include "lizard/symbolic/ExpressionCardinality.hpp"
+#include "lizard/symbolic/ExpressionOperator.hpp"
+#include "lizard/symbolic/ExpressionTree.hpp"
+#include "lizard/symbolic/ExpressionType.hpp"
+#include "lizard/symbolic/Expression_fwd.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
+#include "lizard/symbolic/details/ExpressionTreeIteratorCore.hpp"
 
 #include <cassert>
 #include <iostream>
@@ -30,7 +29,8 @@
 namespace lizard {
 
 template< typename Variable >
-ConstExpression< Variable >::ConstExpression(Numeric nodeID, const Node &node, const ExpressionTree< Variable > &tree)
+ConstExpression< Variable >::ConstExpression(Numeric nodeID, const TreeNode &node,
+											 const ExpressionTree< Variable > &tree)
 	: m_nodeID(std::move(nodeID)), m_node(&node), m_tree(&tree) {
 }
 
@@ -115,7 +115,7 @@ template< typename Variable > auto ConstExpression< Variable >::nodeID() const -
 	return m_nodeID;
 }
 
-template< typename Variable > auto ConstExpression< Variable >::node() const -> const Node & {
+template< typename Variable > auto ConstExpression< Variable >::node() const -> const TreeNode & {
 	return *m_node;
 }
 
@@ -150,7 +150,7 @@ auto operator!=(const ConstExpression< Variable > &lhs, const ConstExpression< V
 
 template< typename Variable >
 auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -> std::ostream & {
-	return stream << "Node " << expr.m_nodeID << ": " << *expr.m_node << " (" << expr.m_tree << ")";
+	return stream << "TreeNode " << expr.m_nodeID << ": " << *expr.m_node << " (" << expr.m_tree << ")";
 }
 
 
@@ -167,7 +167,7 @@ auto operator<<(std::ostream &stream, const ConstExpression< Variable > &expr) -
  */
 
 template< typename Variable >
-Expression< Variable >::Expression(Numeric nodeID, Node &node, ExpressionTree< Variable > &tree)
+Expression< Variable >::Expression(Numeric nodeID, TreeNode &node, ExpressionTree< Variable > &tree)
 	: ConstExpression< Variable >(std::move(nodeID), node, tree) {
 }
 
@@ -208,9 +208,9 @@ template< typename Variable > auto Expression< Variable >::getArg() -> Expressio
 	return { node().getLeftChild(), tree().m_nodes[node().getLeftChild()], tree() };
 }
 
-template< typename Variable > auto Expression< Variable >::node() -> Node & {
+template< typename Variable > auto Expression< Variable >::node() -> TreeNode & {
 	// NOLINTNEXTLINE(*-const-cast)
-	return const_cast< Node & >(ConstExpression< Variable >::node());
+	return const_cast< TreeNode & >(ConstExpression< Variable >::node());
 }
 
 template< typename Variable > auto Expression< Variable >::tree() -> ExpressionTree< Variable > & {

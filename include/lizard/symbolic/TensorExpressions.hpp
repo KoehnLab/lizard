@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "lizard/core/Expression.hpp"
-#include "lizard/core/ExpressionTree.hpp"
+#include "lizard/symbolic/Expression.hpp"
+#include "lizard/symbolic/ExpressionTree.hpp"
 #include "lizard/symbolic/TensorElement.hpp"
 
 namespace lizard {

@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "lizard/core/DepthFirst.hpp"
-#include "lizard/core/Expression_fwd.hpp"
-#include "lizard/core/Node.hpp"
 #include "lizard/core/Numeric.hpp"
-#include "lizard/core/TreeTraversal.hpp"
+#include "lizard/symbolic/DepthFirst.hpp"
+#include "lizard/symbolic/Expression_fwd.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
+#include "lizard/symbolic/TreeTraversal.hpp"
 
 #include <iostream>
 #include <iterator>
@@ -47,7 +47,7 @@ public:
 		std::conditional_t< isConst, const ExpressionTree< Variable > &, ExpressionTree< Variable > & >;
 	using tree_pointer    = std::add_pointer_t< std::remove_reference_t< tree_reference > >;
 	using expression_type = std::conditional_t< isConst, ConstExpression< Variable >, Expression< Variable > >;
-	using node_type       = std::conditional_t< isConst, const Node, Node >;
+	using node_type       = std::conditional_t< isConst, const TreeNode, TreeNode >;
 
 	/**
 	 * @param tree The ExpressionTree the created core shall be associated with
@@ -59,7 +59,7 @@ public:
 
 	/**
 	 * @param tree The ExpressionTree the created core shall be associated with
-	 * @param nodeID The ID of the referenced Node
+	 * @param nodeID The ID of the referenced TreeNode
 	 *
 	 * @returns An iterator core in a state that will dereference to the given node
 	 */
@@ -73,10 +73,10 @@ public:
 
 	/**
 	 * @param tree The ExpressionTree the created core shall be associated with
-	 * @param nodeID The ID of the referenced Node
+	 * @param nodeID The ID of the referenced TreeNode
 	 *
-	 * @returns An iterator core in a state that will dereference to the Node that will be visited after the provided
-	 * Node (if any)
+	 * @returns An iterator core in a state that will dereference to the TreeNode that will be visited after the
+	 * provided TreeNode (if any)
 	 */
 	static auto after(tree_reference tree, Numeric nodeID) -> ExpressionTreeIteratorCore {
 		ExpressionTreeIteratorCore core = at(tree, nodeID);
@@ -91,22 +91,23 @@ public:
 
 	/**
 	 * @param tree The ExpressionTree the created core shall be associated with
-	 * @param nodeID The ID of Node that shall be considered as root Node
+	 * @param nodeID The ID of TreeNode that shall be considered as root TreeNode
 	 *
-	 * @returns An iterator core in a state that will dereference to the Node has to be visited in order traverse the
-	 * tree represented by the given root Node (with its sub-tree) in the respective iteration order
+	 * @returns An iterator core in a state that will dereference to the TreeNode has to be visited in order traverse
+	 * the tree represented by the given root TreeNode (with its sub-tree) in the respective iteration order
 	 */
 	static auto fromRoot(tree_reference tree, Numeric nodeID) -> ExpressionTreeIteratorCore {
 		switch (iterationOrder) {
 			case TreeTraversal::DepthFirst_PreOrder:
-				// The root node is in fact the first Node to be visited
+				// The root node is in fact the first TreeNode to be visited
 				return at(tree, nodeID);
 			case TreeTraversal::DepthFirst_PostOrder:
 			case TreeTraversal::DepthFirst_InOrder:
-				// Start with a step that indicates that we are currently mid-traversal (coming from the Node's parent).
-				// Thus, calling increment() on such a state will go and find the Node that shall be visited next.
+				// Start with a step that indicates that we are currently mid-traversal (coming from the TreeNode's
+				// parent). Thus, calling increment() on such a state will go and find the TreeNode that shall be
+				// visited next.
 				assert(nodeID < tree.m_nodes.size());
-				const Node &node = tree.m_nodes[nodeID];
+				const TreeNode &node = tree.m_nodes[nodeID];
 				ExpressionTreeIteratorCore core(&tree, nodeID, node.getParent());
 				core.increment();
 				return core;
@@ -121,34 +122,34 @@ public:
 
 	/**
 	 * @param tree The ExpressionTree the created core shall be associated with
-	 * @param nodeID The ID of Node that shall be considered as root Node
+	 * @param nodeID The ID of TreeNode that shall be considered as root TreeNode
 	 *
-	 * @returns An iterator core in a state that will dereference to whatever Node (if any) is visited after the
-	 * sub-tree under (and including) the given root Node has been visited.
+	 * @returns An iterator core in a state that will dereference to whatever TreeNode (if any) is visited after the
+	 * sub-tree under (and including) the given root TreeNode has been visited.
 	 */
 	static auto afterRoot(tree_reference tree, Numeric nodeID) -> ExpressionTreeIteratorCore {
 		assert(nodeID < tree.m_nodes.size());
 
 		ExpressionTreeIteratorCore core = [&]() -> ExpressionTreeIteratorCore {
-			// Create a state that will lead to the first Node that is outside the given sub-tree upon increment
-			const Node &node = tree.m_nodes[nodeID];
+			// Create a state that will lead to the first TreeNode that is outside the given sub-tree upon increment
+			const TreeNode &node = tree.m_nodes[nodeID];
 			switch (iterationOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
-					// State: Either just finished visiting the Node's right sub-tree or - if there is no right
-					// sub-tree - just visited the current Node
+					// State: Either just finished visiting the TreeNode's right sub-tree or - if there is no right
+					// sub-tree - just visited the current TreeNode
 					return node.hasRightChild() ? at(tree, node.getRightChild()) : at(tree, nodeID);
 				case TreeTraversal::DepthFirst_PostOrder:
 					// State: just visited Root node
 					return at(tree, nodeID);
 				case TreeTraversal::DepthFirst_PreOrder:
 					if (node.hasRightChild()) {
-						// State: Just visited Node's right sub-tree
+						// State: Just visited TreeNode's right sub-tree
 						return at(tree, node.getRightChild());
 					} else if (node.hasLeftChild()) {
-						// State: Just visited Node's left sub-tree
+						// State: Just visited TreeNode's left sub-tree
 						return at(tree, node.getLeftChild());
 					} else {
-						// State: Just visited the Node itself
+						// State: Just visited the TreeNode itself
 						return at(tree, nodeID);
 					}
 			}
@@ -259,7 +260,7 @@ private:
 		bool done = false;
 
 		do {
-			const Node &currentNode = toNode(m_currentID);
+			const TreeNode &currentNode = toNode(m_currentID);
 
 			depth_first::TraversalStep step = depth_first::stepTraversal(currentNode, m_currentID, m_previousID,
 																		 orderToDepthFirstOrder(iterationOrder));

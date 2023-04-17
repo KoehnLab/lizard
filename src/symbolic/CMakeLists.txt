@@ -4,6 +4,7 @@
 # tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 add_library(lizard_symbolic STATIC
+	DepthFirst.cpp
 	EnumStreamOperators.cpp
 	Index.cpp
 	IndexSpace.cpp
@@ -12,9 +13,16 @@ add_library(lizard_symbolic STATIC
 	Tensor.cpp
 	TensorBlock.cpp
 	TensorElement.cpp
+	TreeNode.cpp
 )
 register_lizard_target(lizard_symbolic)
 
 add_library(lizard::symbolic ALIAS lizard_symbolic)
 
-target_link_libraries(lizard_symbolic PUBLIC lizard::core libperm::libperm nonstd::span-lite)
+target_link_libraries(lizard_symbolic
+	PUBLIC
+		lizard::core
+		libperm::libperm
+		nonstd::span-lite
+		iterators::iterators
+)

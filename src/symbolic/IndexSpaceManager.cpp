@@ -56,7 +56,7 @@ auto IndexSpaceManager::getData(const IndexSpace &space) const -> const IndexSpa
 	return iter->data;
 }
 
-auto IndexSpaceManager::createFromName(std::string_view name) -> IndexSpace {
+auto IndexSpaceManager::createFromName(std::string_view name) const -> IndexSpace {
 	auto iter = std::find_if(m_spaces.begin(), m_spaces.end(), FindByName{ name });
 
 	if (iter == m_spaces.end()) {

@@ -17,4 +17,4 @@ set(BENCHMARK_INSTALL_DOCS OFF CACHE INTERNAL "")
 FetchContent_MakeAvailable(googlebenchmark)
 
 add_executable(ExpressionTreeBenchmark ExpressionTree.cpp)
-target_link_libraries(ExpressionTreeBenchmark PRIVATE benchmark::benchmark lizard::core)
+target_link_libraries(ExpressionTreeBenchmark PRIVATE benchmark::benchmark lizard::symbolic)

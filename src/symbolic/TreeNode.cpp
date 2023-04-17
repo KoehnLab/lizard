@@ -3,12 +3,12 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
-#include "lizard/core/Node.hpp"
-#include "lizard/core/ExpressionCardinality.hpp"
-#include "lizard/core/ExpressionOperator.hpp"
-#include "lizard/core/ExpressionType.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/core/SignedCast.hpp"
+#include "lizard/symbolic/ExpressionCardinality.hpp"
+#include "lizard/symbolic/ExpressionOperator.hpp"
+#include "lizard/symbolic/ExpressionType.hpp"
 
 #include <cassert>
 #include <cmath>
@@ -19,23 +19,23 @@
 
 namespace lizard {
 
-Node::Node(ExpressionType type, Numeric left, Numeric right) noexcept
+TreeNode::TreeNode(ExpressionType type, Numeric left, Numeric right) noexcept
 	: m_flags(type), m_left(std::move(left)), m_right(std::move(right)) {
 	assert(type != ExpressionType::Literal || (left.isValid() && right.isValid()));   // NOLINT
 	assert(type != ExpressionType::Variable || (left.isValid() && !right.isValid())); // NOLINT
 	assert(type != ExpressionType::Operator || (left.isValid() && right.isValid()));  // NOLINT
 }
 
-Node::Node(ExpressionOperator operatorType) noexcept : m_flags(ExpressionType::Operator, operatorType) {
+TreeNode::TreeNode(ExpressionOperator operatorType) noexcept : m_flags(ExpressionType::Operator, operatorType) {
 }
 
-Node::Node(std::make_signed_t< Numeric::numeric_type > numerator,
-		   std::make_signed_t< Numeric::numeric_type > denominator) noexcept
+TreeNode::TreeNode(std::make_signed_t< Numeric::numeric_type > numerator,
+				   std::make_signed_t< Numeric::numeric_type > denominator) noexcept
 	: m_flags(ExpressionType::Literal), m_left(signed_cast< Numeric::numeric_type >(numerator)),
 	  m_right(signed_cast< Numeric::numeric_type >(denominator)) {
 }
 
-auto Node::getCardinality() const -> ExpressionCardinality {
+auto TreeNode::getCardinality() const -> ExpressionCardinality {
 	switch (m_flags.get< ExpressionType >()) {
 		case ExpressionType::Operator:
 			return ExpressionCardinality::Binary;
@@ -49,66 +49,66 @@ auto Node::getCardinality() const -> ExpressionCardinality {
 	HEDLEY_UNREACHABLE();
 }
 
-auto Node::getType() const -> ExpressionType {
+auto TreeNode::getType() const -> ExpressionType {
 	return m_flags.get< ExpressionType >();
 }
 
-auto Node::getOperator() const -> ExpressionOperator {
+auto TreeNode::getOperator() const -> ExpressionOperator {
 	assert(getType() == ExpressionType::Operator); // NOLINT
 
 	return m_flags.get< ExpressionOperator >();
 }
 
-auto Node::hasParent() const -> bool {
+auto TreeNode::hasParent() const -> bool {
 	return m_parentID.isValid();
 }
 
-auto Node::getParent() const -> Numeric {
+auto TreeNode::getParent() const -> Numeric {
 	return m_parentID;
 }
 
-void Node::setParent(Numeric parentID) {
+void TreeNode::setParent(Numeric parentID) {
 	m_parentID = std::move(parentID);
 }
 
-auto Node::hasLeftChild() const -> bool {
+auto TreeNode::hasLeftChild() const -> bool {
 	return getCardinality() != ExpressionCardinality::Nullary && m_left.isValid();
 }
 
-auto Node::getLeftChild() const -> Numeric {
+auto TreeNode::getLeftChild() const -> Numeric {
 	return m_left;
 }
 
-void Node::setLeftChild(Numeric childID) {
+void TreeNode::setLeftChild(Numeric childID) {
 	assert(getCardinality() != ExpressionCardinality::Nullary); // NOLINT
 	m_left = std::move(childID);
 }
 
-auto Node::hasRightChild() const -> bool {
+auto TreeNode::hasRightChild() const -> bool {
 	return getCardinality() == ExpressionCardinality::Binary && m_right.isValid();
 }
 
-auto Node::getRightChild() const -> Numeric {
+auto TreeNode::getRightChild() const -> Numeric {
 	return m_right;
 }
 
-void Node::setRightChild(Numeric childID) {
+void TreeNode::setRightChild(Numeric childID) {
 	assert(getCardinality() == ExpressionCardinality::Binary); // NOLINT
 	m_right = std::move(childID);
 }
 
 
 
-auto operator==(const Node &lhs, const Node &rhs) -> bool {
+auto operator==(const TreeNode &lhs, const TreeNode &rhs) -> bool {
 	return lhs.m_flags == rhs.m_flags && lhs.m_parentID == rhs.m_parentID && lhs.m_left == rhs.m_left
 		   && lhs.m_right == rhs.m_right;
 }
 
-auto operator!=(const Node &lhs, const Node &rhs) -> bool {
+auto operator!=(const TreeNode &lhs, const TreeNode &rhs) -> bool {
 	return !(lhs == rhs);
 }
 
-auto operator<<(std::ostream &stream, const Node &node) -> std::ostream & {
+auto operator<<(std::ostream &stream, const TreeNode &node) -> std::ostream & {
 	stream << node.getType() << "{ ";
 
 	switch (node.getType()) {

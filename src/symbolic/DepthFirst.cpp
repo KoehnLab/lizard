@@ -3,14 +3,14 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
-#include "lizard/core/DepthFirst.hpp"
-#include "lizard/core/ExpressionCardinality.hpp"
+#include "lizard/symbolic/DepthFirst.hpp"
+#include "lizard/symbolic/ExpressionCardinality.hpp"
 
 #include <hedley.h>
 
 namespace lizard::depth_first {
 
-auto stepTraversalPostOrder(const Node &node, const Numeric &currentID, const Numeric &previousNodeID)
+auto stepTraversalPostOrder(const TreeNode &node, const Numeric &currentID, const Numeric &previousNodeID)
 	-> TraversalStep {
 	TraversalStep step;
 
@@ -39,7 +39,8 @@ auto stepTraversalPostOrder(const Node &node, const Numeric &currentID, const Nu
 	return step;
 }
 
-auto stepTraversalPreOrder(const Node &node, const Numeric &currentID, const Numeric &previousNodeID) -> TraversalStep {
+auto stepTraversalPreOrder(const TreeNode &node, const Numeric &currentID, const Numeric &previousNodeID)
+	-> TraversalStep {
 	TraversalStep step;
 
 	const ExpressionCardinality cardinality = node.getCardinality();
@@ -65,7 +66,8 @@ auto stepTraversalPreOrder(const Node &node, const Numeric &currentID, const Num
 	return step;
 }
 
-auto stepTraversalInOrder(const Node &node, const Numeric &currentID, const Numeric &previousNodeID) -> TraversalStep {
+auto stepTraversalInOrder(const TreeNode &node, const Numeric &currentID, const Numeric &previousNodeID)
+	-> TraversalStep {
 	TraversalStep step;
 
 	const ExpressionCardinality cardinality = node.getCardinality();
@@ -93,7 +95,7 @@ auto stepTraversalInOrder(const Node &node, const Numeric &currentID, const Nume
 }
 
 
-auto stepTraversal(const Node &node, const Numeric &currentID, const Numeric &previousID, Order order)
+auto stepTraversal(const TreeNode &node, const Numeric &currentID, const Numeric &previousID, Order order)
 	-> TraversalStep {
 	switch (order) {
 		case Order::Post:

@@ -5,7 +5,6 @@
 
 add_executable(CoreTest
 	BitOperationsTest.cpp
-	ExpressionTreeTest.cpp
 	FractionTest.cpp
 	MetaprogrammingTest.cpp
 	MultiEnumTest.cpp
