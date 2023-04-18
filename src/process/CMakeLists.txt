@@ -8,7 +8,9 @@ add_library(lizard_process STATIC
 	ExportStrategy.cpp
 	ImportStrategy.cpp
 	OptimizationStrategy.cpp
+	ProcessingStep.cpp
 	Processor.cpp
+	ReporterConfig.cpp
 	SpinIntegrationStrategy.cpp
 	SpinSummationStrategy.cpp
 	Strategy.cpp
@@ -19,4 +21,4 @@ register_lizard_target(lizard_process)
 
 add_library(lizard::process ALIAS lizard_process)
 
-target_link_libraries(lizard_process PUBLIC lizard::symbolic lizard::core)
+target_link_libraries(lizard_process PUBLIC lizard::symbolic lizard::core spdlog::spdlog)

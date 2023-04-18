@@ -7,7 +7,10 @@
 
 #include "lizard/process/StrategyType.hpp"
 
+#include <spdlog/logger.h>
+
 #include <iosfwd>
+#include <memory>
 #include <string_view>
 
 namespace lizard {
@@ -34,6 +37,20 @@ public:
 	 * @returns The type of this strategy
 	 */
 	[[nodiscard]] virtual auto getType() const -> StrategyType = 0;
+
+	/**
+	 * Sets the logger that shall be used by this Strategy to report its progress
+	 */
+	void setLogger(std::shared_ptr< spdlog::logger > logger);
+
+protected:
+	/**
+	 * @returns The logger that shall be used by this strategy
+	 */
+	[[nodiscard]] auto getLogger() const -> spdlog::logger &;
+
+private:
+	std::shared_ptr< spdlog::logger > m_log;
 };
 
 auto operator<<(std::ostream &stream, const Strategy &strategy) -> std::ostream &;

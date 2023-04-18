@@ -5,8 +5,10 @@
 
 #pragma once
 
-#include "lizard/process/Strategy.hpp"
+#include "lizard/process/ProcessingStep.hpp"
 #include "lizard/symbolic/IndexSpaceManager.hpp"
+
+#include <spdlog/logger.h>
 
 #include <memory>
 #include <vector>
@@ -22,7 +24,7 @@ namespace lizard {
  */
 class Processor {
 public:
-	Processor(IndexSpaceManager manager = {});
+	Processor(IndexSpaceManager manager, std::shared_ptr< spdlog::logger > logger);
 
 	/**
 	 * Sets the IndexSpaceManager that shall be used during processing
@@ -30,23 +32,29 @@ public:
 	void setIndexSpaceManager(IndexSpaceManager manager);
 
 	/**
+	 * Sets the logger that shall be used by this processor
+	 */
+	void setLogger(std::shared_ptr< spdlog::logger > logger);
+
+	/**
 	 * Queues the provided processing step to be executed after all steps that have been queued before
 	 */
-	void enqueue(std::unique_ptr< Strategy > step);
+	void enqueue(ProcessingStep step);
 
 	/**
 	 * Inserts the provided processing step into the queue at the provided position
 	 */
-	void insert(std::unique_ptr< Strategy > step, std::size_t position);
+	void insert(ProcessingStep step, std::size_t position);
 
 	/**
 	 * Runs all queued processing steps (in order)
 	 */
-	void run() const;
+	void run();
 
 private:
 	IndexSpaceManager m_spaceManager;
-	std::vector< std::unique_ptr< Strategy > > m_processingSteps;
+	std::shared_ptr< spdlog::logger > m_log;
+	std::vector< ProcessingStep > m_steps;
 };
 
 } // namespace lizard
