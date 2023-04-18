@@ -28,12 +28,25 @@
 
 using namespace lizard;
 
+struct LogShutdown {
+	LogShutdown()                    = default;
+	LogShutdown(const LogShutdown &) = delete;
+	LogShutdown(LogShutdown &&)      = delete;
+
+	auto operator=(const LogShutdown &) -> LogShutdown & = delete;
+	auto operator=(LogShutdown &&) -> LogShutdown & = delete;
+
+	~LogShutdown() { spdlog::shutdown(); }
+};
+
 auto main(int argc, char **argv) -> int {
 	CLI::App app("A quantum chemistry application used for the symbolic derivation and manipulation of equations based "
 				 "on second quantization.");
 	app.set_version_flag("--version", std::string(LIZARD_VERSION_STR));
 
 	CLI11_PARSE(app, argc, argv);
+
+	LogShutdown shutdown;
 
 	std::shared_ptr< spdlog::logger > logger = spdlog::stdout_color_mt("lizard_main");
 	logger->set_pattern("[%^%l%$]: %v");
