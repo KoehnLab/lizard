@@ -15,7 +15,7 @@
 
 template< typename T, typename Char >
 struct fmt::formatter< T, Char, typename std::enable_if< std::is_base_of< std::exception, T >::value >::type >
-	: formatter< string_view > {
+	: fmt::formatter< string_view > {
 	[[nodiscard]] static auto getMessage(const std::exception &exception) -> std::string {
 		std::string message(exception.what());
 

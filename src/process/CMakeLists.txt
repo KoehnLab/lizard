@@ -22,4 +22,4 @@ register_lizard_target(lizard_process)
 
 add_library(lizard::process ALIAS lizard_process)
 
-target_link_libraries(lizard_process PUBLIC lizard::symbolic lizard::core spdlog::spdlog)
+target_link_libraries(lizard_process PUBLIC lizard::format lizard::symbolic lizard::core spdlog::spdlog)

@@ -7,6 +7,7 @@ include(setup_tools)
 
 add_subdirectory(core)
 add_subdirectory(symbolic)
+add_subdirectory(format)
 add_subdirectory(parser)
 add_subdirectory(process)
 

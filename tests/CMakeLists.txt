@@ -37,5 +37,6 @@ if (LIZARD_BUILD_TESTS)
 
 	add_subdirectory(core)
 	add_subdirectory(symbolic)
+	add_subdirectory(format)
 	add_subdirectory(parser)
 endif()

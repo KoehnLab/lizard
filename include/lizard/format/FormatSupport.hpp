@@ -5,6 +5,11 @@
 
 #pragma once
 
-#include "details/Exceptions.hpp"
+#include "lizard/format/details/Exceptions.hpp"
+#include "lizard/format/details/Strategy.hpp"
+#include "lizard/format/details/Tensor.hpp"
 
-#include "details/Strategy.hpp"
+#include "lizard/format/IndexFormatter.hpp"
+#include "lizard/format/IndexSpaceFormatter.hpp"
+#include "lizard/format/TensorBlockFormatter.hpp"
+#include "lizard/format/TensorElementFormatter.hpp"
