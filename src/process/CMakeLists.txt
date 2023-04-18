@@ -6,6 +6,7 @@
 add_library(lizard_process STATIC
 	EnumStreamOperators.cpp
 	ExportStrategy.cpp
+	HardcodedImport.cpp
 	ImportStrategy.cpp
 	OptimizationStrategy.cpp
 	ProcessingStep.cpp

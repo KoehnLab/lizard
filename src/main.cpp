@@ -4,6 +4,7 @@
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 #include "lizard/format/FormatSupport.hpp"
+#include "lizard/process/HardcodedImport.hpp"
 #include "lizard/process/ProcessingException.hpp"
 #include "lizard/process/ProcessingStep.hpp"
 #include "lizard/process/Processor.hpp"
@@ -68,6 +69,8 @@ auto main(int argc, char **argv) -> int {
 
 
 		// Import diagrams
+		// & Translate diagrams into algebraic expressions
+		processor.enqueue(ProcessingStep{ std::make_unique< HardcodedImport >(HardcodedImport::CCD_ENERGY) });
 
 		// Perform substitutions (e.g. density-fitting)
 
