@@ -17,6 +17,7 @@
 #include <libperm/ExplicitPermutation.hpp>
 #include <libperm/Permutation.hpp>
 #include <libperm/PrimitivePermutationGroup.hpp>
+#include <libperm/SpecialGroups.hpp>
 
 #include <fmt/format.h>
 
@@ -31,13 +32,12 @@ auto HardcodedImport::getName() const -> std::string_view {
 
 auto HardcodedImport::importExpressions(const IndexSpaceManager &manager) const -> std::vector< NamedTensorExprTree > {
 	// Define common symmetries. These definitions assume that the creators are listed before the annihilators
-	const perm::PrimitivePermutationGroup fourIdxAntisymmetry(
-		{ perm::ExplicitPermutation(perm::Cycle({ 0, 1 }), -1), perm::ExplicitPermutation(perm::Cycle({ 2, 3 }), -1) });
-	const perm::PrimitivePermutationGroup twoElectronIntSym = [&fourIdxAntisymmetry]() {
-		auto group = fourIdxAntisymmetry;
-		// Symmetry that exchanges creators with annihilators
-		group.addGenerator(perm::Permutation(perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 1, 3 } }))));
-		return group;
+	const perm::PrimitivePermutationGroup fourIdxAntisymmetry = perm::antisymmetricRanges({ { 0, 1 }, { 2, 3 } });
+	const perm::PrimitivePermutationGroup twoElectronIntSym   = [&fourIdxAntisymmetry]() {
+        auto group = fourIdxAntisymmetry;
+        // Symmetry that exchanges creators with annihilators
+        group.addGenerator(perm::ExplicitPermutation(perm::Cycle({ { 0, 2 }, { 1, 3 } })));
+        return group;
 	}();
 
 	switch (m_target) {

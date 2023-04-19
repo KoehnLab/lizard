@@ -77,7 +77,7 @@ FetchContent_Declare(
 FetchContent_Declare(
 	libperm
 	GIT_REPOSITORY https://github.com/Krzmbrzl/libPerm
-	GIT_TAG        v1.3.0
+	GIT_TAG        v1.4.0
 	GIT_SHALLOW    ON
 )
 FetchContent_Declare(
