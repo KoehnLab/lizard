@@ -111,6 +111,30 @@ template< typename Variable > auto ConstExpression< Variable >::size() const -> 
 	return computeSize();
 }
 
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::begin() const -> iterator_template< iteration_order > {
+	return cbegin< iteration_order >();
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::end() const -> iterator_template< iteration_order > {
+	return cend< iteration_order >();
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::cbegin() const -> iterator_template< iteration_order > {
+	return details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(tree(), nodeID());
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::cend() const -> iterator_template< iteration_order > {
+	return details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::afterRoot(tree(), nodeID());
+}
+
 template< typename Variable > auto ConstExpression< Variable >::nodeID() const -> const Numeric & {
 	return m_nodeID;
 }
@@ -230,6 +254,20 @@ template< typename Variable > void Expression< Variable >::substituteWith(const 
 	Iterator end(Core::afterRoot(expr.tree(), expr.nodeID()));
 
 	tree().substitute(this->nodeID(), begin, end);
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto Expression< Variable >::begin() -> iterator_template< iteration_order > {
+	return details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(
+		tree(), ConstExpression< Variable >::nodeID());
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto Expression< Variable >::end() -> iterator_template< iteration_order > {
+	return details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::afterRoot(
+		tree(), ConstExpression< Variable >::nodeID());
 }
 
 

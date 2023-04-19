@@ -176,32 +176,32 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::fromRoot(*this, m_rootID) };
+		return getRoot().template begin< iteration_order >();
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() -> iterator_template< false, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::end(*this) };
+		return getRoot().template end< iteration_order >();
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
+		return getRoot().template begin< iteration_order >();
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
+		return getRoot().template end< iteration_order >();
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cbegin() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::fromRoot(*this, m_rootID) };
+		return getRoot().template cbegin< iteration_order >();
 	}
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cend() const -> iterator_template< true, iteration_order > {
-		return { details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::end(*this) };
+		return getRoot().template cend< iteration_order >();
 	}
 
 	friend auto operator==(const ExpressionTree &lhs, const ExpressionTree &rhs) -> bool {

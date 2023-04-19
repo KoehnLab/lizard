@@ -13,6 +13,8 @@
 #include "lizard/symbolic/ExpressionType.hpp"
 #include "lizard/symbolic/TreeTraversal.hpp"
 
+#include <iterators/iterator_facade.hpp>
+
 #include <cstdint>
 #include <iosfwd>
 #include <type_traits>
@@ -24,7 +26,7 @@ template< typename > class ExpressionTree;
 class TreeNode;
 
 namespace details {
-	template< typename, bool, TreeTraversal > class ExpressionTreeIteratorCore;
+	template< typename Variable, bool isConst, TreeTraversal iterationOrder > class ExpressionTreeIteratorCore;
 }
 
 /**
@@ -38,7 +40,20 @@ namespace details {
  * @see TreeNode
  */
 template< typename Variable > class ConstExpression {
+protected:
 public:
+	template< TreeTraversal iteration_order >
+	using iterator_template =
+		iterators::iterator_facade< details::ExpressionTreeIteratorCore< Variable, true, iteration_order > >;
+
+	using const_post_order_iterator = iterator_template< TreeTraversal::DepthFirst_PostOrder >;
+	using const_pre_order_iterator  = iterator_template< TreeTraversal::DepthFirst_PreOrder >;
+	using const_in_order_iterator   = iterator_template< TreeTraversal::DepthFirst_InOrder >;
+
+	using iterator       = const_post_order_iterator;
+	using const_iterator = const_post_order_iterator;
+
+
 	ConstExpression(Numeric nodeID, const TreeNode &node, const ExpressionTree< Variable > &tree);
 	ConstExpression(const ConstExpression &)     = default;
 	ConstExpression(ConstExpression &&) noexcept = default;
@@ -115,6 +130,18 @@ public:
 	 */
 	[[nodiscard]] auto size() const -> Numeric::numeric_type;
 
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto begin() const -> iterator_template< iteration_order >;
+
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto end() const -> iterator_template< iteration_order >;
+
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto cbegin() const -> iterator_template< iteration_order >;
+
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto cend() const -> iterator_template< iteration_order >;
+
 	template< typename V >
 	friend auto operator==(const ConstExpression< V > &lhs, const ConstExpression< V > &rhs) -> bool;
 	template< typename V >
@@ -155,7 +182,19 @@ private:
  * @see TreeNode
  */
 template< typename Variable > class Expression : public ConstExpression< Variable > {
+protected:
+	template< TreeTraversal iteration_order >
+	using iterator_template =
+		iterators::iterator_facade< details::ExpressionTreeIteratorCore< Variable, false, iteration_order > >;
+
 public:
+	using post_order_iterator = iterator_template< TreeTraversal::DepthFirst_PostOrder >;
+	using pre_order_iterator  = iterator_template< TreeTraversal::DepthFirst_PreOrder >;
+	using in_order_iterator   = iterator_template< TreeTraversal::DepthFirst_InOrder >;
+
+	using iterator       = post_order_iterator;
+	using const_iterator = typename ConstExpression< Variable >::const_iterator;
+
 	Expression(Numeric nodeID, TreeNode &node, ExpressionTree< Variable > &tree);
 
 	// Inherit constructors from base class
@@ -205,6 +244,12 @@ public:
 	 * Replaces the represented expression with the provided one.
 	 */
 	void substituteWith(const ConstExpression< Variable > &expr);
+
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto begin() -> iterator_template< iteration_order >;
+
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto end() -> iterator_template< iteration_order >;
 
 protected:
 	[[nodiscard]] auto node() -> TreeNode &;

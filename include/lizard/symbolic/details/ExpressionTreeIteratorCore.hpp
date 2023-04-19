@@ -7,7 +7,6 @@
 
 #include "lizard/core/Numeric.hpp"
 #include "lizard/symbolic/DepthFirst.hpp"
-#include "lizard/symbolic/Expression_fwd.hpp"
 #include "lizard/symbolic/TreeNode.hpp"
 #include "lizard/symbolic/TreeTraversal.hpp"
 
