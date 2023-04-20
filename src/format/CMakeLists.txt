@@ -7,4 +7,4 @@ add_library(lizard_format INTERFACE)
 
 add_library(lizard::format ALIAS lizard_format)
 
-target_link_libraries(lizard_format INTERFACE lizard::core lizard::symbolic lizard::process fmt::fmt)
+target_link_libraries(lizard_format INTERFACE lizard::core lizard::symbolic lizard::process fmt::fmt iterators::iterators)

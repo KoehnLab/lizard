@@ -14,10 +14,13 @@
 #include "lizard/symbolic/TensorBlock.hpp"
 #include "lizard/symbolic/TensorElement.hpp"
 #include "lizard/symbolic/TensorExpressions.hpp"
+#include "lizard/symbolic/TreeNode.hpp"
 
 #include <fmt/core.h>
 
 #include <gtest/gtest.h>
+
+#include <vector>
 
 using namespace lizard;
 
@@ -28,21 +31,68 @@ using namespace lizard;
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 struct FormatTest : ::testing::Test {
-	FormatTest() {
-		IndexSpace occSpace(0, Spin::Both);
-		IndexSpace virtSpace(1, Spin::Both);
+	FormatTest() : m_tree(Tensor("R")) {
+		const IndexSpace occSpace(0, Spin::Both);
+		const IndexSpace virtSpace(1, Spin::Both);
+		const IndexSpace extSpace(2, Spin::Both);
 
-		IndexSpaceData occData("occ", 10, Spin::Both, { 'i', 'j', 'k', 'l' }, '\'');
-		IndexSpaceData virtData("virt", 100, Spin::Both, { 'a', 'b', 'c', 'd' }, '\'');
+		const IndexSpaceData occData("occ", 10, Spin::Both, { 'i', 'j', 'k', 'l' }, '\'');
+		const IndexSpaceData virtData("virt", 100, Spin::Both, { 'a', 'b', 'c', 'd' }, '\'');
+		const IndexSpaceData extData("ext", 150, Spin::None, { 'p', 'q', 'r', 's' }, '\'');
 
 		m_manager.registerSpace(occSpace, occData);
 		m_manager.registerSpace(virtSpace, virtData);
+		m_manager.registerSpace(extSpace, extData);
+
+		m_spaces  = { occSpace, virtSpace, extSpace };
+		m_indices = {
+			Index(0, occSpace, IndexType::Creator),
+			Index(1, virtSpace, IndexType::Annihilator),
+			Index(2, extSpace, IndexType::External),
+		};
+		m_tensors = { Tensor{ "A" }, Tensor{ "B" }, Tensor{ "C" } };
+		m_blocks  = {
+            TensorBlock(m_tensors[0]),
+            std::get< 0 >(TensorBlock::create(m_tensors[1], { m_spaces[0], m_spaces[1] })),
+            std::get< 0 >(TensorBlock::create(m_tensors[2], { m_spaces[2], m_spaces[0], m_spaces[1] })),
+		};
+		m_elements = {
+			TensorElement(m_tensors[0]),
+			std::get< 0 >(TensorElement::create(m_tensors[1], { m_indices[1], m_indices[2] }, {})),
+			std::get< 0 >(TensorElement::create(m_tensors[2], { m_indices[0], m_indices[2], m_indices[1] }, {})),
+		};
+
+		// Construct sample tree for something like
+		// R = 1/2 + A * ( -2/3 * C + B * C )
+		m_tree.add(TreeNode(1, 2));
+		m_tree.add(m_elements[0]);
+		m_tree.add(TreeNode(-2, 3));
+		m_tree.add(m_elements[2]);
+		m_tree.add(TreeNode(ExpressionOperator::Times));
+		m_tree.add(m_elements[1]);
+		m_tree.add(m_elements[2]);
+		m_tree.add(TreeNode(ExpressionOperator::Times));
+		m_tree.add(TreeNode(ExpressionOperator::Plus));
+		m_tree.add(TreeNode(ExpressionOperator::Times));
+		m_tree.add(TreeNode(ExpressionOperator::Plus));
 	}
 
-	[[nodiscard]] auto getManager() -> const IndexSpaceManager & { return m_manager; }
+	[[nodiscard]] auto getManager() const -> const IndexSpaceManager & { return m_manager; }
+	[[nodiscard]] auto getSpaces() const -> const std::vector< IndexSpace > & { return m_spaces; }
+	[[nodiscard]] auto getIndices() const -> const std::vector< Index > & { return m_indices; }
+	[[nodiscard]] auto getTensors() const -> const std::vector< Tensor > & { return m_tensors; }
+	[[nodiscard]] auto getBlocks() const -> const std::vector< TensorBlock > & { return m_blocks; }
+	[[nodiscard]] auto getElements() const -> const std::vector< TensorElement > & { return m_elements; }
+	[[nodiscard]] auto getTree() const -> const NamedTensorExprTree & { return m_tree; }
 
 private:
 	IndexSpaceManager m_manager;
+	std::vector< IndexSpace > m_spaces;
+	std::vector< Index > m_indices;
+	std::vector< Tensor > m_tensors;
+	std::vector< TensorBlock > m_blocks;
+	std::vector< TensorElement > m_elements;
+	NamedTensorExprTree m_tree;
 };
 
 
@@ -51,7 +101,9 @@ private:
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 TEST_F(FormatTest, Tensor) {
-	ASSERT_EQ(fmt::format("{}", Tensor("Dummy")), "Dummy");
+	for (const Tensor &current : getTensors()) {
+		ASSERT_EQ(fmt::format("{}", current), current.getName());
+	}
 }
 
 TEST_F(FormatTest, IndexSpace) {
@@ -92,6 +144,7 @@ TEST_F(FormatTest, Index) {
 }
 
 TEST_F(FormatTest, TensorBlock) {
+	// TODO: Indicate spin
 	const Tensor T("T");
 	const TensorBlock scalarBlock(T);
 
@@ -106,15 +159,43 @@ TEST_F(FormatTest, TensorBlock) {
 }
 
 TEST_F(FormatTest, TensorElement) {
+	// TODO: Indicate spin
 	const Tensor H("H");
 	const TensorElement scalarElement(H);
 
 	ASSERT_EQ(fmt::format("{}", TensorElementFormatter(scalarElement, getManager())), "H[]");
 
-	const Index occIdx(3, getManager().createFromName("occ"), IndexType::Creator);
-	const Index virtIdx(6, getManager().createFromName("virt"), IndexType::Annihilator);
+	IndexSpace alphaOccSpace = getManager().createFromName("occ");
+	alphaOccSpace.setSpin(Spin::Alpha);
+	IndexSpace alphaVirtSpace = getManager().createFromName("virt");
+	alphaVirtSpace.setSpin(Spin::Alpha);
 
-	const TensorElement element = std::get< 0 >(TensorElement::create(H, { occIdx, virtIdx }, {}));
+
+	const Index occIdx1(3, getManager().createFromName("occ"), IndexType::Creator);
+	const Index occIdx2(2, alphaOccSpace, IndexType::Creator);
+	const Index virtIdx1(6, getManager().createFromName("virt"), IndexType::Annihilator);
+	const Index virtIdx2(7, alphaVirtSpace, IndexType::Annihilator);
+
+	TensorElement element = std::get< 0 >(TensorElement::create(H, { occIdx1, virtIdx1 }, {}));
 
 	ASSERT_EQ(fmt::format("{}", TensorElementFormatter(element, getManager())), "H[l c']");
+
+	element = std::get< 0 >(TensorElement::create(H, { occIdx1, occIdx2, virtIdx1, virtIdx2 }, {}));
+
+	ASSERT_EQ(fmt::format("{}", TensorElementFormatter(element, getManager())), "H[l k c' d'](././)");
+}
+
+TEST_F(FormatTest, TensorExpr) {
+	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree().getRoot(), getManager())),
+			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+}
+
+TEST_F(FormatTest, TensorExprTree) {
+	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree(), getManager())),
+			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+}
+
+TEST_F(FormatTest, NamedTensorExprTree) {
+	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree(), getManager())),
+			  "R[] = 1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
 }

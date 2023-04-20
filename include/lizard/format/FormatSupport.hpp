@@ -11,5 +11,8 @@
 
 #include "lizard/format/IndexFormatter.hpp"
 #include "lizard/format/IndexSpaceFormatter.hpp"
+#include "lizard/format/NamedTensorExprTreeFormatter.hpp"
 #include "lizard/format/TensorBlockFormatter.hpp"
 #include "lizard/format/TensorElementFormatter.hpp"
+#include "lizard/format/TensorExprFormatter.hpp"
+#include "lizard/format/TensorExprTreeFormatter.hpp"
