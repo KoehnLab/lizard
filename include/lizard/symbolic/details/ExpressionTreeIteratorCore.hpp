@@ -36,7 +36,7 @@ namespace lizard::details {
  *
  * @see TreeTraversal
  */
-template< typename Variable, bool isConst, TreeTraversal iterationOrder = TreeTraversal::DepthFirst_PreOrder >
+template< typename Variable, bool isConst, TreeTraversal iterationOrder = TreeTraversal::DepthFirst_PostOrder >
 class ExpressionTreeIteratorCore {
 public:
 	using target_iterator_category = std::input_iterator_tag;
