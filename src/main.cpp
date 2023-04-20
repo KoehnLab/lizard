@@ -8,6 +8,7 @@
 #include "lizard/process/ProcessingException.hpp"
 #include "lizard/process/ProcessingStep.hpp"
 #include "lizard/process/Processor.hpp"
+#include "lizard/process/TextExport.hpp"
 #include "lizard/symbolic/IndexSpace.hpp"
 #include "lizard/symbolic/IndexSpaceData.hpp"
 #include "lizard/symbolic/IndexSpaceManager.hpp"
@@ -71,6 +72,8 @@ auto main(int argc, char **argv) -> int {
 		// Import diagrams
 		// & Translate diagrams into algebraic expressions
 		processor.enqueue(ProcessingStep{ std::make_unique< HardcodedImport >(HardcodedImport::CCD_ENERGY) });
+
+		processor.enqueue(ProcessingStep{ std::make_unique< TextExport >() });
 
 		// Perform substitutions (e.g. density-fitting)
 

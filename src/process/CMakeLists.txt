@@ -16,6 +16,7 @@ add_library(lizard_process STATIC
 	SpinSummationStrategy.cpp
 	Strategy.cpp
 	SubstitutionStrategy.cpp
+	TextExport.cpp
 )
 
 register_lizard_target(lizard_process)
