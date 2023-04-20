@@ -130,6 +130,11 @@ public:
 	 */
 	[[nodiscard]] auto size() const -> Numeric::numeric_type;
 
+	/**
+	 * @returns The ExpressionTree that contains this Expression
+	 */
+	[[nodiscard]] auto getContainingTree() const -> const ExpressionTree< Variable > &;
+
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< iteration_order >;
 

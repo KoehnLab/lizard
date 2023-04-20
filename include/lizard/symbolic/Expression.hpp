@@ -112,6 +112,12 @@ template< typename Variable > auto ConstExpression< Variable >::size() const -> 
 }
 
 template< typename Variable >
+auto ConstExpression< Variable >::getContainingTree() const -> const ExpressionTree< Variable > & {
+	assert(m_tree);
+	return *m_tree;
+}
+
+template< typename Variable >
 template< TreeTraversal iteration_order >
 auto ConstExpression< Variable >::begin() const -> iterator_template< iteration_order > {
 	return cbegin< iteration_order >();
