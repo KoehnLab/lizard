@@ -25,6 +25,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include <iostream>
+
 #include <hedley.h>
 
 using namespace ::lizard;
@@ -468,14 +470,16 @@ TEST_P(IterationTest, full_iteration) {
 
 template< TreeTraversal traversalOrder, bool isConst > void test_partial_iteration() {
 	/*
-	 *      +
+	 *      + --
+	 *     /    \
+	 *    *      *
+	 *   / \    / \
+	 *  2   +  3   4
 	 *     / \
-	 *    *   3
-	 *   / \
-	 *  2   x
+	 *    a   b
 	 */
 	std::conditional_t< isConst, const ExpressionTree< Variable >, ExpressionTree< Variable > > tree =
-		treeFromPostfix("2 x * 3 +");
+		treeFromPostfix("2 a b + * 3 4 * +");
 
 	using Core     = details::ExpressionTreeIteratorCore< Variable, isConst, traversalOrder >;
 	using Iterator = ExpressionTree< Variable >::iterator_template< isConst, traversalOrder >;
@@ -492,9 +496,9 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		expectedNodeVisits = []() -> std::vector< std::string > {
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
-					return { "2", "*", "x" };
+					return { "2", "*", "a", "+", "b" };
 				case TreeTraversal::DepthFirst_PostOrder:
-					return { "2", "x", "*", "3" };
+					return { "2", "a", "b", "+", "*", "3", "4", "*" };
 				case TreeTraversal::DepthFirst_PreOrder:
 					return {};
 			}
@@ -511,9 +515,9 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		expectedNodeVisits = []() -> std::vector< std::string > {
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
-					return { "2", "*", "x", "+" };
+					return { "2", "*", "a", "+", "b", "+" };
 				case TreeTraversal::DepthFirst_PostOrder:
-					return { "2", "x", "*", "3", "+" };
+					return { "2", "a", "b", "+", "*", "3", "4", "*", "+" };
 				case TreeTraversal::DepthFirst_PreOrder:
 					return { "+" };
 			}
@@ -522,7 +526,7 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 		EXPECT_EQ(visitedNodes, expectedNodeVisits);
 	}
 	{
-		// Iterate only over the sub-tree representing the multiplication
+		// Iterate only over the sub-tree representing the left multiplication
 		auto begin = Iterator(Core::fromRoot(tree, tree.getRoot().getLeftArg()));
 		auto end   = Iterator(Core::afterRoot(tree, tree.getRoot().getLeftArg()));
 
@@ -531,13 +535,13 @@ template< TreeTraversal traversalOrder, bool isConst > void test_partial_iterati
 			switch (traversalOrder) {
 				case TreeTraversal::DepthFirst_InOrder:
 					EXPECT_EQ(begin->getType(), ExpressionType::Literal);
-					return { "2", "*", "x" };
+					return { "2", "*", "a", "+", "b" };
 				case TreeTraversal::DepthFirst_PostOrder:
 					EXPECT_EQ(begin->getType(), ExpressionType::Literal);
-					return { "2", "x", "*" };
+					return { "2", "a", "b", "+", "*" };
 				case TreeTraversal::DepthFirst_PreOrder:
 					EXPECT_EQ(begin->getType(), ExpressionType::Operator);
-					return { "*", "2", "x" };
+					return { "*", "2", "+", "a", "b" };
 			}
 			HEDLEY_UNREACHABLE();
 		}();

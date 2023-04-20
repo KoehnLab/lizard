@@ -10,7 +10,6 @@
 #include "lizard/symbolic/TreeNode.hpp"
 #include "lizard/symbolic/TreeTraversal.hpp"
 
-#include <iostream>
 #include <iterator>
 
 #include <iterators/is_semantically_const.hpp>
@@ -124,6 +123,36 @@ public:
 	 * @param nodeID The ID of TreeNode that shall be considered as root TreeNode
 	 *
 	 * @returns An iterator core in a state that will dereference to whatever TreeNode (if any) is visited after the
+	 * rightmost leaf element of the given root TreeNode has been visited.
+	 */
+	static auto atRightMostLeaf(tree_reference tree, Numeric nodeID) -> ExpressionTreeIteratorCore {
+		assert(nodeID < tree.m_nodes.size());
+		const TreeNode *node = &tree.m_nodes[nodeID];
+
+		while (node->getCardinality() != ExpressionCardinality::Nullary) {
+			if (node->hasRightChild()) {
+				nodeID = node->getRightChild();
+			} else {
+				nodeID = node->getLeftChild();
+			}
+
+			assert(nodeID.isValid());
+			assert(nodeID < tree.m_nodes.size());
+			node = &tree.m_nodes[nodeID];
+		}
+
+		return at(tree, nodeID);
+	}
+
+	static auto atRightMostLeaf(tree_reference tree, const expression_type &expr) -> ExpressionTreeIteratorCore {
+		return atRightMostLeaf(tree, expr.nodeID());
+	}
+
+	/**
+	 * @param tree The ExpressionTree the created core shall be associated with
+	 * @param nodeID The ID of TreeNode that shall be considered as root TreeNode
+	 *
+	 * @returns An iterator core in a state that will dereference to whatever TreeNode (if any) is visited after the
 	 * sub-tree under (and including) the given root TreeNode has been visited.
 	 */
 	static auto afterRoot(tree_reference tree, Numeric nodeID) -> ExpressionTreeIteratorCore {
@@ -136,17 +165,17 @@ public:
 				case TreeTraversal::DepthFirst_InOrder:
 					// State: Either just finished visiting the TreeNode's right sub-tree or - if there is no right
 					// sub-tree - just visited the current TreeNode
-					return node.hasRightChild() ? at(tree, node.getRightChild()) : at(tree, nodeID);
+					return node.hasRightChild() ? atRightMostLeaf(tree, node.getRightChild()) : at(tree, nodeID);
 				case TreeTraversal::DepthFirst_PostOrder:
 					// State: just visited Root node
 					return at(tree, nodeID);
 				case TreeTraversal::DepthFirst_PreOrder:
 					if (node.hasRightChild()) {
-						// State: Just visited TreeNode's right sub-tree
-						return at(tree, node.getRightChild());
+						// State: Just finished visiting the TreeNode's right sub-tree
+						return atRightMostLeaf(tree, node.getRightChild());
 					} else if (node.hasLeftChild()) {
-						// State: Just visited TreeNode's left sub-tree
-						return at(tree, node.getLeftChild());
+						// State: Just finished visiting the TreeNode's left sub-tree
+						return atRightMostLeaf(tree, node.getLeftChild());
 					} else {
 						// State: Just visited the TreeNode itself
 						return at(tree, nodeID);
@@ -160,7 +189,7 @@ public:
 		return core;
 	}
 
-	static auto afterRoot(tree_reference tree, const ConstExpression< Variable > &expr) -> ExpressionTreeIteratorCore {
+	static auto afterRoot(tree_reference tree, const expression_type &expr) -> ExpressionTreeIteratorCore {
 		return afterRoot(tree, expr.nodeID());
 	}
 
@@ -188,8 +217,8 @@ public:
 	void increment() { skipToNext(); }
 
 	/**
-	 * This function will be called if the iterator constructed from this core is compared to another one (equality of
-	 * the cores determines equality of the iterators)
+	 * This function will be called if the iterator constructed from this core is compared to another one (equality
+	 * of the cores determines equality of the iterators)
 	 */
 	[[nodiscard]] auto equals(const ExpressionTreeIteratorCore &other) const -> bool {
 		return other.m_tree == m_tree && other.m_currentID == m_currentID && other.m_previousID == m_previousID;
@@ -307,7 +336,6 @@ static_assert(
 
 
 namespace iterators {
-
 // Specialize is_semantically_const for our ConstExpression type in order to let the iterators library
 // know that this type should be considered as a const type
 template< typename Variable >
