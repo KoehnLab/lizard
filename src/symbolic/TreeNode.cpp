@@ -35,6 +35,9 @@ TreeNode::TreeNode(std::make_signed_t< Numeric::numeric_type > numerator,
 	  m_right(signed_cast< Numeric::numeric_type >(denominator)) {
 }
 
+TreeNode::TreeNode(const Fraction &literal) noexcept : TreeNode(literal.getNumerator(), literal.getDenominator()) {
+}
+
 auto TreeNode::getCardinality() const -> ExpressionCardinality {
 	switch (m_flags.get< ExpressionType >()) {
 		case ExpressionType::Operator:

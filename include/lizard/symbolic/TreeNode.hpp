@@ -6,6 +6,7 @@
 #pragma once
 
 #include "lizard/core/ConstexprMath.hpp"
+#include "lizard/core/Fraction.hpp"
 #include "lizard/core/MultiEnum.hpp"
 #include "lizard/core/Numeric.hpp"
 #include "lizard/symbolic/ExpressionCardinality.hpp"
@@ -44,6 +45,10 @@ public:
 	 */
 	explicit TreeNode(std::make_signed_t< Numeric::numeric_type > numerator,
 					  std::make_signed_t< Numeric::numeric_type > denominator = 1) noexcept;
+	/**
+	 * Constructor for TreeNodes representing a literal value
+	 */
+	explicit TreeNode(const Fraction &literal) noexcept;
 
 	/**
 	 * @returns The cardinality of the expression represented by this TreeNode
