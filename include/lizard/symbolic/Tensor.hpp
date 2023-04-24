@@ -32,6 +32,11 @@ public:
 	 */
 	[[nodiscard]] auto getName() const -> std::string_view;
 
+	/**
+	 * @returns The multiplicity of the operator that this tensor corresponds to
+	 */
+	[[nodiscard]] auto getMultiplicity() const -> std::uint8_t;
+
 private:
 	std::string m_name;
 };
