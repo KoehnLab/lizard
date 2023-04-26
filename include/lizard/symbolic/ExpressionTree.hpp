@@ -205,30 +205,12 @@ public:
 	}
 
 	friend auto operator==(const ExpressionTree &lhs, const ExpressionTree &rhs) -> bool {
-		if (lhs.size() != rhs.size()) {
-			return false;
+		if (&lhs == &rhs) {
+			// lhs and rhs refer to the same tree instance and are therefore necessarily equal
+			return true;
 		}
 
-		auto lhsIt  = lhs.begin< TreeTraversal::DepthFirst_PreOrder >();
-		auto lhsEnd = lhs.begin< TreeTraversal::DepthFirst_PreOrder >();
-		auto rhsIt  = rhs.begin< TreeTraversal::DepthFirst_PreOrder >();
-		auto rhsEnd = rhs.begin< TreeTraversal::DepthFirst_PreOrder >();
-
-		while (lhsIt != lhsEnd && rhsIt != rhsEnd) {
-			if (*lhsIt != *rhsIt) {
-				return false;
-			}
-			if (lhsIt->getType() == ExpressionType::Variable) {
-				if (lhsIt->getVariable() != rhsIt->getVariable()) {
-					return false;
-				}
-			}
-
-			lhsIt++;
-			rhsIt++;
-		}
-
-		return lhsIt == lhsEnd && rhsIt == rhsEnd;
+		return lhs.getRoot() == rhs.getRoot();
 	}
 
 	friend auto operator!=(const ExpressionTree &lhs, const ExpressionTree &rhs) -> bool { return !(lhs == rhs); }

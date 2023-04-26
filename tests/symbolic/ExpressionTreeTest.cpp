@@ -305,6 +305,18 @@ TEST(ExpressionTree, construction) {
 	ASSERT_EQ(tree, other);
 }
 
+TEST(ExpressionTree, equality) {
+	const ExpressionTree< Variable > tree1 = treeFromPostfix("a b +");
+	const ExpressionTree< Variable > tree2 = treeFromPostfix("2");
+	const ExpressionTree< Variable > tree3 = treeFromPostfix("a d +");
+	const ExpressionTree< Variable > tree4 = treeFromPostfix("a b +");
+
+	ASSERT_EQ(tree1, tree1);
+	ASSERT_EQ(tree1, tree4);
+	ASSERT_NE(tree1, tree2);
+	ASSERT_NE(tree1, tree3);
+}
+
 
 template< TreeTraversal traversalOrder, bool isConst > void test_iteration_anchors() {
 	/*

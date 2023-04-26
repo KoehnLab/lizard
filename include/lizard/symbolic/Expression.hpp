@@ -170,7 +170,42 @@ template< typename Variable > auto ConstExpression< Variable >::computeSize() co
 
 template< typename Variable >
 auto operator==(const ConstExpression< Variable > &lhs, const ConstExpression< Variable > &rhs) -> bool {
-	return lhs.m_nodeID == rhs.m_nodeID && *lhs.m_node == *rhs.m_node && lhs.m_tree == rhs.m_tree;
+	auto lhsIt  = lhs.cbegin();
+	auto lhsEnd = lhs.cend();
+	auto rhsIt  = rhs.cbegin();
+	auto rhsEnd = rhs.cend();
+
+	while (lhsIt != lhsEnd && rhsIt != rhsEnd) {
+		const ConstExpression< Variable > &currentLHS = *lhsIt;
+		const ConstExpression< Variable > &currentRHS = *rhsIt;
+
+		if (currentLHS.getType() != currentRHS.getType()) {
+			return false;
+		}
+
+		switch (currentLHS.getType()) {
+			case ExpressionType::Literal:
+				if (currentLHS.getLiteral() != currentRHS.getLiteral()) {
+					return false;
+				}
+				break;
+			case ExpressionType::Operator:
+				if (currentLHS.getOperator() != currentRHS.getOperator()) {
+					return false;
+				}
+				break;
+			case ExpressionType::Variable:
+				if (currentLHS.getVariable() != currentRHS.getVariable()) {
+					return false;
+				}
+				break;
+		}
+
+		lhsIt++;
+		rhsIt++;
+	}
+
+	return lhsIt == lhsEnd && rhsIt == rhsEnd;
 }
 
 template< typename Variable >
