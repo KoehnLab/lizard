@@ -331,11 +331,13 @@ private:
 			} else {
 				parent.setRightChild(std::move(m_rootID));
 			}
+
+			// Restore old root
+			m_rootID = std::move(rootCopy);
 		}
 
 		// Restore previous state
 		m_consumableNodes = std::move(copy);
-		m_rootID          = std::move(rootCopy);
 	}
 };
 

@@ -663,6 +663,19 @@ TEST_P(SubstitutionTest, substitutions) {
 	EXPECT_EQ(m_tree.size(), expectedSize);
 }
 
+TEST(ExpressionTree, substituteRoot) {
+	ExpressionTree< Variable > tree                  = treeFromPostfix("a b +");
+	const ExpressionTree< Variable > replacementTree = treeFromPostfix("1");
+
+	ASSERT_EQ(tree.getRoot().getType(), ExpressionType::Operator);
+	ASSERT_EQ(tree.size(), static_cast< Numeric::numeric_type >(3));
+
+	tree.getRoot().substituteWith(replacementTree.getRoot());
+
+	ASSERT_EQ(tree.getRoot().getType(), ExpressionType::Literal);
+	ASSERT_EQ(tree.size(), static_cast< Numeric::numeric_type >(1));
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// TEST SUITE INSTANTIATIONS ////////////////////////////////////
