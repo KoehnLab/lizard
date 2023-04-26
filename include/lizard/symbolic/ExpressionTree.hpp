@@ -268,6 +268,10 @@ private:
 		TreeNode node = addVariable(variable);
 		node.setParent(m_nodes[nodeID].getParent());
 
+		const Numeric::numeric_type replacedSize =
+			ConstExpression< Variable >(nodeID, std::move(m_nodes[nodeID]), *this).size();
+		m_size = m_size + 1 - replacedSize;
+
 		m_nodes[nodeID] = std::move(node);
 	}
 

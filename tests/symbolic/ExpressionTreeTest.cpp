@@ -649,6 +649,8 @@ TEST_P(SubstitutionTest, substitutions) {
 
 	ASSERT_NE(iter, m_tree.end());
 
+	const std::size_t expectedSize = m_tree.size() + replacement.size() - iter->size();
+
 	if (replacement.getRoot().getType() == ExpressionType::Variable) {
 		// Substitute with a single Variable
 		iter->substituteWith(replacement.getRoot().getVariable());
@@ -658,6 +660,7 @@ TEST_P(SubstitutionTest, substitutions) {
 	}
 
 	EXPECT_EQ(evaluate(m_tree, m_variableDefinitions), expectedResult);
+	EXPECT_EQ(m_tree.size(), expectedSize);
 }
 
 
