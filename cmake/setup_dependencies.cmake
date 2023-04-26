@@ -86,6 +86,12 @@ FetchContent_Declare(
 	GIT_TAG        v0.10.3
 	GIT_SHALLOW    ON
 )
+FetchContent_Declare(
+	eigen3
+	GIT_REPOSITORY https://gitlab.com/libeigen/eigen
+	GIT_TAG        3.4.0
+	GIT_SHALLOW    ON
+)
 
 # ANTLR options
 set(DISABLE_WARNINGS   TRUE  CACHE INTERNAL "")
@@ -144,7 +150,15 @@ set(LIBPERM_EXAMPLES OFF CACHE INTERNAL "")
 set(LIBPERM_DISABLE_WARNINGS ON CACHE INTERNAL "")
 set(LIBPERM_WARNINGS_AS_ERRORS OFF CACHE INTERNAL "")
 
-FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators libperm span_lite)
+# Eigen options
+set(EIGEN_BUILD_DOC     OFF CACHE INTERNAL "")
+set(BUILD_TESTING       OFF CACHE INTERNAL "")
+set(EIGEN_BUILD_BLAS    OFF CACHE INTERNAL "")
+set(EIGEN_TEST_NOQT     ON  CACHE INTERNAL "")
+# Prevent Eigen from including any Fortran modules
+set(CMAKE_Fortran_COMPILER NOTFOUND CACHE INTERNAL "")
+
+FetchContent_MakeAvailable(cmake_compiler_flags antlr4 CLI11 fmt spdlog hedley iterators libperm span_lite eigen3)
 
 
 # Append the compiler flags CMake module to the module path
@@ -166,6 +180,11 @@ target_include_directories(antlr4_static PUBLIC "${ANTLR_SOURCE_DIR}/runtime/Cpp
 FetchContent_GetProperties(hedley SOURCE_DIR HEDLEY_SOURCE_DIR)
 include_directories("${HEDLEY_SOURCE_DIR}")
 
+# Add a custom Eigen target that ensures that we are not flooded with warnings due to Eigen's implementation
+add_library(lizard_eigen_interface INTERFACE)
+get_target_property(EIGEN_INCLUDES Eigen3::Eigen INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(lizard_eigen_interface SYSTEM INTERFACE ${EIGEN_INCLUDES})
+add_library(lizard::Eigen3 ALIAS lizard_eigen_interface)
 
 # Restore build type
 set(CMAKE_BUILD_TYPE ${GENERAL_BUILD_TYPE} CACHE INTERNAL "" FORCE)
