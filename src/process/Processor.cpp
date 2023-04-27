@@ -101,8 +101,7 @@ void Processor::run() {
 				exportStrategy.exportExpressions(expressions, m_spaceManager);
 			} break;
 			case StrategyType::Optimization:
-			case StrategyType::SpinIntegration:
-			case StrategyType::SpinSummation:
+			case StrategyType::SpinProcessing:
 			case StrategyType::Substitution: {
 				auto &rewriteStrategy = dynamic_cast< RewriteStrategy & >(strategy);
 

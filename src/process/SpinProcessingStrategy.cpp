@@ -3,12 +3,12 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
-#include "lizard/process/SpinIntegrationStrategy.hpp"
+#include "lizard/process/SpinProcessingStrategy.hpp"
 
 namespace lizard {
 
-auto SpinIntegrationStrategy::getType() const -> StrategyType {
-	return StrategyType::SpinIntegration;
+auto SpinProcessingStrategy::getType() const -> StrategyType {
+	return StrategyType::SpinProcessing;
 }
 
 } // namespace lizard

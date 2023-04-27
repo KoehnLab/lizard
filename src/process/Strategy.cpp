@@ -34,11 +34,8 @@ auto operator<<(std::ostream &stream, const Strategy &strategy) -> std::ostream 
 		case StrategyType::Optimization:
 			stream << "Opt-";
 			break;
-		case StrategyType::SpinIntegration:
-			stream << "SpinInt-";
-			break;
-		case StrategyType::SpinSummation:
-			stream << "SpinSum-";
+		case StrategyType::SpinProcessing:
+			stream << "SpinProcess-";
 			break;
 		case StrategyType::Substitution:
 			stream << "Subst-";

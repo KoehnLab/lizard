@@ -14,8 +14,7 @@ enum class StrategyType {
 	Export,
 	Substitution,
 	Optimization,
-	SpinIntegration,
-	SpinSummation,
+	SpinProcessing,
 };
 
 auto operator<<(std::ostream &stream, StrategyType type) -> std::ostream &;

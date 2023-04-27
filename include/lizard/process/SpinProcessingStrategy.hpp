@@ -11,11 +11,12 @@
 namespace lizard {
 
 /**
- * Base class for all processing strategies that deal with spin integration
+ * Base class for all processing strategies that deal with spin processing
+ * (e.g. spin integration and spin summation)
  */
-class SpinIntegrationStrategy : public RewriteStrategy {
+class SpinProcessingStrategy : public RewriteStrategy {
 public:
-	SpinIntegrationStrategy() = default;
+	SpinProcessingStrategy() = default;
 
 	[[nodiscard]] auto getType() const -> StrategyType final;
 };

@@ -19,10 +19,8 @@ auto operator<<(std::ostream &stream, StrategyType type) -> std::ostream & {
 			return stream << "Import";
 		case StrategyType::Optimization:
 			return stream << "Optimization";
-		case StrategyType::SpinIntegration:
-			return stream << "Spin integration";
-		case StrategyType::SpinSummation:
-			return stream << "Spin summation";
+		case StrategyType::SpinProcessing:
+			return stream << "Spin processing";
 		case StrategyType::Substitution:
 			return stream << "Substitution";
 	}

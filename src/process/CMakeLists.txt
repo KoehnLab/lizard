@@ -12,8 +12,7 @@ add_library(lizard_process STATIC
 	ProcessingStep.cpp
 	Processor.cpp
 	ReporterConfig.cpp
-	SpinIntegrationStrategy.cpp
-	SpinSummationStrategy.cpp
+	SpinProcessingStrategy.cpp
 	Strategy.cpp
 	SubstitutionStrategy.cpp
 	TextExport.cpp
