@@ -25,6 +25,27 @@ public:
 	 */
 	using Id = std::uint8_t;
 
+	/**
+	 * Helper class that can act as a unary predicate to find the provided Index by its "name",
+	 * which consists of its ID and the ID of the IndexSpace it belongs to.
+	 * Thus, the name explicitly does NOT depend on the index's type or the respective space's spin.
+	 */
+	class FindByName {
+	public:
+		FindByName(const Index &idx) : m_idx(idx) {}
+
+		/**
+		 * @returns Whether the provided Index matches the search criteria
+		 */
+		[[nodiscard]] auto operator()(const Index &other) -> bool {
+			return m_idx.getID() == other.getID() && IndexSpace::FindByID{ m_idx.getSpace() }(other.getSpace());
+		}
+
+	private:
+		const Index &m_idx;
+	};
+
+
 	Index() = default;
 	Index(Id id, IndexSpace space, IndexType type);
 

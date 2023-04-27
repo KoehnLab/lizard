@@ -21,6 +21,23 @@ class IndexSpace {
 public:
 	using Id = std::uint8_t;
 
+	/**
+	 * Helper class that can be used as a unary predicate to find the provided IndexSpace by its ID.
+	 * That means that the search explicitly ignores the space's spin.
+	 */
+	class FindByID {
+	public:
+		FindByID(const IndexSpace &space) : m_id(space.getID()) {}
+
+		/**
+		 * @returns Whether the given IndexSpace satisfies the search criteria
+		 */
+		[[nodiscard]] auto operator()(const IndexSpace &other) const -> bool { return m_id == other.getID(); }
+
+	private:
+		IndexSpace::Id m_id;
+	};
+
 	IndexSpace() = default;
 	IndexSpace(Id identifier, Spin spin);
 

@@ -5,23 +5,26 @@
 
 #include "lizard/symbolic/IndexSpaceManager.hpp"
 #include "lizard/core/Utils.hpp"
+#include "lizard/symbolic/IndexSpace.hpp"
 #include "lizard/symbolic/InvalidIndexSpaceException.hpp"
 
 #include <algorithm>
 
 namespace lizard {
 
-class FindBySpace {
+class IndexSpaceManager::FindBySpace {
 public:
 	FindBySpace(IndexSpace space) : m_space(std::move(space)) {}
 
-	auto operator()(const IndexSpaceManager::Pair &pair) const -> bool { return pair.space.getID() == m_space.getID(); }
+	auto operator()(const IndexSpaceManager::Pair &pair) const -> bool {
+		return IndexSpace::FindByID{ pair.space }(m_space);
+	}
 
 private:
 	IndexSpace m_space;
 };
 
-class FindByName {
+class IndexSpaceManager::FindByName {
 public:
 	FindByName(std::string_view name) : m_name(std::move(name)) {}
 

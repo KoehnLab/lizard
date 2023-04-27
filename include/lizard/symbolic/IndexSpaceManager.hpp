@@ -53,8 +53,10 @@ private:
 		IndexSpace space;
 		IndexSpaceData data;
 	};
-	friend class FindBySpace;
-	friend class FindByName;
+	class FindBySpace;
+	class FindByName;
+	friend class IndexSpaceManager::FindBySpace;
+	friend class IndexSpaceManager::FindByName;
 
 	std::vector< Pair > m_spaces;
 };
