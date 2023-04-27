@@ -69,4 +69,16 @@ auto IndexSpaceManager::createFromName(std::string_view name) const -> IndexSpac
 	return iter->space;
 }
 
+auto IndexSpaceManager::createFromLabel(char label) const -> IndexSpace {
+	for (const Pair &current : m_spaces) {
+		auto iter = std::find(current.data.getLabels().begin(), current.data.getLabels().end(), label);
+
+		if (iter != current.data.getLabels().end()) {
+			return current.space;
+		}
+	}
+
+	throw InvalidIndexSpaceException("No index space known for label '" + toString(label) + "'");
+}
+
 } // namespace lizard

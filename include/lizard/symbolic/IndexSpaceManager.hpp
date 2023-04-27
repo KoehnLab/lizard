@@ -48,6 +48,15 @@ public:
 	 */
 	[[nodiscard]] auto createFromName(std::string_view name) const -> IndexSpace;
 
+	/**
+	 * @param name The label of an index in the space to create
+	 * @returns A new instance of the index space that an Index with the given label will be in
+	 *
+	 * @throws InvalidIndexSpaceException if there is no index space for the given label that was
+	 * registered with this manager
+	 */
+	[[nodiscard]] auto createFromLabel(char label) const -> IndexSpace;
+
 private:
 	struct Pair {
 		IndexSpace space;

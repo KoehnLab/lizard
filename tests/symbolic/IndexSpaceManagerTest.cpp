@@ -48,8 +48,8 @@ TEST(IndexSpaceManager, query) {
 	IndexSpace space1(0, Spin::Alpha);
 	IndexSpace space2(1, Spin::Both);
 
-	IndexSpaceData data1("space1", 2, Spin::Both, {});
-	IndexSpaceData data2("space2", 2, Spin::Both, {});
+	IndexSpaceData data1("space1", 2, Spin::Both, { 'a', 'b' });
+	IndexSpaceData data2("space2", 2, Spin::Both, { 'i', 'j' });
 
 	IndexSpaceData dummyData({}, {}, {}, {});
 	ASSERT_THROW(dummyData = manager.getData(space1), InvalidIndexSpaceException);
@@ -65,4 +65,7 @@ TEST(IndexSpaceManager, query) {
 	ASSERT_EQ(manager.createFromName(data1.getName()).getSpin(), Spin::Both);
 	ASSERT_EQ(manager.createFromName(data1.getName()).getID(), space1.getID());
 	ASSERT_EQ(manager.createFromName(data2.getName()), space2);
+
+	ASSERT_EQ(manager.createFromLabel('a'), manager.createFromName("space1"));
+	ASSERT_EQ(manager.createFromLabel('i'), manager.createFromName("space2"));
 }
