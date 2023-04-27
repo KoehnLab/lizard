@@ -20,9 +20,9 @@ auto Tensor::getName() const -> std::string_view {
 	return m_name;
 }
 
-auto Tensor::getMultiplicity() const -> std::uint8_t { // NOLINT (*-convert-member-functions-to-static)
+auto Tensor::getSpinProjection() const -> int { // NOLINT (*-convert-member-functions-to-static)
 	// For now, all tensors are assumed to belong to singlet operators
-	return 1;
+	return 0;
 }
 
 auto operator==(const Tensor &lhs, const Tensor &rhs) -> bool {

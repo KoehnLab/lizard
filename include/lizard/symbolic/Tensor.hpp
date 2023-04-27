@@ -33,9 +33,10 @@ public:
 	[[nodiscard]] auto getName() const -> std::string_view;
 
 	/**
-	 * @returns The multiplicity of the operator that this tensor corresponds to
+	 * @returns The spin projection of the operator this tensor belongs to. The spin projection number
+	 * used here, is the integer representation of the typical M_S value by multiplying that by two.
 	 */
-	[[nodiscard]] auto getMultiplicity() const -> std::uint8_t;
+	[[nodiscard]] auto getSpinProjection() const -> int;
 
 private:
 	std::string m_name;
