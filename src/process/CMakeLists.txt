@@ -12,6 +12,8 @@ add_library(lizard_process STATIC
 	ProcessingStep.cpp
 	Processor.cpp
 	ReporterConfig.cpp
+	SpinIntegration.cpp
+	SpinLSE.cpp
 	SpinProcessingStrategy.cpp
 	Strategy.cpp
 	SubstitutionStrategy.cpp
@@ -22,4 +24,15 @@ register_lizard_target(lizard_process)
 
 add_library(lizard::process ALIAS lizard_process)
 
-target_link_libraries(lizard_process PUBLIC lizard::format lizard::symbolic lizard::core spdlog::spdlog)
+target_link_libraries(lizard_process
+	PUBLIC
+		lizard::format
+		lizard::symbolic
+		lizard::core
+		spdlog::spdlog
+	PRIVATE
+		lizard::Eigen3
+)
+
+add_library(lizard_process_private_includes INTERFACE)
+target_include_directories(lizard_process_private_includes INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")

@@ -8,6 +8,7 @@
 #include "lizard/process/ProcessingException.hpp"
 #include "lizard/process/ProcessingStep.hpp"
 #include "lizard/process/Processor.hpp"
+#include "lizard/process/SpinIntegration.hpp"
 #include "lizard/process/TextExport.hpp"
 #include "lizard/symbolic/IndexSpace.hpp"
 #include "lizard/symbolic/IndexSpaceData.hpp"
@@ -81,6 +82,9 @@ auto main(int argc, char **argv) -> int {
 		// -> At least: strength-reduction
 
 		// Spin-integration
+		processor.enqueue(ProcessingStep{ std::make_unique< SpinIntegration >() });
+
+		processor.enqueue(ProcessingStep{ std::make_unique< TextExport >() });
 
 		// If restricted orbitals: Spin summation
 
