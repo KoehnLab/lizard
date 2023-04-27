@@ -204,8 +204,8 @@ namespace details {
 
 	template< typename TreeType > void addLiteral(TreeType &tree, std::string_view token) {
 		int value                     = 0;
-		std::from_chars_result result = std::from_chars(token.begin(), token.end(), value);
-		if (result.ptr != token.end()) {
+		std::from_chars_result result = std::from_chars(token.data(), token.data() + token.size(), value);
+		if (result.ptr != (token.data() + token.size())) {
 			throw std::runtime_error(fmt::format("Failed to parse '{}' as an integer number", token));
 		}
 
