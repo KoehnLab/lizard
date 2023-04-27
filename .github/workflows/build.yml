@@ -36,7 +36,9 @@ jobs:
                   submodules: 'recursive'
 
             - name: Get CMake
-              uses: lukka/get-cmake@v3.20.1
+              uses: lukka/get-cmake@latest
+              with:
+                cmakeVersion: 3.25.0
 
             - name: Setup MSVC
               if: ${{ contains(matrix.os, 'windows') }}
@@ -54,7 +56,7 @@ jobs:
                   cmakeListsOrSettingsJson: 'CMakeListsTxtAdvanced' # Required to respect cmakeAppendedArgs
                   cmakeBuildType: ${{ matrix.build_type }}
                   buildDirectory: 'build'
-                  cmakeAppendedArgs: -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF -DLIZARD_CLANG_TIDY=OFF -DCMAKE_UNITY_BUILD=ON -DLIZARD_WARNINGS_AS_ERRORS=ON
+                  cmakeAppendedArgs: -G Ninja -DLIZARD_LWYU=OFF -DLIZARD_IWYU=OFF -DLIZARD_CLANG_TIDY=OFF -DCMAKE_UNITY_BUILD=ON -DLIZARD_WARNINGS_AS_ERRORS=ON
 
             - name: Run tests
               run: cd build && ctest --output-on-failure .
