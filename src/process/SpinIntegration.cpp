@@ -5,6 +5,7 @@
 
 #include "IndexTracker.hpp"
 #include "SpinLSE.hpp"
+#include "SymmetryUtils.hpp"
 
 #include "lizard/format/FormatSupport.hpp"
 #include "lizard/process/ProcessingException.hpp"
@@ -37,31 +38,12 @@ auto SpinIntegration::getName() const -> std::string_view {
 	return "SpinIntegration";
 }
 
-[[nodiscard]] auto hasNecessaryAntisymmetry(const TensorElement &element, const IndexTracker &tracker) -> bool {
-	const TensorBlock::SlotSymmetry &symmetry = element.getBlock().getSlotSymmetry();
-
-	for (const std::vector< std::size_t > &currentSet : { tracker.creators(), tracker.annihilators() }) {
-		for (std::size_t i = 0; i < currentSet.size(); ++i) {
-			for (std::size_t j = i + 1; j < currentSet.size(); j++) {
-				using CycleVal = perm::Cycle::value_type;
-				assert(currentSet[i] < std::numeric_limits< CycleVal >::max()); // NOLINT
-				assert(currentSet[j] < std::numeric_limits< CycleVal >::max()); // NOLINT
-
-				perm::ExplicitPermutation expectedAntisymmetry(
-					perm::Cycle({ static_cast< CycleVal >(currentSet[i]), static_cast< CycleVal >(currentSet[j]) }),
-					-1);
-
-				if (!symmetry.contains(expectedAntisymmetry)) {
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
 void processProduct(TensorExpr &rootExpression, const IndexSpaceManager &manager);
+
+auto hasNecessaryAntisymmetry(const TensorElement &element, const IndexTracker &tracker) -> bool {
+	return containsAntisymmetryOf(element.getBlock().getSlotSymmetry(), tracker.creators())
+		   && containsAntisymmetryOf(element.getBlock().getSlotSymmetry(), tracker.annihilators());
+}
 
 void SpinIntegration::process(std::vector< NamedTensorExprTree > &expressions, const IndexSpaceManager &manager) {
 	for (NamedTensorExprTree &currentTree : expressions) {
