@@ -306,19 +306,36 @@ private:
 
 		m_nodes[m_rootID].setParent(parentID);
 
-		if (parentID.isValid()) {
-			TreeNode &parent = m_nodes[parentID];
-			if (parent.getLeftChild() == nodeID) {
-				parent.setLeftChild(std::move(m_rootID));
-			} else {
-				parent.setRightChild(std::move(m_rootID));
-			}
+		// Move the root of the replacement to the position of the root of the replaced expression
+		// That way, the change is transparent to anything that still holds a reference to the original
+		// TreeNode (as that will now simply point to the replacement root)
+		// This is particularly important for substituting the current element while iterating over the tree
+		m_nodes[nodeID] = std::move(m_nodes[m_rootID]);
 
-			// Restore old root
-			m_rootID = std::move(rootCopy);
+		// Given that the tree is constructed by adding elements in post-order, the position where the root
+		// of the replacement used to be must now be the last element inside m_nodes -> get rid of it
+		assert(m_rootID == m_nodes.size() - 1); // NOLINT
+		m_nodes.pop_back();
+
+		m_rootID                        = nodeID;
+		const TreeNode &replacementRoot = m_nodes[m_rootID];
+		// Update the root's children's parent
+		switch (replacementRoot.getCardinality()) {
+			case ExpressionCardinality::Binary:
+				m_nodes.at(replacementRoot.getRightChild()).setParent(m_rootID);
+				// Fallthrough
+			case ExpressionCardinality::Unary:
+				m_nodes.at(replacementRoot.getLeftChild()).setParent(m_rootID);
+				// Fallthrough
+			case ExpressionCardinality::Nullary:
+				break;
 		}
 
 		// Restore previous state
+		if (parentID.isValid()) {
+			// Restore old root
+			m_rootID = std::move(rootCopy);
+		}
 		m_consumableNodes = std::move(copy);
 	}
 };
