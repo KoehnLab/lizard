@@ -211,22 +211,22 @@ TEST_F(FormatTest, TensorElement) {
 
 TEST_F(FormatTest, TensorExpr) {
 	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree1().getRoot(), getManager())),
-			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+			  "1/2 + A[] * ( -2/3 * C[i r b] + B[b r] * C[i r b] )");
 
 	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree2().getRoot(), getManager())),
-			  "( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
+			  "( A[] * ( B[b r] * C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] * -1 ) * C[i r b]");
 }
 
 TEST_F(FormatTest, TensorExprTree) {
 	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree1(), getManager())),
-			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+			  "1/2 + A[] * ( -2/3 * C[i r b] + B[b r] * C[i r b] )");
 	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree2(), getManager())),
-			  "( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
+			  "( A[] * ( B[b r] * C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] * -1 ) * C[i r b]");
 }
 
 TEST_F(FormatTest, NamedTensorExprTree) {
 	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree1(), getManager())),
-			  "R[] = 1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+			  "R[] = 1/2 + A[] * ( -2/3 * C[i r b] + B[b r] * C[i r b] )");
 	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree2(), getManager())),
-			  "R[] = ( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
+			  "R[] = ( A[] * ( B[b r] * C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] * -1 ) * C[i r b]");
 }

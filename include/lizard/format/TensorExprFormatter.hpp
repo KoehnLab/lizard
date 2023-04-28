@@ -99,24 +99,16 @@ template<> struct fmt::formatter< lizard::TensorExprFormatter > : fmt::formatter
 							// result will have to be put in parenthesis in order to
 							// 1) preserver order of operations in case it was a Plus
 							// 2) encode order of contraction in case it was a Times
-							bool usedParen = false;
 							if (lhsOp.has_value()) {
 								lhs.insert(0, "( ");
 								lhs += " )";
-								usedParen = true;
 							}
 							if (rhsOp.has_value()) {
 								rhs.insert(0, "( ");
 								rhs += " )";
-								usedParen = true;
 							}
 
-							if (usedParen) {
-								lhs += " * ";
-							} else {
-								// Implicit multiplication
-								lhs += " ";
-							}
+							lhs += " * ";
 							lhs += rhs;
 
 							formattedPieces.push(std::move(lhs));
