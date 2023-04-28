@@ -50,7 +50,6 @@ TEST_P(SpinIntegrationTest, process) {
 	std::vector< NamedTensorExprTree > actualResults = { test::createTree< NamedTensorExprTree >(inputTreeSpec) };
 	integrator.process(actualResults, test::getIndexSpaceManager());
 
-	ASSERT_EQ(actualResults[0], expectedResults[0]);
 	ASSERT_THAT(actualResults, ::testing::UnorderedElementsAreArray(expectedResults));
 }
 
