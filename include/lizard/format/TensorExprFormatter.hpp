@@ -19,7 +19,9 @@
 
 #include <iterators/iterator_facade.hpp>
 
+#include <optional>
 #include <stack>
+#include <string>
 #include <string_view>
 
 namespace lizard {
@@ -35,71 +37,100 @@ template<> struct fmt::formatter< lizard::Fraction > : fmt::ostream_formatter {}
 
 template<> struct fmt::formatter< lizard::TensorExprFormatter > : fmt::formatter< std::string_view > {
 	template< typename FormatContext > auto format(const lizard::TensorExprFormatter &formatter, FormatContext &ctx) {
-		const lizard::ConstTensorExpr &expr = formatter.get();
+		using namespace lizard;
 
-		std::string formatted;
+		// In order to format an expression, we have to iterate in a defined order and then translate that
+		// into a suitable infix expression.
+		// The easiest way to do this is to iterate in post order and effectively "evaluate" each encountered
+		// element by converting that into the appropriate string contribution.
+		// See also e.g. https://stackoverflow.com/a/19053203/3907364
 
-		using InOrderCore = lizard::details::ExpressionTreeIteratorCore< lizard::TensorElement, true,
-																		 lizard::TreeTraversal::DepthFirst_InOrder >;
-		using InOrderIter = iterators::iterator_facade< InOrderCore >;
+		const ConstTensorExpr &expr = formatter.get();
 
-		std::stack< InOrderIter > parenClosePositions;
+		std::stack< std::string > formattedPieces;
+		std::stack< std::optional< ExpressionOperator > > encounteredOperators;
 
-		for (auto iter = expr.cbegin< lizard::TreeTraversal::DepthFirst_InOrder >();
-			 iter != expr.cend< lizard::TreeTraversal::DepthFirst_InOrder >(); ++iter) {
-			const lizard::ConstTensorExpr &current = *iter;
+		auto iter      = expr.cbegin< TreeTraversal::DepthFirst_PostOrder >();
+		const auto end = expr.cend< TreeTraversal::DepthFirst_PostOrder >();
 
-			if (!parenClosePositions.empty() && parenClosePositions.top() == iter) {
-				formatted += ") ";
-			}
+		for (; iter != end; ++iter) {
+			const ConstTensorExpr &current = *iter;
 
 			switch (current.getType()) {
-				case lizard::ExpressionType::Literal:
-					formatted += fmt::format("{} ", current.getLiteral());
+				case ExpressionType::Literal:
+					formattedPieces.push(fmt::format("{}", current.getLiteral()));
+					encounteredOperators.push({});
 					break;
-				case lizard::ExpressionType::Operator: {
-					assert(current.getCardinality() == lizard::ExpressionCardinality::Binary);
+				case ExpressionType::Variable:
+					formattedPieces.push(
+						fmt::format("{}", TensorElementFormatter(current.getVariable(), formatter.getManager())));
+					encounteredOperators.push({});
+					break;
+				case ExpressionType::Operator: {
+					assert(current.getCardinality() == ExpressionCardinality::Binary);
+					assert(formattedPieces.size() >= 2);
+					assert(formattedPieces.size() == encounteredOperators.size());
+
+					std::string rhs = std::move(formattedPieces.top());
+					formattedPieces.pop();
+					std::string lhs = std::move(formattedPieces.top());
+					formattedPieces.pop();
+
+					std::optional< ExpressionOperator > rhsOp = std::move(encounteredOperators.top());
+					encounteredOperators.pop();
+					std::optional< ExpressionOperator > lhsOp = std::move(encounteredOperators.top());
+					encounteredOperators.pop();
 
 					switch (current.getOperator()) {
 						// Peek at next
-						case lizard::ExpressionOperator::Plus:
-							formatted += "+ ";
-							break;
-						case lizard::ExpressionOperator::Times: {
-							const lizard::ConstTensorExpr peekExpr = current.getRightArg();
-
-							const bool followedByAddition =
-								peekExpr.getType() == lizard::ExpressionType::Operator
-									? peekExpr.getOperator() == lizard::ExpressionOperator::Plus
-									: false;
-
-							if (followedByAddition) {
-								formatted += "* ( ";
-
-								parenClosePositions.emplace(
-									InOrderCore::afterRoot(peekExpr.getContainingTree(), peekExpr));
-							} else {
-								// We take multiplication as implicit
+						case ExpressionOperator::Plus: {
+							// Since Plus has the lowest precedence of all possible operators, we can
+							// always insert it without any need for parenthesis
+							// Formally, we'd have to use parenthesis to encode the order of operations (same as for
+							// multiplication/contraction) but since we don't care about the order of addition, we
+							// don't do that here.
+							lhs += " + ";
+							lhs += rhs;
+							formattedPieces.push(std::move(lhs));
+							encounteredOperators.push(ExpressionOperator::Plus);
+						} break;
+						case ExpressionOperator::Times: {
+							// If any of lhs or rhs is the result of a prior operator acting on some arguments, that
+							// result will have to be put in parenthesis in order to
+							// 1) preserver order of operations in case it was a Plus
+							// 2) encode order of contraction in case it was a Times
+							bool usedParen = false;
+							if (lhsOp.has_value()) {
+								lhs.insert(0, "( ");
+								lhs += " )";
+								usedParen = true;
 							}
+							if (rhsOp.has_value()) {
+								rhs.insert(0, "( ");
+								rhs += " )";
+								usedParen = true;
+							}
+
+							if (usedParen) {
+								lhs += " * ";
+							} else {
+								// Implicit multiplication
+								lhs += " ";
+							}
+							lhs += rhs;
+
+							formattedPieces.push(std::move(lhs));
+							encounteredOperators.push(ExpressionOperator::Times);
 						} break;
 					}
 					break;
 				}
-				case lizard::ExpressionType::Variable:
-					formatted += fmt::format(
-						"{} ", lizard::TensorElementFormatter(current.getVariable(), formatter.getManager()));
-					break;
 			}
 		}
 
-		// Add trailing closing parenthesis
-		while (!parenClosePositions.empty()) {
-			formatted += ") ";
-			parenClosePositions.pop();
-		}
+		assert(formattedPieces.size() == 1);
 
 		// Make sure to exclude the trailing space that appears in non-empty formatted texts
-		return fmt::formatter< std::string_view >::format(
-			std::string_view{ formatted.data(), formatted.empty() ? 0 : formatted.size() - 1 }, ctx);
+		return fmt::formatter< std::string_view >::format(std::move(formattedPieces.top()), ctx);
 	}
 };

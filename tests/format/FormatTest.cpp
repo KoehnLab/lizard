@@ -31,7 +31,7 @@ using namespace lizard;
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 struct FormatTest : ::testing::Test {
-	FormatTest() : m_tree(Tensor("R")) {
+	FormatTest() : m_tree1(Tensor("R")), m_tree2(Tensor("R")) {
 		const IndexSpace occSpace(0, Spin::Both);
 		const IndexSpace virtSpace(1, Spin::Both);
 		const IndexSpace extSpace(2, Spin::Both);
@@ -64,17 +64,39 @@ struct FormatTest : ::testing::Test {
 
 		// Construct sample tree for something like
 		// R = 1/2 + A * ( -2/3 * C + B * C )
-		m_tree.add(TreeNode(1, 2));
-		m_tree.add(m_elements[0]);
-		m_tree.add(TreeNode(-2, 3));
-		m_tree.add(m_elements[2]);
-		m_tree.add(TreeNode(ExpressionOperator::Times));
-		m_tree.add(m_elements[1]);
-		m_tree.add(m_elements[2]);
-		m_tree.add(TreeNode(ExpressionOperator::Times));
-		m_tree.add(TreeNode(ExpressionOperator::Plus));
-		m_tree.add(TreeNode(ExpressionOperator::Times));
-		m_tree.add(TreeNode(ExpressionOperator::Plus));
+		m_tree1.add(TreeNode(1, 2));
+		m_tree1.add(m_elements[0]);
+		m_tree1.add(TreeNode(-2, 3));
+		m_tree1.add(m_elements[2]);
+		m_tree1.add(TreeNode(ExpressionOperator::Times));
+		m_tree1.add(m_elements[1]);
+		m_tree1.add(m_elements[2]);
+		m_tree1.add(TreeNode(ExpressionOperator::Times));
+		m_tree1.add(TreeNode(ExpressionOperator::Plus));
+		m_tree1.add(TreeNode(ExpressionOperator::Times));
+		m_tree1.add(TreeNode(ExpressionOperator::Plus));
+		assert(m_tree1.isValid()); // NOLINT
+
+		// Construct another sample tree for something like
+		// R = ( A * ( B * C ) ) * (A + B) + ( A + B * -1 ) * C
+		m_tree2.add(m_elements[0]);
+		m_tree2.add(m_elements[1]);
+		m_tree2.add(m_elements[2]);
+		m_tree2.add(TreeNode(ExpressionOperator::Times));
+		m_tree2.add(TreeNode(ExpressionOperator::Times));
+		m_tree2.add(m_elements[0]);
+		m_tree2.add(m_elements[1]);
+		m_tree2.add(TreeNode(ExpressionOperator::Plus));
+		m_tree2.add(TreeNode(ExpressionOperator::Times));
+		m_tree2.add(m_elements[0]);
+		m_tree2.add(m_elements[1]);
+		m_tree2.add(TreeNode(-1));
+		m_tree2.add(TreeNode(ExpressionOperator::Times));
+		m_tree2.add(TreeNode(ExpressionOperator::Plus));
+		m_tree2.add(m_elements[2]);
+		m_tree2.add(TreeNode(ExpressionOperator::Times));
+		m_tree2.add(TreeNode(ExpressionOperator::Plus));
+		assert(m_tree2.isValid()); // NOLINT
 	}
 
 	[[nodiscard]] auto getManager() const -> const IndexSpaceManager & { return m_manager; }
@@ -83,7 +105,8 @@ struct FormatTest : ::testing::Test {
 	[[nodiscard]] auto getTensors() const -> const std::vector< Tensor > & { return m_tensors; }
 	[[nodiscard]] auto getBlocks() const -> const std::vector< TensorBlock > & { return m_blocks; }
 	[[nodiscard]] auto getElements() const -> const std::vector< TensorElement > & { return m_elements; }
-	[[nodiscard]] auto getTree() const -> const NamedTensorExprTree & { return m_tree; }
+	[[nodiscard]] auto getTree1() const -> const NamedTensorExprTree & { return m_tree1; }
+	[[nodiscard]] auto getTree2() const -> const NamedTensorExprTree & { return m_tree2; }
 
 private:
 	IndexSpaceManager m_manager;
@@ -92,7 +115,8 @@ private:
 	std::vector< Tensor > m_tensors;
 	std::vector< TensorBlock > m_blocks;
 	std::vector< TensorElement > m_elements;
-	NamedTensorExprTree m_tree;
+	NamedTensorExprTree m_tree1;
+	NamedTensorExprTree m_tree2;
 };
 
 
@@ -186,16 +210,23 @@ TEST_F(FormatTest, TensorElement) {
 }
 
 TEST_F(FormatTest, TensorExpr) {
-	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree().getRoot(), getManager())),
+	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree1().getRoot(), getManager())),
 			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+
+	ASSERT_EQ(fmt::format("{}", TensorExprFormatter(getTree2().getRoot(), getManager())),
+			  "( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
 }
 
 TEST_F(FormatTest, TensorExprTree) {
-	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree(), getManager())),
+	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree1(), getManager())),
 			  "1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+	ASSERT_EQ(fmt::format("{}", TensorExprTreeFormatter(getTree2(), getManager())),
+			  "( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
 }
 
 TEST_F(FormatTest, NamedTensorExprTree) {
-	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree(), getManager())),
+	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree1(), getManager())),
 			  "R[] = 1/2 + A[] * ( -2/3 C[i r b] + B[b r] C[i r b] )");
+	ASSERT_EQ(fmt::format("{}", NamedTensorExprTreeFormatter(getTree2(), getManager())),
+			  "R[] = ( A[] * ( B[b r] C[i r b] ) ) * ( A[] + B[b r] ) + ( A[] + B[b r] -1 ) * C[i r b]");
 }
