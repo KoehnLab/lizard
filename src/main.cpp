@@ -8,6 +8,7 @@
 #include "lizard/process/ProcessingException.hpp"
 #include "lizard/process/ProcessingStep.hpp"
 #include "lizard/process/Processor.hpp"
+#include "lizard/process/SkeletonQuantityMapper.hpp"
 #include "lizard/process/SpinIntegration.hpp"
 #include "lizard/process/TextExport.hpp"
 #include "lizard/symbolic/IndexSpace.hpp"
@@ -87,6 +88,9 @@ auto main(int argc, char **argv) -> int {
 		processor.enqueue(ProcessingStep{ std::make_unique< TextExport >() });
 
 		// If restricted orbitals: Spin summation
+		processor.enqueue(ProcessingStep{ std::make_unique< SkeletonQuantityMapper >() });
+
+		processor.enqueue(ProcessingStep{ std::make_unique< TextExport >() });
 
 		// Export terms
 

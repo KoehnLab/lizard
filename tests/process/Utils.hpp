@@ -15,6 +15,8 @@
 #include "lizard/symbolic/TensorExpressions.hpp"
 #include "lizard/symbolic/TreeNode.hpp"
 
+#include "SymmetryUtils.hpp"
+
 #include <libperm/SpecialGroups.hpp>
 
 #include <algorithm>
@@ -54,19 +56,27 @@ namespace lizard::test {
 /**
  * @param tensorName The name of the tensor the desired block belongs to
  * @param indexCount The amount of indices/index slots of the respective block
+ * @param isSkeleton Whether the symmetry shall be created for a skeleton tensor
  * @returns The symmetry that the given tensor block should have
  */
-[[nodiscard]] inline auto getDefaultSymmetry(std::string_view tensorName, std::size_t indexCount)
-	-> TensorBlock::SlotSymmetry {
+[[nodiscard]] inline auto getDefaultSymmetry(std::string_view tensorName, std::size_t indexCount,
+											 bool isSkeleton = false) -> TensorBlock::SlotSymmetry {
 	if (indexCount == 0) {
 		return {};
 	}
 
-	if (tensorName == "H" || tensorName == "T" || tensorName == "O") {
+	if (tensorName == "H" || tensorName == "T" || tensorName == "O" || tensorName == "R") {
 		if (indexCount == 2) {
 			return {};
 		}
 		if (indexCount == 4) {
+			if (isSkeleton) {
+				const std::vector< std::size_t > creatorPositions     = { 0, 1 };
+				const std::vector< std::size_t > annihilatorPositions = { 2, 3 };
+
+				return makeColumnsymmetricExchanges(creatorPositions, annihilatorPositions);
+			}
+
 			return perm::antisymmetricRanges({ { 0, 1 }, { 2, 3 } });
 		}
 
@@ -172,10 +182,12 @@ namespace lizard::test {
  *
  * @param spec The spec to use
  * @param signPtr A pointer to an integer to which the sign (due to symmetry reordering of indices)
+ * @param isSkeletonTensor Whether the created tensor represents a skeleton tensor
  * of the created TensorElement should be written to
  * @returns The created TensorElement
  */
-[[nodiscard]] inline auto createTensorElement(std::string_view spec, int *signPtr = nullptr) -> TensorElement {
+[[nodiscard]] inline auto createTensorElement(std::string_view spec, int *signPtr = nullptr,
+											  bool isSkeletonTensor = false) -> TensorElement {
 	const std::size_t openingBracket = spec.find('[');
 
 	assert(openingBracket != std::string::npos); // NOLINT
@@ -184,7 +196,7 @@ namespace lizard::test {
 
 	std::vector< Index > indices = createIndexSequence(spec.substr(openingBracket));
 
-	TensorBlock::SlotSymmetry symmetry = getDefaultSymmetry(name, indices.size());
+	TensorBlock::SlotSymmetry symmetry = getDefaultSymmetry(name, indices.size(), isSkeletonTensor);
 	auto [element, sign] = TensorElement::create(Tensor(std::string(name)), std::move(indices), std::move(symmetry));
 
 	if (signPtr != nullptr) {
@@ -212,9 +224,10 @@ namespace details {
 		tree.add(TreeNode(value, 1));
 	}
 
-	template< typename TreeType > void addTensorElement(TreeType &tree, std::string_view token) {
+	template< typename TreeType >
+	void addTensorElement(TreeType &tree, std::string_view token, bool isSkeleton = false) {
 		int sign = 1;
-		tree.add(createTensorElement(token, &sign));
+		tree.add(createTensorElement(token, &sign, isSkeleton));
 
 		if (sign != 1) {
 			// Add the sign into the expression
@@ -223,7 +236,7 @@ namespace details {
 		}
 	}
 
-	template< typename TreeType > void addToken(TreeType &tree, std::string_view token) {
+	template< typename TreeType > void addToken(TreeType &tree, std::string_view token, bool isSkeleton = false) {
 		if (token == "+") {
 			tree.add(TreeNode(ExpressionOperator::Plus));
 		} else if (token == "*") {
@@ -231,7 +244,7 @@ namespace details {
 		} else if (details::startsLikeNumber(token)) {
 			addLiteral(tree, token);
 		} else {
-			addTensorElement(tree, token);
+			addTensorElement(tree, token, isSkeleton);
 		}
 	}
 
@@ -305,11 +318,13 @@ namespace details {
  * Parses the given specification and returns the corresponding ExpressionTree
  *
  * @param spec The tree's specification (in infix notation; parenthesis supported)
+ * @param skeletonExpressions Whether the tensors appearing in the spec are understood as skeleton quantities
  * @returns The created tree
  *
  * @tparam TreeType the exact type of the tree to create (must be a TensorExprTree or a NamedTensorExprTree)
  */
-template< typename TreeType >[[nodiscard]] auto createTree(std::string_view spec) -> TreeType {
+template< typename TreeType >
+[[nodiscard]] auto createTree(std::string_view spec, bool skeletonExpressions = false) -> TreeType {
 	TreeType tree = [&]() {
 		if constexpr (std::is_same_v< TreeType, NamedTensorExprTree >) {
 			std::size_t equalSign = spec.find('=');
@@ -339,7 +354,7 @@ template< typename TreeType >[[nodiscard]] auto createTree(std::string_view spec
 			tokenStack.push(token);
 		} else if (token == ")") {
 			while (tokenStack.top() != "(") {
-				details::addToken(tree, tokenStack.top());
+				details::addToken(tree, tokenStack.top(), skeletonExpressions);
 
 				tokenStack.pop();
 			}
@@ -359,14 +374,14 @@ template< typename TreeType >[[nodiscard]] auto createTree(std::string_view spec
 			details::addLiteral(tree, token);
 		} else {
 			// This is expected to be a tensor element specification
-			details::addTensorElement(tree, token);
+			details::addTensorElement(tree, token, skeletonExpressions);
 		}
 	}
 
 	// Append missing operators
 	while (!tokenStack.empty()) {
 		if (tokenStack.top() != "(") {
-			details::addToken(tree, tokenStack.top());
+			details::addToken(tree, tokenStack.top(), skeletonExpressions);
 		}
 
 		tokenStack.pop();

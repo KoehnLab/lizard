@@ -4,6 +4,7 @@
 # tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 add_executable(ProcessTest
+	SkeletonQuantityMapperTest.cpp
 	SpinIntegrationTest.cpp
 	SpinLSETest.cpp
 	UtilsTest.cpp
