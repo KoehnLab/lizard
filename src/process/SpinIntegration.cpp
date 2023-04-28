@@ -3,6 +3,7 @@
 // can be found in the LICENSE file at the root of the lizard source
 // tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
+#include "IndexTracker.hpp"
 #include "SpinLSE.hpp"
 
 #include "lizard/format/FormatSupport.hpp"
@@ -36,34 +37,10 @@ auto SpinIntegration::getName() const -> std::string_view {
 	return "SpinIntegration";
 }
 
-struct IndexTracker {
-	std::vector< std::size_t > creators;
-	std::vector< std::size_t > annihilators;
-};
-
-[[nodiscard]] auto trackIndices(nonstd::span< const Index > indices) -> IndexTracker {
-	IndexTracker tracker{};
-
-	for (std::size_t i = 0; i < indices.size(); ++i) {
-		switch (indices[i].getType()) {
-			case IndexType::Creator:
-				tracker.creators.push_back(i);
-				break;
-			case IndexType::Annihilator:
-				tracker.annihilators.push_back(i);
-				break;
-			case IndexType::External:
-				break;
-		}
-	}
-
-	return tracker;
-}
-
 [[nodiscard]] auto hasNecessaryAntisymmetry(const TensorElement &element, const IndexTracker &tracker) -> bool {
 	const TensorBlock::SlotSymmetry &symmetry = element.getBlock().getSlotSymmetry();
 
-	for (const std::vector< std::size_t > &currentSet : { tracker.creators, tracker.annihilators }) {
+	for (const std::vector< std::size_t > &currentSet : { tracker.creators(), tracker.annihilators() }) {
 		for (std::size_t i = 0; i < currentSet.size(); ++i) {
 			for (std::size_t j = i + 1; j < currentSet.size(); j++) {
 				using CycleVal = perm::Cycle::value_type;
@@ -232,7 +209,7 @@ auto setupLSE(const ConstTensorExpr &rootExpression, const IndexSpaceManager &ma
 				const TensorElement &currentElement = currentExpression.getVariable();
 
 				const nonstd::span< const Index > indices = currentElement.getIndices();
-				const IndexTracker tracker                = trackIndices(currentElement.getIndices());
+				const IndexTracker tracker(currentElement.getIndices());
 
 				system.beginEquation();
 

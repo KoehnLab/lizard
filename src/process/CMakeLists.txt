@@ -8,6 +8,7 @@ add_library(lizard_process STATIC
 	ExportStrategy.cpp
 	HardcodedImport.cpp
 	ImportStrategy.cpp
+	IndexTracker.cpp
 	OptimizationStrategy.cpp
 	ProcessingStep.cpp
 	Processor.cpp
