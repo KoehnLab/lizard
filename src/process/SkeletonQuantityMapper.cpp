@@ -21,7 +21,7 @@
 
 namespace lizard {
 
-auto SkeletonQuantityMapper::getName() const -> std::string_view {
+auto SkeletonQuantityMapper::getName() const -> std::string {
 	return "SkeletonMapper";
 }
 

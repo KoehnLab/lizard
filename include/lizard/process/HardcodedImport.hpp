@@ -27,7 +27,7 @@ public:
 
 	HardcodedImport(ImportTarget target);
 
-	[[nodiscard]] auto getName() const -> std::string_view final;
+	[[nodiscard]] auto getName() const -> std::string final;
 
 	[[nodiscard]] auto importExpressions(const IndexSpaceManager &manager) const
 		-> std::vector< NamedTensorExprTree > final;

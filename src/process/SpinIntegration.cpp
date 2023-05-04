@@ -34,7 +34,7 @@
 
 namespace lizard {
 
-auto SpinIntegration::getName() const -> std::string_view {
+auto SpinIntegration::getName() const -> std::string {
 	return "SpinIntegration";
 }
 

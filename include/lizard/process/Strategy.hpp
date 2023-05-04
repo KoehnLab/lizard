@@ -11,7 +11,7 @@
 
 #include <iosfwd>
 #include <memory>
-#include <string_view>
+#include <string>
 
 namespace lizard {
 
@@ -31,7 +31,7 @@ public:
 	/**
 	 * @returns Display name of this strategy
 	 */
-	[[nodiscard]] virtual auto getName() const -> std::string_view = 0;
+	[[nodiscard]] virtual auto getName() const -> std::string = 0;
 
 	/**
 	 * @returns The type of this strategy

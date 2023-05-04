@@ -17,7 +17,7 @@ class SkeletonQuantityMapper : public SpinProcessingStrategy {
 public:
 	SkeletonQuantityMapper() = default;
 
-	[[nodiscard]] auto getName() const -> std::string_view final;
+	[[nodiscard]] auto getName() const -> std::string final;
 
 	void process(std::vector< NamedTensorExprTree > &expressions, const IndexSpaceManager &manager) final;
 };

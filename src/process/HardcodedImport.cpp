@@ -26,7 +26,7 @@ namespace lizard {
 HardcodedImport::HardcodedImport(ImportTarget target) : m_target(target) {
 }
 
-auto HardcodedImport::getName() const -> std::string_view {
+auto HardcodedImport::getName() const -> std::string {
 	return "HardcodedImport";
 }
 

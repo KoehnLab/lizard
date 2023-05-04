@@ -31,7 +31,8 @@ template<> struct fmt::formatter< TreeSpanFormatter > : fmt::formatter< std::str
 };
 
 namespace lizard {
-auto TextExport::getName() const -> std::string_view {
+
+auto TextExport::getName() const -> std::string {
 	return "TextExport";
 }
 

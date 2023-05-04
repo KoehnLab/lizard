@@ -18,7 +18,7 @@ class SpinIntegration : public SpinProcessingStrategy {
 public:
 	SpinIntegration() = default;
 
-	[[nodiscard]] auto getName() const -> std::string_view final;
+	[[nodiscard]] auto getName() const -> std::string final;
 
 	void process(std::vector< NamedTensorExprTree > &expressions, const IndexSpaceManager &manager) final;
 };

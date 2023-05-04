@@ -17,7 +17,7 @@ class TextExport : public ExportStrategy {
 public:
 	TextExport() = default;
 
-	[[nodiscard]] auto getName() const -> std::string_view final;
+	[[nodiscard]] auto getName() const -> std::string final;
 
 	void exportExpressions(nonstd::span< const NamedTensorExprTree > expressions,
 						   const IndexSpaceManager &manager) final;
