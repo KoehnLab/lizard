@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <initializer_list>
 #include <random>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -141,6 +142,65 @@ inline auto indexSequence(std::size_t size, std::uint_fast32_t seed = 16) -> std
 	}
 
 	std::shuffle(indices.begin(), indices.end(), generator);
+
+	return indices;
+}
+
+[[nodiscard]] inline auto createIndex(std::string_view spec) -> Index {
+	char name     = spec.at(0);
+	char typeSpec = spec.at(1);
+	char spinSpec = spec.at(2);
+
+	Spin spin = [&]() {
+		switch (spinSpec) {
+			case '/':
+				return Spin::Alpha;
+			case '\\':
+				return Spin::Beta;
+			case '|':
+				return Spin::Both;
+			case '.':
+				return Spin::None;
+		}
+
+		throw std::invalid_argument("Unknown spin spec");
+	}();
+
+	IndexType type = [&]() {
+		switch (typeSpec) {
+			case '+':
+				return IndexType::Creator;
+			case '-':
+				return IndexType::Annihilator;
+			case '=':
+				return IndexType::External;
+		}
+
+		throw std::invalid_argument("Unknown type spec");
+	}();
+
+
+	auto [spaceID, indexID] = [&]() -> std::pair< IndexSpace::Id, Index::Id > {
+		if (name >= 'i' && name <= 'n') {
+			return { 0, name - 'i' };
+		}
+		if (name >= 'a' && name <= 'f') {
+			return { 1, name - 'a' };
+		}
+
+		throw std::runtime_error("Unknown index name");
+	}();
+
+	return { indexID, IndexSpace(spaceID, spin), type };
+}
+
+[[nodiscard]] inline auto createIndices(const std::vector< std::string > &vec) -> std::vector< Index > {
+	std::vector< Index > indices;
+	indices.reserve(vec.size());
+
+	for (const std::string &current : vec) {
+		indices.push_back(createIndex(current));
+	}
 
 	return indices;
 }

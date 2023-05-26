@@ -4,6 +4,7 @@
 # tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 add_executable(SymbolicTest
+	ContractionTest.cpp
 	ExpressionTreeTest.cpp
 	IndexSpaceTest.cpp
 	IndexSpaceManagerTest.cpp

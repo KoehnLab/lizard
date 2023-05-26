@@ -4,6 +4,7 @@
 # tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 add_library(lizard_symbolic STATIC
+	Contraction.cpp
 	DepthFirst.cpp
 	EnumStreamOperators.cpp
 	Index.cpp
