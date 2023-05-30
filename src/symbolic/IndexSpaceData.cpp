@@ -13,7 +13,7 @@ IndexSpaceData::IndexSpaceData(std::string name, unsigned int size, Spin default
 	  m_labelExtension(labelExtension) {
 }
 
-auto IndexSpaceData::getName() const -> std::string_view {
+auto IndexSpaceData::getName() const -> const std::string & {
 	return m_name;
 }
 

@@ -24,7 +24,7 @@ public:
 	/**
 	 * @returns The name of the index space
 	 */
-	[[nodiscard]] auto getName() const -> std::string_view;
+	[[nodiscard]] auto getName() const -> const std::string &;
 	/**
 	 * @returns The size (amount of indices inside the space) of the index space
 	 */
