@@ -45,8 +45,8 @@ auto HardcodedImport::importExpressions(const IndexSpaceManager &manager) const 
 			getLogger().info("Importing CCD energy expresion");
 
 			// E = H + 0.25 * H[ijab] T2[abij]
-			IndexSpace occ  = manager.createFromName("occ");
-			IndexSpace virt = manager.createFromName("virt");
+			IndexSpace occ  = manager.createFromName("Closed");
+			IndexSpace virt = manager.createFromName("External");
 
 			TensorElement resultElement(Tensor("E"));
 

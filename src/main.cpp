@@ -63,10 +63,12 @@ auto main(int argc, char **argv) -> int {
 		IndexSpaceManager spaceManager;
 		constexpr std::size_t occSize  = 10;
 		constexpr std::size_t virtSize = 100;
-		spaceManager.registerSpace(IndexSpace{ 0, Spin::Both },
-								   IndexSpaceData{ "occ", occSize, Spin::Both, { 'i', 'j', 'k', 'l', 'm', 'n' } });
-		spaceManager.registerSpace(IndexSpace{ 1, Spin::Both },
-								   IndexSpaceData{ "virt", virtSize, Spin::Both, { 'a', 'b', 'c', 'd', 'e', 'f' } });
+		spaceManager.registerSpace(
+			IndexSpace{ 0, Spin::Both },
+			IndexSpaceData{ "Closed", 'c', occSize, Spin::Both, { 'i', 'j', 'k', 'l', 'm', 'n' } });
+		spaceManager.registerSpace(
+			IndexSpace{ 1, Spin::Both },
+			IndexSpaceData{ "External", 'e', virtSize, Spin::Both, { 'a', 'b', 'c', 'd', 'e', 'f' } });
 
 		Processor processor(std::move(spaceManager), logger);
 

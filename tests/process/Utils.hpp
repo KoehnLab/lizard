@@ -41,11 +41,11 @@ namespace lizard::test {
 
 	if (!initialized) {
 		manager.registerSpace(IndexSpace(0, Spin::Both),
-							  IndexSpaceData("occ", 16, Spin::Both, { 'i', 'j', 'k', 'l', 'm', 'n' }));
+							  IndexSpaceData("occ", 'o', 16, Spin::Both, { 'i', 'j', 'k', 'l', 'm', 'n' }));
 		manager.registerSpace(IndexSpace(1, Spin::Both),
-							  IndexSpaceData("virt", 256, Spin::Both, { 'a', 'b', 'c', 'd', 'e', 'f' }));
+							  IndexSpaceData("virt", 'v', 256, Spin::Both, { 'a', 'b', 'c', 'd', 'e', 'f' }));
 		manager.registerSpace(IndexSpace(2, Spin::None),
-							  IndexSpaceData("ext", 256, Spin::None, { 'P', 'Q', 'R', 'S', 'T', 'U' }));
+							  IndexSpaceData("ext", 'e', 256, Spin::None, { 'P', 'Q', 'R', 'S', 'T', 'U' }));
 
 		initialized = true;
 	}

@@ -26,8 +26,8 @@ TEST(IndexSpaceManager, registerSpace) {
 	IndexSpace space2(0, Spin::Both);
 	IndexSpace space3(1, Spin::Alpha);
 
-	IndexSpaceData data1("dummy", 2, Spin::Both, {});
-	IndexSpaceData data2("other_dummy", 2, Spin::Both, {});
+	IndexSpaceData data1("dummy", 'd', 2, Spin::Both, {});
+	IndexSpaceData data2("other_dummy", 'o', 2, Spin::Both, {});
 
 	ASSERT_NO_THROW(manager.registerSpace(space1, data1));
 
@@ -48,10 +48,10 @@ TEST(IndexSpaceManager, query) {
 	IndexSpace space1(0, Spin::Alpha);
 	IndexSpace space2(1, Spin::Both);
 
-	IndexSpaceData data1("space1", 2, Spin::Both, { 'a', 'b' });
-	IndexSpaceData data2("space2", 2, Spin::Both, { 'i', 'j' });
+	IndexSpaceData data1("space1", '1', 2, Spin::Both, { 'a', 'b' });
+	IndexSpaceData data2("space2", '2', 2, Spin::Both, { 'i', 'j' });
 
-	IndexSpaceData dummyData({}, {}, {}, {});
+	IndexSpaceData dummyData({}, {}, {}, {}, {});
 	ASSERT_THROW(dummyData = manager.getData(space1), InvalidIndexSpaceException);
 
 	manager.registerSpace(space1, data1);

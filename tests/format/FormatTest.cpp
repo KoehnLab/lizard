@@ -36,9 +36,9 @@ struct FormatTest : ::testing::Test {
 		const IndexSpace virtSpace(1, Spin::Both);
 		const IndexSpace extSpace(2, Spin::Both);
 
-		const IndexSpaceData occData("occ", 10, Spin::Both, { 'i', 'j', 'k', 'l' }, '\'');
-		const IndexSpaceData virtData("virt", 100, Spin::Both, { 'a', 'b', 'c', 'd' }, '\'');
-		const IndexSpaceData extData("ext", 150, Spin::None, { 'p', 'q', 'r', 's' }, '\'');
+		const IndexSpaceData occData("occ", 'o', 10, Spin::Both, { 'i', 'j', 'k', 'l' }, '\'');
+		const IndexSpaceData virtData("virt", 'v', 100, Spin::Both, { 'a', 'b', 'c', 'd' }, '\'');
+		const IndexSpaceData extData("ext", 'e', 150, Spin::None, { 'p', 'q', 'r', 's' }, '\'');
 
 		m_manager.registerSpace(occSpace, occData);
 		m_manager.registerSpace(virtSpace, virtData);

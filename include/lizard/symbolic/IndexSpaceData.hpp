@@ -18,13 +18,17 @@ namespace lizard {
  */
 class IndexSpaceData {
 public:
-	IndexSpaceData(std::string name, unsigned int size, Spin defaultSpin, std::vector< char > labels,
+	IndexSpaceData(std::string name, char shortName, unsigned int size, Spin defaultSpin, std::vector< char > labels,
 				   char labelExtension = '\'');
 
 	/**
 	 * @returns The name of the index space
 	 */
 	[[nodiscard]] auto getName() const -> const std::string &;
+	/**
+	 * @returns The short (single-character) name of the index space
+	 */
+	[[nodiscard]] auto getShortName() const -> char;
 	/**
 	 * @returns The size (amount of indices inside the space) of the index space
 	 */
@@ -45,6 +49,7 @@ public:
 
 private:
 	std::string m_name;
+	char m_shortName;
 	unsigned int m_size;
 	Spin m_defaultSpin;
 	std::vector< char > m_labels;

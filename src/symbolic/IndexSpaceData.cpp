@@ -7,14 +7,18 @@
 
 namespace lizard {
 
-IndexSpaceData::IndexSpaceData(std::string name, unsigned int size, Spin defaultSpin, std::vector< char > labels,
-							   char labelExtension)
-	: m_name(std::move(name)), m_size(size), m_defaultSpin(defaultSpin), m_labels(std::move(labels)),
-	  m_labelExtension(labelExtension) {
+IndexSpaceData::IndexSpaceData(std::string name, char shortName, unsigned int size, Spin defaultSpin,
+							   std::vector< char > labels, char labelExtension)
+	: m_name(std::move(name)), m_shortName(shortName), m_size(size), m_defaultSpin(defaultSpin),
+	  m_labels(std::move(labels)), m_labelExtension(labelExtension) {
 }
 
 auto IndexSpaceData::getName() const -> const std::string & {
 	return m_name;
+}
+
+auto IndexSpaceData::getShortName() const -> char {
+	return m_shortName;
 }
 
 auto IndexSpaceData::getSize() const -> unsigned int {
