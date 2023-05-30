@@ -9,6 +9,7 @@ add_library(lizard_process STATIC
 	HardcodedImport.cpp
 	ImportStrategy.cpp
 	IndexTracker.cpp
+	ITFExport.cpp
 	OptimizationStrategy.cpp
 	ProcessingStep.cpp
 	Processor.cpp
@@ -21,6 +22,15 @@ add_library(lizard_process STATIC
 	SubstitutionStrategy.cpp
 	SymmetryUtils.cpp
 	TextExport.cpp
+
+	itf/Alloc.cpp
+	itf/Contract.cpp
+	itf/Drop.cpp
+	itf/Load.cpp
+	itf/Multiplyable.cpp
+	itf/Store.cpp
+	itf/TensorExpression.cpp
+	itf/Translator.cpp
 )
 
 register_lizard_target(lizard_process)

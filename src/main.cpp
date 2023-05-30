@@ -5,6 +5,7 @@
 
 #include "lizard/format/FormatSupport.hpp"
 #include "lizard/process/HardcodedImport.hpp"
+#include "lizard/process/ITFExport.hpp"
 #include "lizard/process/ProcessingException.hpp"
 #include "lizard/process/ProcessingStep.hpp"
 #include "lizard/process/Processor.hpp"
@@ -95,6 +96,7 @@ auto main(int argc, char **argv) -> int {
 		processor.enqueue(ProcessingStep{ std::make_unique< TextExport >() });
 
 		// Export terms
+		processor.enqueue(ProcessingStep{ std::make_unique< ITFExport >() });
 
 		processor.run();
 
