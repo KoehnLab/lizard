@@ -147,6 +147,19 @@ public:
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto cend() const -> iterator_template< iteration_order >;
 
+	/**
+	 * Get an iterator that continues iterating this expression's super-tree as if it
+	 * had just finished visiting the sub-tree under and including this expression.
+	 */
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto afterRoot() const -> iterator_template< iteration_order >;
+
+	/**
+	 * Get the end iterator for the iteration started by a call to afterRoot
+	 */
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto afterRootEnd() const -> iterator_template< iteration_order >;
+
 	template< typename V >
 	friend auto operator==(const ConstExpression< V > &lhs, const ConstExpression< V > &rhs) -> bool;
 	template< typename V >
@@ -255,6 +268,18 @@ public:
 
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto end() -> iterator_template< iteration_order >;
+
+	/**
+	 * Get an iterator that continues iterating this expression's super-tree as if it
+	 * had just finished visiting the sub-tree under and including this expression.
+	 */
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto afterRoot() -> iterator_template< iteration_order >;
+	/**
+	 * Get the end iterator for the iteration started by a call to afterRoot
+	 */
+	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
+	auto afterRootEnd() -> iterator_template< iteration_order >;
 
 protected:
 	[[nodiscard]] auto node() -> TreeNode &;

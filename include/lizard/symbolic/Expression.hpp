@@ -141,6 +141,24 @@ auto ConstExpression< Variable >::cend() const -> iterator_template< iteration_o
 	return details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::afterRoot(tree(), nodeID());
 }
 
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::afterRoot() const -> iterator_template< iteration_order > {
+	// In our case, end() == afterRoot()
+	return end();
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto ConstExpression< Variable >::afterRootEnd() const -> iterator_template< iteration_order > {
+	if (!isRoot()) {
+		return details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::afterRoot(tree(),
+																								 afterRoot()->nodeID());
+	}
+
+	return end();
+}
+
 template< typename Variable > auto ConstExpression< Variable >::nodeID() const -> const Numeric & {
 	return m_nodeID;
 }
@@ -309,6 +327,25 @@ template< TreeTraversal iteration_order >
 auto Expression< Variable >::end() -> iterator_template< iteration_order > {
 	return details::ExpressionTreeIteratorCore< Variable, false, iteration_order >::afterRoot(
 		tree(), ConstExpression< Variable >::nodeID());
+}
+
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto Expression< Variable >::afterRoot() -> iterator_template< iteration_order > {
+	// In our case, end() == afterRoot()
+	return end();
+}
+
+template< typename Variable >
+template< TreeTraversal iteration_order >
+auto Expression< Variable >::afterRootEnd() -> iterator_template< iteration_order > {
+	if (!this->isRoot()) {
+		return details::ExpressionTreeIteratorCore< Variable, true, iteration_order >::afterRoot(tree(),
+																								 afterRoot()->nodeID());
+	}
+
+	return end();
 }
 
 
