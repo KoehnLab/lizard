@@ -135,6 +135,12 @@ public:
 	 */
 	[[nodiscard]] auto getContainingTree() const -> const ExpressionTree< Variable > &;
 
+	/**
+	 * @returns Whether the given expression object describes the exact same expression
+	 * in the same tree
+	 */
+	[[nodiscard]] auto isSame(const ConstExpression< Variable > &other) const -> bool;
+
 	template< TreeTraversal iteration_order = TreeTraversal::DepthFirst_PostOrder >
 	auto begin() const -> iterator_template< iteration_order >;
 

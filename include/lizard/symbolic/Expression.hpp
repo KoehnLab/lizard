@@ -118,6 +118,11 @@ auto ConstExpression< Variable >::getContainingTree() const -> const ExpressionT
 }
 
 template< typename Variable >
+auto ConstExpression< Variable >::isSame(const ConstExpression< Variable > &other) const -> bool {
+	return m_tree == other.m_tree && m_nodeID == other.m_nodeID && m_node == other.m_node;
+}
+
+template< typename Variable >
 template< TreeTraversal iteration_order >
 auto ConstExpression< Variable >::begin() const -> iterator_template< iteration_order > {
 	return cbegin< iteration_order >();
