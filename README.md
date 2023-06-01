@@ -19,8 +19,11 @@ All other dependencies will be fetched automatically while running cmake (requir
 - [CLI11](https://github.com/CLIUtils/CLI11) (BSD-3-Clause)
 - [fmt](https://github.com/fmtlib/fmt) (MIT)
 - [spdlog](https://github.com/gabime/spdlog) (MIT)
-- [Headley](https://github.com/nemequ/hedley) (CC0-1.0)
+- [Hedley](https://github.com/nemequ/hedley) (CC0-1.0)
 - [iterators](https://github.com/Krzmbrzl/iterators) (BSD-3-Clause)
+- [libPerm](https://github.com/Krzmbrzl/libPerm) (BSD-3-Clause)
+- [span_lite](https://github.com/martinmoene/span-lite) (BSL 1.0)
+- [Eigen3](https://gitlab.com/libeigen/eigen) (MPL 2.0)
 
 
 ### Build `lizard`
@@ -52,4 +55,5 @@ might look like this: `cmake -DCMAKE_BUILD_TYPE="Release" -DLIZARD_LTO=ON ..`
 | `LIZARD_IWYU` | Enable the [include-what-you-use](https://include-what-you-use.org/) tool, if installed | `ON` |
 | `LIZARD_LWYU` | Enable cmake's link-what-you-use tool, if available | `ON` |
 | `LIZARD_CLANG_TIDY` | Enable [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) static analysis, if installed | `ON` |
+| `LIZARD_DEPENDENCIES_BUILD_TYPE` | The build type to use for lizard's dependencies | `Release` |
 

@@ -14,8 +14,8 @@ auto operator<<(std::ostream &stream, const Fraction &fraction) -> std::ostream 
 	const Fraction::field_type denominator = fraction.getDenominator();
 
 	stream << numerator;
-	if (numerator > 0 && denominator != 1) {
-		stream << " / " << denominator;
+	if (denominator > 0 && denominator != 1) {
+		stream << "/" << denominator;
 	}
 
 	return stream;

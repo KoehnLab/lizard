@@ -12,6 +12,7 @@ Checks: "-*,
          readability-*,
          -misc-no-recursion,
          -bugprone-easily-swappable-parameters,
+		 -readability-identifier-length,
          -modernize-use-auto"
 
 WarningsAsErrors: ''

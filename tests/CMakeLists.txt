@@ -1,7 +1,7 @@
 # This file is part of the lizard quantum chemistry software.
 # Use of this source code is governed by a BSD-style license that
 # can be found in the LICENSE file at the root of the lizard source
-# tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
+# tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 include(FetchContent)
 include(GoogleTest)
@@ -25,6 +25,7 @@ function(register_test)
 			message(FATAL_ERROR "\"${CURRENT} is not a target")
 		endif()
 
+		register_lizard_target("${CURRENT}")
 		target_compile_definitions("${CURRENT}" PRIVATE TEST_FILE_DIR="${TEST_FILE_DIR}")
 		target_link_libraries("${CURRENT}" PRIVATE gmock gtest_main)
 		gtest_discover_tests("${CURRENT}")
@@ -35,5 +36,8 @@ if (LIZARD_BUILD_TESTS)
 	FetchContent_MakeAvailable(googletest)
 
 	add_subdirectory(core)
+	add_subdirectory(symbolic)
+	add_subdirectory(format)
 	add_subdirectory(parser)
+	add_subdirectory(process)
 endif()

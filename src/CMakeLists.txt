@@ -1,12 +1,15 @@
 # This file is part of the lizard quantum chemistry software.
 # Use of this source code is governed by a BSD-style license that
 # can be found in the LICENSE file at the root of the lizard source
-# tree or at <https://github.com/Krzmbrzl/lizard/blob/main/LICENSE>.
+# tree or at <https://github.com/KoehnLab/lizard/blob/main/LICENSE>.
 
 include(setup_tools)
 
 add_subdirectory(core)
+add_subdirectory(symbolic)
+add_subdirectory(format)
 add_subdirectory(parser)
+add_subdirectory(process)
 
 
 add_executable(lizard main.cpp)
@@ -23,13 +26,8 @@ target_compile_definitions(
 
 target_link_libraries(
 	lizard
-		PUBLIC
-		lizard::core
-		lizard::parser
-)
-target_link_libraries(
-	lizard
 		PRIVATE
+			lizard::process
 			CLI11::CLI11
 			fmt::fmt
 			spdlog::spdlog
